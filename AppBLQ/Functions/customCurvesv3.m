@@ -16,15 +16,16 @@
 
 function [datosIniciales] = customCurvesv3(SaveFolder, FileName, Struct)
 f = figure;
+f.Position(3:4)=[350 365];
 %Si ya existe, abro el archivo de iniciacion y segun si existe o no, creo
 %una variable existeIni que sera true si existe y false si no. Si existe
-%guardará los valores introducidos por el usuario en orden de esta forma:
+%guardarÃ¡ los valores introducidos por el usuario en orden de esta forma:
 % 1.- Corte Inferior
 % 2.- Corte Superior
-% 3.- Energía inicial
-% 4.- Energía final
-% 5.- Paso energía
-% 6.- Delta energía
+% 3.- EnergÃ­a inicial
+% 4.- EnergÃ­a final
+% 5.- Paso energÃ­a
+% 6.- Delta energÃ­a
 
 if exist([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.in'], 'file') == 2
     [[SaveFolder,filesep],FileName(1:length(FileName)-4),'.in'];
@@ -41,43 +42,43 @@ end
 
 %%%%%%%%%% Corte Inferior %%%%%%%%%%%%%%%%%
 editCorteInferior = uicontrol('Style','edit',...
-        'Position',[200 300 120 20]);
+    'Position',[160 320 120 20]);
                     uicontrol('Style','text',...
-        'Position',[40 300 120 40],...
-        'String', 'Corte inferior inicial conductancia:');
+    'Position',[40 315 120 30],...
+    'String', 'Corte inferior inicial conductancia:');
     %Si existe coge el valor del archivo
 if existeIni
     editCorteInferior.String = ( remember(1));
 end
 %%%%%%%%% Corte Superior %%%%%%%%%%%%%    
 editCorteSuperior = uicontrol('Style','edit',...
-        'Position',[200 250 120 20]);
+    'Position',[160 270 120 20]);
                     uicontrol('Style','text',...
-        'Position',[40 250 120 40],...
-        'String', 'Corte superior inicial conductancia:');
+    'Position',[40 265 120 30],...
+    'String', 'Corte superior inicial conductancia:');
     %Si existe coge el valor del archivo
 if existeIni
     editCorteSuperior.String = ( remember(2));
 end
     
-%%%%%%%%% Energía mínima %%%%%%%%%%%%
+%%%%%%%%% EnergÃ­a mÃ­nima %%%%%%%%%%%%
     
 editEnergiaMin = uicontrol('Style','edit',...
-        'Position',[200 200 120 20]);
-                     uicontrol('Style','text',...
-        'Position',[40 200 120 20],...
-        'String', 'Mapas desde:');
+    'Position',[160 220 120 20]);
+                 uicontrol('Style','text',...
+    'Position',[40 220 120 20],...
+    'String', 'Mapas desde:');
     %Si existe coge el valor del archivo
 if existeIni
     editEnergiaMin.String = ( remember(3));
 end
        
-%%%%%%%% Energía máxima %%%%%%%%%%%%%%%
+%%%%%%%% EnergÃ­a mÃ¡xima %%%%%%%%%%%%%%%
 editEnergiaMax = uicontrol('Style','edit',...
-        'Position',[200 150 120 20]);
-             uicontrol('Style','text',...
-        'Position',[40 150 120 20],...
-        'String', 'hasta:');
+    'Position',[160 170 120 20]);
+                 uicontrol('Style','text',...
+    'Position',[40 170 120 20],...
+    'String', 'hasta:');
     %Si existe coge el valor del archivo
 if existeIni
     editEnergiaMax.String = ( remember(4));
@@ -85,20 +86,20 @@ end
           
 %%%%%%%% Paso mapas %%%%%%%%%%%%    
 editPasoMapas = uicontrol('Style','edit',...
-        'Position',[200 100 120 20]);
-              uicontrol('Style','text',...
-        'Position',[40 100 120 40],...
-        'String', 'en pasos de:');
+    'Position',[160 120 120 20]);
+                uicontrol('Style','text',...
+    'Position',[40 120 120 20],...
+    'String', 'en pasos de:');
     %Si existe coge el valor del archivo
 if existeIni
     editPasoMapas.String = ( remember(6));
 end    
-%%%%%%%%% Delta energía %%%%%%%%%%%%%
+%%%%%%%%% Delta energÃ­a %%%%%%%%%%%%%
 editDeltaEnergia = uicontrol('Style','edit',...
-        'Position',[200 50 120 20]);
-              uicontrol('Style','text',...
-        'Position',[40 50 120 40],...
-        'String', '\Delta(E):');
+    'Position',[160 70 120 20]);
+                   uicontrol('Style','text',...
+    'Position',[40 70 120 20],...
+    'String', 'Î”E:');
 %Si existe coge el valor del archivo
 if existeIni
     editDeltaEnergia.String = (remember(5));
@@ -106,8 +107,8 @@ end
 
 
 %Boton para continuar
-uicontrol('Position',[20 20 200 20],'String','Continue',...
-              'Callback','uiresume(gcbf)');    
+uicontrol('Position',[80 25 200 20],'String','Continue',...
+          'Callback','uiresume(gcbf)');    
 uiwait(gcf);
 
 datosIniciales.corteInferior	= str2double(editCorteInferior.String);
@@ -142,7 +143,7 @@ fclose(fileIni);
         fprintf(FileID, 'Dibuja de                : %s mV\r\n',editEnergiaMin.String);
         fprintf(FileID, ' a                       : %s mV\r\n',editEnergiaMax.String);
         fprintf(FileID, 'con pasos de             : %s mV\r\n',editPasoMapas.String);
-        fprintf(FileID, 'deta de Energia          : %s mV\r\n',editDeltaEnergia.String );
+        fprintf(FileID, 'delta de Energia          : %s mV\r\n',editDeltaEnergia.String );
         fprintf(FileID, '-------------------------------\r\n');
         fprintf(FileID, '\r\n');
         fprintf(FileID, '\r\n');

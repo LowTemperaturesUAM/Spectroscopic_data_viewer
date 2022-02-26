@@ -104,7 +104,7 @@ Struct.datosIniciales = customCurvesv3(Struct.SaveFolder, Struct.FileName, Struc
 % averaging points around a certain DeltaEnergia and its 2D-FFT map
 % ------------------------------------------------------------------------
 fileID = Struct.fileID;
-
+% creo que estamos sobreescribiendo lo anterior!!!
 fprintf(fileID, 'Valores de Energia: de %g mV a %g mV en pasos de %g mV\r\n',...
                 Energia(1), Energia(length(Energia)),PasoMapas);
 fprintf(fileID, 'Delta de Energia  : %g mv\r\n', DeltaEnergia);
