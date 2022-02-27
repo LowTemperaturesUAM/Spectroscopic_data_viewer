@@ -27,25 +27,26 @@ for i = 1:NCell
     SaveFigure.Children.FontSize = 20;
     
     %------------------Choose whatever you prefer--------------------------   
-
-    if type == 0 % NO TITLE NO AXES NO BORDERS
-        SaveFigure.Children.Position =  SaveFigure.Children.OuterPosition;
-        SaveFigure.Children.XTick = [];
-        SaveFigure.Children.YTick = [];
-        SaveFigure.Children.XTickLabel = [];
-        SaveFigure.Children.YTickLabel = [];
+    switch type
+        case 0 % NO TITLE NO AXES NO BORDERS
+            SaveFigure.Children.Position =  SaveFigure.Children.OuterPosition;
+            SaveFigure.Children.XTick = [];
+            SaveFigure.Children.YTick = [];
+            SaveFigure.Children.XTickLabel = [];
+            SaveFigure.Children.YTickLabel = [];
         
-    elseif type == 1 % WITH TITLE AND AXES
-        title([num2str(Info.Energia(i)), ' mV']);
-%         SaveFigure.Children.Position= [0.1 0.1 0.85 0.75];
+        case 1 % ONLY TITLE
+            title([num2str(Info.Energia(i)), ' mV']);
+            %SaveFigure.Children.Position= [0.0 0.0 1 0.94];
+            SaveFigure.Children.XTick = [];
+            SaveFigure.Children.YTick = [];
+            SaveFigure.Children.XTickLabel = [];
+            SaveFigure.Children.YTickLabel = [];
     
-    elseif type == 2 % ONLY TITLE
-                title([num2str(Info.Energia(i)), ' mV']);
-%                 %SaveFigure.Children.Position= [0.0 0.0 1 0.94];
-                SaveFigure.Children.XTick = [];
-                SaveFigure.Children.YTick = [];
-                SaveFigure.Children.XTickLabel = [];
-                SaveFigure.Children.YTickLabel = [];
+        case 2 % WITH TITLE AND AXES
+            title([num2str(Info.Energia(i)), ' mV']);
+            %SaveFigure.Children.Position= [0.1 0.1 0.85 0.75];
+
     end
     
     SaveFigure.Children.DataAspectRatio = [1,1,1];
