@@ -1,7 +1,7 @@
-function [Info] = showCell(App, Cell, Info, k, flag) %flag: true if Real, false if FFT
-
+function [Info] = showCell(App, Cell, Info, k, isReal) %flag: true if Real, false if FFT
+previousColormap = App.Axes.Colormap;
 % Analize Real
-if flag
+if isReal
     
     DistanciaColumnas            = Info.DistanciaColumnas;
     DistanciaFilas               = Info.DistanciaFilas;
@@ -28,7 +28,7 @@ if flag
     if App.Interpolation
         App.Axes.Children.Interpolation = 'bilinear';
     end
-    App.Axes.Colormap = feval(App.CallingApp.ColormapRealDropDownNew.Value);
+    App.Axes.Colormap =  previousColormap;
 % 
 %     Ratio = (App.Axes.XLim(2) - App.Axes.XLim(1))/...
 %     (App.Axes.YLim(2) - App.Axes.YLim(1));
@@ -83,8 +83,8 @@ else % Analize FFT
     if App.Interpolation
         App.Axes.Children.Interpolation = 'bilinear';
     end
-    
-    App.Axes.Colormap = Info.Colormap;
+        
+    App.Axes.Colormap =  previousColormap;
 
 %     Ratio = (App.Axes.XLim(2) - App.Axes.XLim(1))/...
 %     (App.Axes.YLim(2) - App.Axes.YLim(1));
