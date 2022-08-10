@@ -123,7 +123,7 @@ if any(dash)
 end
 
 % Standardize all colormap names to lowercase: 
-ColormapName = lower(ColormapName); 
+% ColormapName = lower(ColormapName);
 
 % Oleron's too hard for me to remember, so I'm gonna use dem or topo. 
 if ismember(ColormapName,{'dem','topo'})
