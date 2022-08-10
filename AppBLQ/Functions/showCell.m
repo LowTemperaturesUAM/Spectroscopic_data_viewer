@@ -28,7 +28,7 @@ if isReal
     if App.Interpolation
         App.Axes.Children.Interpolation = 'bilinear';
     end
-    App.Axes.Colormap =  previousColormap;
+    App.Axes.Colormap = previousColormap;
 % 
 %     Ratio = (App.Axes.XLim(2) - App.Axes.XLim(1))/...
 %     (App.Axes.YLim(2) - App.Axes.YLim(1));
@@ -84,7 +84,7 @@ else % Analize FFT
         App.Axes.Children.Interpolation = 'bilinear';
     end
         
-    App.Axes.Colormap =  previousColormap;
+    App.Axes.Colormap = previousColormap;
 
 %     Ratio = (App.Axes.XLim(2) - App.Axes.XLim(1))/...
 %     (App.Axes.YLim(2) - App.Axes.YLim(1));
