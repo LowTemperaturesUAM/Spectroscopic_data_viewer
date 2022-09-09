@@ -23,14 +23,14 @@ end
 % PerfilesPromedio = (Perfiles + Perfiles2)/2;
 % PerfilesFlatten=Flatten(Perfiles,[1,1]);
 
-a=figure(54534);
-a.Name='Horizontal Profile';
+a=figure;
 %surf((ParametroRed/TamanhoReal)*(1:LongitudPerfil-1),Energia,Perfiles(:,1:LongitudPerfil-1))
-% imagesc(Info.DistanciaFourierColumnas*2*Info.ParametroRedFilas,Info.Energia,Perfiles);
 
-imagesc(Info.DistanciaFourierColumnas.*Info.ParametroRedColumnas,Info.Energia,Perfiles); %Para redes cuadradas
+%imagesc(Info.DistanciaFourierColumnas.*Info.ParametroRedColumnas,Info.Energia,Perfiles);
 
-%imagesc(Info.DistanciaFourierColumnas.*Info.ParametroRedColumnas.*2./sqrt(3),Info.Energia,Perfiles);
+imagesc(Info.DistanciaFourierColumnas*2*Info.ParametroRedFilas,Info.Energia,Perfiles);  %Para redes cuadradas
+
+%imagesc(Info.DistanciaFourierColumnas.*2*Info.ParametroRedColumnas.*2./sqrt(3),Info.Energia,Perfiles);
 %%Para redes hexagonales, con los picos de Bragg en la vertical
 
 
@@ -54,7 +54,6 @@ b.TickDir = 'out';
 % b.Position = b.OuterPosition;
 %b.CLim=[0 0.15];
 %b.CLim=[min(min(Perfiles)) max(max(Perfiles))];
-b.CLim = Info.ContrastFFT(:,(end+1)/2); %Usamos el contraste a 0 mV para empezar
 %colormap gray
 b.Children.XData = b.Children.XData./max(b.XLim); 
 b.XLim = [-1 1];

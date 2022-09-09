@@ -25,11 +25,11 @@ end
 % PerfilesPromedio = (Perfiles + Perfiles2)/2;
 % PerfilesFlatten=Flatten(Perfiles,[1,1]);
 
-a=figure(54533);
-a.Name='Vertical Profile';
+a=figure;
 %surf((ParametroRed/TamanhoReal)*(1:LongitudPerfil-1),Energia,Perfiles(:,1:LongitudPerfil-1))
-% imagesc(Info.DistanciaFourierFilas*2*Info.ParametroRedFilas,Info.Energia,Perfiles);
-imagesc(Info.DistanciaFourierFilas.*Info.ParametroRedFilas,Info.Energia,Perfiles);
+imagesc(Info.DistanciaFourierFilas*2*Info.ParametroRedFilas,Info.Energia,Perfiles);
+%imagesc(Info.DistanciaFourierFilas.*Info.ParametroRedFilas,Info.Energia,Perfiles);
+
 % axis([0 1 min(Info.Energia) max(Info.Energia)]);
 axis([-1/(2*Info.ParametroRedFilas) 1/(2*Info.ParametroRedFilas) min(Info.Energia) max(Info.Energia)]);
 %axis([0 1 -85 85]);
@@ -51,7 +51,6 @@ b.TickDir = 'out';
 % b.Position = b.OuterPosition;
 %b.CLim=[0 0.15];
 %b.CLim=[min(min(Perfiles)) max(max(Perfiles))];
-b.CLim = Info.ContrastFFT(:,(end+1)/2);  %Usamos el contraste a 0 mV para empezar
 %colormap gray
 
 % Renombro eje X para que vaya desde -1 a 1 [-pi/a,pi/a];
