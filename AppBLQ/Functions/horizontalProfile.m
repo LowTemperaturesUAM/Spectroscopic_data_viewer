@@ -23,6 +23,9 @@ end
 % PerfilesPromedio = (Perfiles + Perfiles2)/2;
 % PerfilesFlatten=Flatten(Perfiles,[1,1]);
 
+a=figure(54534);
+a.Name='Horizontal Profile';
+
 a=figure;
 %surf((ParametroRed/TamanhoReal)*(1:LongitudPerfil-1),Energia,Perfiles(:,1:LongitudPerfil-1))
 
@@ -54,6 +57,7 @@ b.TickDir = 'out';
 % b.Position = b.OuterPosition;
 %b.CLim=[0 0.15];
 %b.CLim=[min(min(Perfiles)) max(max(Perfiles))];
+b.CLim = Info.ContrastFFT(:,(end+1)/2); %Usamos el contraste a 0 mV para empezar
 %colormap gray
 b.Children.XData = b.Children.XData./max(b.XLim); 
 b.XLim = [-1 1];
