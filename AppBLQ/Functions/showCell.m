@@ -23,7 +23,7 @@ if isReal
     axis(App.Axes,'square');
     App.Axes.Box = 'On';
     App.Axes.XLim = Info.XLimReal;
-    App.Axes.YLim = Info.YLimReal;
+    App.Axes.YLim = Info.YLimReal;  
     
     if App.Interpolation
         App.Axes.Children.Interpolation = 'bilinear';
@@ -44,10 +44,9 @@ if isReal
 %     end
     
     %I make sure to choose Values inside the defined Limits or the limits themselves.
-    checkInside = Info.ContrastReal(:,k) >= App.MinSlider.Limits(1) &...
-                Info.ContrastReal(:,k) <= App.MaxSlider.Limits(2);
-    values = Info.ContrastReal(:,k);
-    values(~checkInside) = App.MinSlider.Limits(~checkInside);
+    
+    values = chooseContrast(Info.ContrastReal(:,k),...
+        App.MinSlider.Limits(1), App.MaxSlider.Limits(2));
 
     App.MinSlider.Value = values(1); 
     App.MinEditField.Value = App.MinSlider.Value;
@@ -103,10 +102,8 @@ else % Analize FFT
 %     end
     
 %I make sure to choose Values inside the defined Limits or the limits themselves.
-    checkInside = Info.ContrastFFT(:,k) >= App.MinSlider.Limits(1) &...
-                Info.ContrastFFT(:,k) <= App.MaxSlider.Limits(2);
-    values = Info.ContrastFFT(:,k);
-    values(~checkInside) = App.MinSlider.Limits(~checkInside);
+    values = chooseContrast(Info.ContrastFFT(:,k),...
+        App.MinSlider.Limits(1), App.MaxSlider.Limits(2));
 
     App.MinSlider.Value = values(1);
     App.MinEditField.Value = App.MinSlider.Value;
