@@ -1,7 +1,8 @@
-function [Info] = showCell(App, Cell, Info, k, isReal) %flag: true if Real, false if FFT
-previousColormap = App.Axes.Colormap;
+function [Info] = showCell(App, Cell, Info, k, Axes)
+previousColormap = Axes.Colormap;
+switch Axes.Tag
 % Analize Real
-if isReal
+    case 'RealAxes'
     
     DistanciaColumnas            = Info.DistanciaColumnas;
     DistanciaFilas               = Info.DistanciaFilas;
@@ -14,26 +15,26 @@ if isReal
         Info.YLimReal = [min(DistanciaFilas) max(DistanciaFilas)];
     end
     
-    cla (App.Axes); %Clear axes
+    cla(Axes); %Clear axes
 %     App.Axes.DataAspectRatioMode = 'manual';
 
-    ImagenReal = imagesc(App.Axes,DistanciaColumnas,DistanciaFilas,Cell{k});
-    App.Axes.YDir = 'normal';
+    ImagenReal = imagesc(Axes,DistanciaColumnas,DistanciaFilas,Cell{k});
+    Axes.YDir = 'normal';
     ImagenReal.HitTest = 'Off';
-    axis(App.Axes,'square');
-    App.Axes.Box = 'On';
-    App.Axes.XLim = Info.XLimReal;
-    App.Axes.YLim = Info.YLimReal;  
+    axis(Axes,'square');
+    Axes.Box = 'On';
+    Axes.XLim = Info.XLimReal;
+    Axes.YLim = Info.YLimReal;  
     
-    if App.Interpolation
-        App.Axes.Children.Interpolation = 'bilinear';
+    if isprop(App, 'Interpolation') & App.Interpolation
+        Axes.Children.Interpolation = 'bilinear';
     end
-    App.Axes.Colormap = previousColormap;
+    Axes.Colormap = previousColormap;
 % 
 %     Ratio = (App.Axes.XLim(2) - App.Axes.XLim(1))/...
 %     (App.Axes.YLim(2) - App.Axes.YLim(1));
 %     App.Axes.DataAspectRatio = [1,Ratio,1];
-    App.Axes.DataAspectRatio = [1,1,1];
+    Axes.DataAspectRatio = [1,1,1];
 %     App.Axes.DataAspectRatioMode = 'auto';
 
 %     if ~App.RealLockContrastCheckBox.Value
@@ -52,9 +53,10 @@ if isReal
     App.MinEditField.Value = App.MinSlider.Value;
     App.MaxSlider.Value = values(2);
     App.MaxEditField.Value = App.MaxSlider.Value;
-    App.Axes.CLim = [App.MinSlider.Value; App.MaxSlider.Value];
+    Axes.CLim = [App.MinSlider.Value; App.MaxSlider.Value];
     
-else % Analize FFT
+    % Analize FFT
+    case 'FFTAxes'
     
     DistanciaFourierFilas        = Info.DistanciaFourierFilas;
     DistanciaFourierColumnas     = Info.DistanciaFourierColumnas;
@@ -111,10 +113,44 @@ else % Analize FFT
     App.MaxEditField.Value = App.MaxSlider.Value;
     App.Axes.CLim = [App.MinSlider.Value, App.MaxSlider.Value];
 %     clear TransformadasAUX
+    case 'ResultAxes'
+        DistanciaFilas = Info.DistanciaFilas;
+        DistanciaColumnas = Info.DistanciaColumnas;
 
+        % Defines axis limits in case they are not in InfoStruct
+        % DETECT THE AXES AND SELECT LIMITS
+        if ~isfield(Info, 'XLimReal')
+            Info.XLimReal = [min(DistanciaColumnas) max(DistanciaColumnas)];
+        end
+
+        if ~isfield(Info, 'YLimReal')
+            Info.YLimReal = [min(DistanciaFilas) max(DistanciaFilas)];
+        end
+
+        ImagenRestas = imagesc(Axes,DistanciaColumnas,DistanciaFilas,Cell{k});
+        Axes.YDir = 'normal';
+        ImagenRestas.HitTest = 'Off';
+        axis(Axes,'square');
+        Axes.Box = 'On';
+        Axes.XLim = Info.XLimReal;
+        Axes.YLim = Info.YLimReal;
+        Axes.Colormap = previousColormap;
+        Axes.DataAspectRatio = [1,1,1];
+
+        values = chooseContrast(Info.ContrastRestasReal(:,k),...
+            -App.LimitsSlider.Limits(2),App.LimitsSlider.Limits(2));
+        % I choose second value because it is positive
+        App.LimitsSlider.Value = values(2);
+        App.LimitsEditField.Value = values(2);
+        Axes.CLim = values;
 
 end
     if App.ColorbarCheckBox.Value
-        set(App.Colorbar, 'Limits', values, 'YTick', values,'TickLength', 0)
+        if strcmp(Axes.Tag, 'ResultAxes')
+            set(App.ColorbarRestas, 'Limits', values, 'YTick', values,'TickLength', 0)
+        else
+            set(App.Colorbar, 'Limits', values, 'YTick', values,'TickLength', 0)
+        end
+        
     end
 end
