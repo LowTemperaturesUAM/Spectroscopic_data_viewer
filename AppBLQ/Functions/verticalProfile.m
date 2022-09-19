@@ -28,7 +28,7 @@ end
 a=figure(54533);
 a.Name='Vertical Profile';
 
-a=figure;
+% a=figure;
 %surf((ParametroRed/TamanhoReal)*(1:LongitudPerfil-1),Energia,Perfiles(:,1:LongitudPerfil-1))
 imagesc(Info.DistanciaFourierFilas*2*Info.ParametroRedFilas,Info.Energia,Perfiles);
 %imagesc(Info.DistanciaFourierFilas.*Info.ParametroRedFilas,Info.Energia,Perfiles);

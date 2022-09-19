@@ -26,7 +26,7 @@ end
 a=figure(54534);
 a.Name='Horizontal Profile';
 
-a=figure;
+% a=figure;
 %surf((ParametroRed/TamanhoReal)*(1:LongitudPerfil-1),Energia,Perfiles(:,1:LongitudPerfil-1))
 
 %imagesc(Info.DistanciaFourierColumnas.*Info.ParametroRedColumnas,Info.Energia,Perfiles);
