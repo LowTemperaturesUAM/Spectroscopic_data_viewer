@@ -11,13 +11,13 @@ DistanciaFilas                  = Struct.DistanciaFilas;
 Voltaje                         = Struct.Voltaje;
 MatrizNormalizada               = Struct.MatrizNormalizada;
 MapasConductancia               = Struct.MapasConductancia;
-% MatrizCorriente                 = Struct.MatrizCorriente;
+MatrizCorriente                 = Struct.MatrizCorriente;
 
 [ax, btn, Movimiento] = Up_v2(App.mapsPreviewFigure);
-if ax~=0
-    Ratio = (ax.XLim(2) - ax.XLim(1))/...
-        (ax.YLim(2) - ax.YLim(1));
-    PosicionAx = ax.Position;
+% if ax~=0
+%     Ratio = (ax.XLim(2) - ax.XLim(1))/...
+%         (ax.YLim(2) - ax.YLim(1));
+%     PosicionAx = ax.Position;
     %    ax.UserData.Rectangle
     %    if Ratio < 1
     %         ax.Position = [PosicionAx(1), PosicionAx(2), PosicionAx(3)*Ratio PosicionAx(4)];
@@ -28,7 +28,7 @@ if ax~=0
         Rectangle = ax.UserData.Rectangle;
         %  MeanIVFunction(Rectangle, MatrizNormalizada, Voltaje, Columnas, Filas, DistanciaColumnas)
         MeanIVFunction_v2(ax,Rectangle, MatrizNormalizada, Voltaje, Columnas, Filas, DistanciaColumnas,0) %Conductancia
-        %MeanIVFunction_v2(ax,Rectangle, MatrizCorriente, Voltaje, Columnas, Filas, DistanciaColumnas,1) %Corriente
+        MeanIVFunction_v2(ax,Rectangle, MatrizCorriente, Voltaje, Columnas, Filas, DistanciaColumnas,1) %Corriente
     end
 
     if strcmp(btn, 'normal') && ~Movimiento
@@ -46,7 +46,7 @@ if ax~=0
             %          size(MatrizCorriente)
             %         curvaUnicaPA(Struct.Puntero, MapasConductancia{k}, Voltaje,MatrizNormalizada, DistanciaColumnas,DistanciaFilas,true);
             curvaUnicaPA_v2(App.RealAxes, Struct.Puntero, Voltaje,MatrizNormalizada, DistanciaColumnas,DistanciaFilas, true,0) %Conductancia vs V
-            %curvaUnicaPA_v2(App.RealAxes, Struct.Puntero, Voltaje,MatrizCorriente, DistanciaColumnas,DistanciaFilas, true,1) %Corriente vs V
+            curvaUnicaPA_v2(App.RealAxes, Struct.Puntero, Voltaje,MatrizCorriente, DistanciaColumnas,DistanciaFilas, true,1) %Corriente vs V
 
         elseif strcmp(ax.Tag,'FFTAxes')
             punteroT = App.FFTAxes.CurrentPoint;
@@ -73,4 +73,4 @@ if ax~=0
             curvaUnicaPA_v2(App.FFTAxes,Struct.PunteroFFT, Energia', TransformadasEqualizadosfAUX, DistanciaFourierColumnas,DistanciaFourierFilas, false,0); %Intensidad FFT vs E
         end
     end
-end
+%end
