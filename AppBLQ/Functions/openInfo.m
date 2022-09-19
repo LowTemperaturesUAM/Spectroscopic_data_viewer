@@ -2,15 +2,20 @@
 %aplicación [Info] y en el workspace general [InfoStructOriginal]
 function [Info,Settings] = openInfo()
 [File,Path] = uigetfile('*.mat');
-File = load([Path,File]);
-Info = File.InfoStruct;
-if isfield(File,'Struct')%exist('File.Struct','var')
-    Settings = File.Struct;
-    %disp('Loaded analysis info')
+% disp(File)
+if ~isequal(File,0)
+    File = load([Path,File]);
+    Info = File.InfoStruct;
+    if isfield(File,'Struct')%exist('File.Struct','var')
+        Settings = File.Struct;
+        %disp('Loaded analysis info')
+    else
+        Settings = struct();
+        %disp('No file information available')
+    end
 else
     Settings = struct();
-    %disp('No file information available')
+    Info= struct();
+    % assignin('base','InfoStructOriginal',Info);
 end
-
-% assignin('base','InfoStructOriginal',Info);
 end

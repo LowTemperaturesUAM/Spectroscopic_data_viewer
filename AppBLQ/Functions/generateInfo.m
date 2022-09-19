@@ -17,7 +17,7 @@ App.CallingApp.InfoStruct.PuntosDerivada               = Struct.PuntosDerivada;
 App.CallingApp.InfoStruct.Voltaje                      = Struct.Voltaje;
 App.CallingApp.InfoStruct.Bias                         = App.CallingApp.InfoStruct.Voltaje(1);
 App.CallingApp.InfoStruct.Colormap                     = eval(App.FFTColormapDropDown.Value);
-App.CallingApp.InfoStruct.ColormapName                 = app.RealColormapDropDown.Value;
+App.CallingApp.InfoStruct.ColormapName                 = (App.FFTColormapDropDown.Value);
 
 App.CallingApp.InfoStruct.XLimReal                     = [Struct.DistanciaColumnas(1) Struct.DistanciaColumnas(end)];
 App.CallingApp.InfoStruct.YLimReal                     = [Struct.DistanciaFilas(1) Struct.DistanciaFilas(end)];
