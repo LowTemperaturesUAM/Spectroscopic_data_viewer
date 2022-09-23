@@ -113,7 +113,7 @@ switch Axes.Tag
     App.MaxEditField.Value = App.MaxSlider.Value;
     App.Axes.CLim = [App.MinSlider.Value, App.MaxSlider.Value];
 %     clear TransformadasAUX
-    case 'ResultAxes'
+    case 'DiffAxes'
         DistanciaFilas = Info.DistanciaFilas;
         DistanciaColumnas = Info.DistanciaColumnas;
 
