@@ -5,7 +5,7 @@ Filas = Struct.Filas;
 OffsetVoltajeValue = App.OffsetvoltageEditField.Value;
 VoltajeEscala = App.VoltageScaleFactor.Value;
 NumeroCurvasValue = App.CurvestoshowEditField.Value;
-NPuntosDerivadaValue = App.DerivativepointsEditField.Value;
+NPuntosDerivadaValue = App.DerivativepointsSpinner.Value;
 VoltajeNormalizacionSuperior = App.toEditField.Value;
 VoltajeNormalizacionInferior = App.fromEditField.Value;
 

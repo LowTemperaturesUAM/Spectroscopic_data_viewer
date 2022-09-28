@@ -223,7 +223,7 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
         
     if length(remember) ==11
         App.CurvestoshowEditField.Value     = remember(7);
-        App.DerivativepointsEditField.Value = remember(8);
+        App.DerivativepointsSpinner.Value = remember(8);
         App.OffsetvoltageEditField.Value    = remember(9);
         App.fromEditField.Value             = remember(10);
         App.toEditField.Value               = remember(11);        
