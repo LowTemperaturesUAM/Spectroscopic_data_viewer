@@ -146,11 +146,12 @@ switch Axes.Tag
 
 end
     if App.ColorbarCheckBox.Value
-        if strcmp(Axes.Tag, 'ResultAxes')
+    switch Axes.Tag
+        case 'DiffAxes'
             set(App.ColorbarRestas, 'Limits', values, 'YTick', values,'TickLength', 0)
-        else
+        otherwise
             set(App.Colorbar, 'Limits', values, 'YTick', values,'TickLength', 0)
-        end
+    end
         
     end
 end
