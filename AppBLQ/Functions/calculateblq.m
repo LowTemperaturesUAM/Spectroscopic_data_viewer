@@ -27,7 +27,7 @@ VoltajeOffset = Voltaje*VoltajeEscala + OffsetVoltajeValue;
 IV = length(Voltaje);
 [MatrizConductanciaTest] = derivadorLeastSquaresPA(NPuntosDerivadaValue,Struct.MatrizCorrienteTest,Voltaje,1,NumeroCurvasValue);
 
-NormalizationFlag = 0;
+NormalizationFlag = 0; %Might need to use a more detail variable
 if App.NormalizedButton.Value
     NormalizationFlag = 1;
     [MatrizNormalizadaTest] = normalizacionPA(VoltajeNormalizacionSuperior,...
@@ -42,14 +42,17 @@ else
 end
 
 % Plot current
-cla(App.CurrentAxes);
+cla(App.CurrentAxes)
 % axes(App.CurrentAxes);
-
-hold(App.CurrentAxes,'on');
-for ContadorCurvas = 1:NumeroCurvasValue
-    plot(VoltajeOffset,Struct.MatrizCorrienteTest(:,ContadorCurvas),'-','Parent',App.CurrentAxes);
-end
-hold(App.CurrentAxes,'off');
+% Clear normalization and offset lines
+curve = findall(App.CurrentAxes,'Type','ConstantLine'); 
+delete(curve)
+% hold(App.CurrentAxes,'on');
+% for ContadorCurvas = 1:NumeroCurvasValue
+%     plot(VoltajeOffset,Struct.MatrizCorrienteTest(:,ContadorCurvas),'-','Parent',App.CurrentAxes);
+% end
+% hold(App.CurrentAxes,'off');
+plot(VoltajeOffset,Struct.MatrizCorrienteTest,'-','Parent',App.CurrentAxes);
 App.CurrentAxes.MinorGridLineStyle = ':';
 
 App.CurrentAxes.XLim = [min(VoltajeOffset), max(VoltajeOffset)];
@@ -59,13 +62,16 @@ App.CurrentAxes.YGrid = 'on';
 App.CurrentAxes.Box = 'on';
 
 %Plot conductance
-cla(App.ConductanceAxes);
+cla(App.ConductanceAxes)
 % axes(App.ConductanceAxes);
-
-hold(App.ConductanceAxes,'on');
-for ContadorCurvas = 1:NumeroCurvasValue
-    plot(VoltajeOffset,MatrizNormalizadaTest(:,ContadorCurvas),'-','Parent',App.ConductanceAxes);
-end
+% Clear normalization and offset lines
+curve = findall(App.ConductanceAxes,'Type','ConstantLine'); 
+delete(curve)
+% hold(App.ConductanceAxes,'on');
+% for ContadorCurvas = 1:NumeroCurvasValue
+%     plot(VoltajeOffset,MatrizNormalizadaTest(:,ContadorCurvas),'-','Parent',App.ConductanceAxes);
+% end
+plot(VoltajeOffset,MatrizNormalizadaTest,'-','Parent',App.ConductanceAxes);
 
 App.ConductanceAxes.MinorGridLineStyle = ':';
 App.ConductanceAxes.MinorGridColor = 'k';
@@ -76,25 +82,19 @@ App.ConductanceAxes.YGrid = 'on';
 App.ConductanceAxes.Box = 'on';
 
 if App.NormalizedButton.Value
-
-    plot([VoltajeNormalizacionInferior,   VoltajeNormalizacionInferior], [0, 2*ConductanciaTunel],'b-',...
-        'Parent',App.ConductanceAxes);
-    plot([-VoltajeNormalizacionInferior, -VoltajeNormalizacionInferior], [0, 2*ConductanciaTunel],'b-',...
-        'Parent',App.ConductanceAxes);
-    plot([VoltajeNormalizacionSuperior,   VoltajeNormalizacionSuperior], [0, 2*ConductanciaTunel],'r-',...
-        'Parent',App.ConductanceAxes);
-    plot([-VoltajeNormalizacionSuperior, -VoltajeNormalizacionSuperior], [0, 2*ConductanciaTunel],'r-',...
-        'Parent',App.ConductanceAxes);
-
+    xline(App.ConductanceAxes,VoltajeNormalizacionInferior,'b-',HandleVisibility='off')
+    xline(App.ConductanceAxes,-VoltajeNormalizacionInferior,'b-',HandleVisibility='off')
+    xline(App.ConductanceAxes,VoltajeNormalizacionSuperior,'r-',HandleVisibility='off')
+    xline(App.ConductanceAxes,-VoltajeNormalizacionSuperior,'r-',HandleVisibility='off')
     ylabel(App.ConductanceAxes,'Normalized conductance (a.u.)');
-        App.ConductanceAxes.YLim = [0, 2*ConductanciaTunel];
+    App.ConductanceAxes.YLim = [0,max( 1.1*max(MatrizNormalizadaTest,[],'all'), 2*ConductanciaTunel) ];
 else
     ylabel(App.ConductanceAxes,'Conductance (\muS)');
 %         App.ConductanceAxes.YLim = [0, 2*ConductanciaTunel];
 App.ConductanceAxes.YLim = [0,1.1*max(MatrizNormalizadaTest,[],'all') ];
 end
 
-hold(App.ConductanceAxes,'off');
+% hold(App.ConductanceAxes,'off');
 
 % Save txt
 
