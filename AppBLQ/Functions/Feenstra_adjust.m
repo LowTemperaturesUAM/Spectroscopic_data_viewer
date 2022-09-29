@@ -1,4 +1,4 @@
-function [] = Feenstra_adjust(App, Struct, Voltaje, MatrizCorriente)
+function [Struct] = Feenstra_adjust(App, Struct, Voltaje, MatrizCorriente)
 % function [] = Feenstra_adjust()%(~,  ~, ~, ~)
 
 %Assume the offset applied is correct
@@ -70,9 +70,8 @@ MethodDropDown2 = uidropdown(grid_l2);
 MethodDropDown2.Items = {'moving','sgolay','rloess'};
 
 
-[SpanLbl2.Enable,SpanBox2.Enable,MethodLbl2.Enable,...
-    MethodDropDown2.Enable] = deal(false);
-SmoothPlus.ValueChangedFcn = @(Check,l1,b1,l2,b2) SecondFilt(SmoothPlus.Value,SpanLbl2,SpanBox2,MethodLbl2,MethodDropDown2);
+
+
 
 
 NewCurveBtn = uibutton(p1,Text='New Curve');
@@ -82,6 +81,9 @@ NewCurveBtn.Position(1:2) = [50,130];
 FinishBtn = uibutton(p1,Text='Continue',BackgroundColor=[0.78,0.96,0.55]);
 FinishBtn.Position(1:2) = [50,40];
 FinishBtn.Position(4) = 40;
+
+
+
 
 ax2 = uiaxes(grid_main);
 ax2.XLabel.String = 'V(mv)';
@@ -95,51 +97,68 @@ grid(ax2,"on")
 
 n = randi(Filas*Columnas);
 
-% % First, we load a random curve
-% % Current = MatrizCorriente(:,randi(size(MatrizCorriente,2)));
-% Current = MatrizCorriente(:,n);
-% % Smooth the current
-% Current_Smooth = smooth(Current,SpanBox.Value,MethodDropDown.Value);
-% % Obtain the zero bias current of the curve
-% Imin = interp1( VoltajeOffset,Current_Smooth,0);
-% 
-% % Calculate I/V
-% Test_G = (Current_Smooth-Imin)./VoltajeOffset;
-% 
-% % Remove NaN points if voltage is exactly zero at any point
-% if any( VoltajeOffset == 0 )
-%     center = find(VoltajeOffset == 0 );
-%     Test_G(center) = 0.5*(Test_G(center+1)+ Test_G(center-1));
-% end
-% 
-% % Here we would apply the secondary smoothing, but it is disabled initially
-% 
-% % Now we can just go ahead and plot the curve
-% 
-% plot(ax2,VoltajeOffset,Test_G,LineWidth = 1.5)
+
+if isfield(Struct,'Fspan')
+    SpanBox.Value = Struct.Fspan;
+    MethodDropDown.Value = Struct.Fmethod;
+    SmoothPlus.Value = Struct.F2check ;
+    SpanBox2.Value = Struct.Fspan2;
+    MethodDropDown2.Value = Struct.Fmethod2;
+    SecondFilt(SmoothPlus.Value,ax2,n,MatrizCorriente,VoltajeOffset,...
+    SpanBox,MethodDropDown,SpanLbl2,SpanBox2,MethodLbl2,MethodDropDown2)
+else
+    [SpanLbl2.Enable,SpanBox2.Enable,MethodLbl2.Enable,...
+        MethodDropDown2.Enable] = deal(false);
+end
+
 
 SmoothCond(ax2,n,MatrizCorriente,VoltajeOffset,SpanBox.Value,MethodDropDown.Value,...
     SpanBox2.Value,MethodDropDown2.Value,SmoothPlus.Value)
-
-% NewCurveBtn.ButtonPushedFcn = @(Filas,Columnas,ax,n,MatrizCorriente,VoltajeOffset,...
-%             Span,Method,Span2,Method2,DoubleSmooth)...
-%             ChangeCurve(Filas,Columnas,ax2,n,MatrizCorriente,VoltajeOffset,...
-%             SpanBox.Value,MethodDropDown.Value,...
-%             SpanBox2.Value,MethodDropDown2.Value,SmoothPlus.Value);
-
-% NewCurveBtn.ButtonPushedFcn = @(a,b,c,d,e,f,g,h,m) ...
-%     SmoothCond(ax2,randi(Filas*Columnas),MatrizCorriente,VoltajeOffset,...
-%     SpanBox.Value,MethodDropDown.Value,...
-%     SpanBox2.Value,MethodDropDown2.Value,SmoothPlus.Value);
 
 NewCurveBtn.ButtonPushedFcn = @(a,b,c,d,e,f,g,h,m,n,p) ...
     ChangeCurve(Filas,Columnas,ax2,randi(Filas*Columnas),MatrizCorriente,VoltajeOffset,...
     SpanBox.Value,MethodDropDown.Value,...
     SpanBox2.Value,MethodDropDown2.Value,SmoothPlus.Value);
 
+SpanBox.ValueChangedFcn = @(a,b,c,d,e,f,g,h,m) ...
+    SmoothCond(ax2,n,MatrizCorriente,VoltajeOffset,...
+    SpanBox.Value,MethodDropDown.Value,...
+    SpanBox2.Value,MethodDropDown2.Value,SmoothPlus.Value);
+
+MethodDropDown.ValueChangedFcn = @(a,b,c,d,e,f,g,h,m) ...
+    SmoothCond(ax2,n,MatrizCorriente,VoltajeOffset,...
+    SpanBox.Value,MethodDropDown.Value,...
+    SpanBox2.Value,MethodDropDown2.Value,SmoothPlus.Value);
+
+SpanBox2.ValueChangedFcn = @(a,b,c,d,e,f,g,h,m) ...
+    SmoothCond(ax2,n,MatrizCorriente,VoltajeOffset,...
+    SpanBox.Value,MethodDropDown.Value,...
+    SpanBox2.Value,MethodDropDown2.Value,SmoothPlus.Value);
+
+MethodDropDown2.ValueChangedFcn = @(a,b,c,d,e,f,g,h,m) ...
+    SmoothCond(ax2,n,MatrizCorriente,VoltajeOffset,...
+    SpanBox.Value,MethodDropDown.Value,...
+    SpanBox2.Value,MethodDropDown2.Value,SmoothPlus.Value);
+
+SmoothPlus.ValueChangedFcn = @(Check,ax,pt,I,V,b1,m1,l2,b2,l3,b3) ...
+    SecondFilt(SmoothPlus.Value,ax2,n,MatrizCorriente,VoltajeOffset,...
+    SpanBox,MethodDropDown,SpanLbl2,SpanBox2,MethodLbl2,MethodDropDown2);
+
+% FinishBtn.ButtonPushedFcn = @(a,b) show(App,Struct);
+% FinishBtn.ButtonPushedFcn = @(a,b,c,d,e,f) Export(Struct,SpanBox,MethodDropDown,SpanBox2,MethodDropDown2,SmoothPlus);
+FinishBtn.ButtonPushedFcn = @(x,y) uiresume(fig);
+uiwait(fig);
+
+% it raises an error when the window is closed without pressing continue
+Struct.Fspan = SpanBox.Value;
+Struct.Fmethod = MethodDropDown.Value;
+Struct.F2check = SmoothPlus.Value;
+Struct.Fspan2 = SpanBox2.Value;
+Struct.Fmethod2 = MethodDropDown2.Value;
 
 
-    function SecondFilt(Value,SpanLbl2,SpanBox2,MethodLbl2,MethodDropDown2)
+    function SecondFilt(Value,ax,n,MatrizCorriente,VoltajeOffset,SpanBox,...
+            MethodDropDown,SpanLbl2,SpanBox2,MethodLbl2,MethodDropDown2)
     if Value
         [SpanLbl2.Enable,...
             SpanBox2.Enable,...
@@ -151,6 +170,9 @@ NewCurveBtn.ButtonPushedFcn = @(a,b,c,d,e,f,g,h,m,n,p) ...
             MethodLbl2.Enable,...
             MethodDropDown2.Enable] = deal(false);
     end
+    SmoothCond(ax,n,MatrizCorriente,VoltajeOffset,...
+    SpanBox.Value,MethodDropDown.Value,...
+    SpanBox2.Value,MethodDropDown2.Value,Value);
     end
 
     function SmoothCond(ax,n,MatrizCorriente,VoltajeOffset,...
@@ -180,12 +202,30 @@ NewCurveBtn.ButtonPushedFcn = @(a,b,c,d,e,f,g,h,m,n,p) ...
 
         plot(ax,VoltajeOffset,Test_G,LineWidth = 1.5)
         ax.XLim = [min(VoltajeOffset), max(VoltajeOffset)];
+        legend(ax,num2str(n))
+        % Add switch to plot normalized conductance
     end
-    function ChangeCurve(Filas,Columnas,ax,n,MatrizCorriente,VoltajeOffset,...
+    function [n] = ChangeCurve(Filas,Columnas,ax,~,MatrizCorriente,VoltajeOffset,...
             Span,Method,Span2,Method2,DoubleSmooth)
-        n = randi(Filas*Columnas);
-        SmoothCond(ax,n,MatrizCorriente,VoltajeOffset,...
+%         n_old = n;
+        n_new = randi(Filas*Columnas);
+        SmoothCond(ax,n_new,MatrizCorriente,VoltajeOffset,...
             Span,Method,Span2,Method2,DoubleSmooth)
+        n = n_new;
     end
-
+%     function [Struct] = Export(Struct,SpanBox,MethodDropDown,SpanBox2,MethodDropDown2,SmoothPlus)
+%         disp(Struct)
+%         Struct.Fspan = SpanBox.Value;
+%         Struct.Fmethod = MethodDropDown.Value;
+%         Struct.F2check = SmoothPlus.Value;
+%         Struct.Fspan2 = SpanBox2.Value;
+%         Struct.Fmethod2 = MethodDropDown2.Value;
+% %         calculateblq(App, Struct, Voltaje, MatrizCorriente);
+%     end
+%     function show(App,Struct)
+%         disp(App.OffsetvoltageEditField.Value)
+%         disp(Struct.NPuntosDerivada)
+% %         disp(Struct.OffsetVoltaje) 
+%         %App refreshes inmediately, but the struct remains as the beggining
+%     end
 end
