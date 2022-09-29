@@ -218,7 +218,7 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
         %-------------------------------------
         remember = 0;
     if exist([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.in'],'file')
-        remember = dlmread( [[SaveFolder,filesep],FileName(1:length(FileName)-4),'.in']);
+        remember = readmatrix([SaveFolder,filesep,FileName(1:length(FileName)-4),'.in'], FileType = 'text');
     end  
         
     if length(remember) ==11

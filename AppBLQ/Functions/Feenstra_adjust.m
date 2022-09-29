@@ -1,0 +1,191 @@
+function [] = Feenstra_adjust(App, Struct, Voltaje, MatrizCorriente)
+% function [] = Feenstra_adjust()%(~,  ~, ~, ~)
+
+%Assume the offset applied is correct
+%Main Current smooth filter with span (in fraction) and smoothing
+%method as options
+%2nd smoothing pass near zero (optional). We can keep the smoothing
+%area to +/-10% of the zero bias point as a reasonable guess. same
+%parameters as before
+
+% plot I/V with the given parameters to see if it diverges
+
+% all parameters should be introduced into the app and/or struct
+% but inmediately or after pressing something?
+
+Columnas = Struct.Columnas;
+Filas = Struct.Filas;
+OffsetVoltajeValue = App.OffsetvoltageEditField.Value;
+VoltajeEscala = App.VoltageScaleFactor.Value;
+NPuntosDerivadaValue = App.DerivativepointsSpinner.Value;
+
+VoltajeOffset = Voltaje*VoltajeEscala + OffsetVoltajeValue;
+
+
+
+fig = uifigure('Name','Conductance Smoothing');
+fig.Position(3:4) = [650,420];
+
+grid_main = uigridlayout(fig,[1,2]);
+grid_main.ColumnWidth = {200,'1x'};
+
+p1 = uipanel(grid_main,'Title','Smoothing',BorderType='none');%,'BackgroundColor','white');
+% grid2 = uigridlayout(p1,[5,2],RowHeight={22,22,22,22,22}); %could increase row separation
+grid_left = uigridlayout(p1,[3,1],RowHeight={'fit',22,'fit'});
+grid_l1 = uigridlayout(grid_left,[2,2],RowHeight={22,22});
+SpanLbl = uilabel(grid_l1);
+SpanLbl.Text = 'Span';
+SpanLbl.HorizontalAlignment = 'right';
+SpanBox = uieditfield(grid_l1,'numeric');
+SpanBox.Value = 0.1;
+SpanBox.Limits = [0,1];
+SpanBox.LowerLimitInclusive = 'off';
+SpanBox.Tooltip = 'Fraction of points used to average';
+
+MethodLbl = uilabel(grid_l1);
+MethodLbl.Text = 'Method';
+MethodLbl.HorizontalAlignment = 'right';
+
+MethodDropDown = uidropdown(grid_l1);
+MethodDropDown.Items = {'moving','sgolay','rloess'};
+
+SmoothPlus = uicheckbox(grid_left,'Text','Extra Smoothing');
+
+grid_l2 = uigridlayout(grid_left,[2,2],RowHeight={22,22});
+SpanLbl2 = uilabel(grid_l2);
+SpanLbl2.Text = 'Span';
+SpanLbl2.HorizontalAlignment = 'right';
+
+SpanBox2 = uieditfield(grid_l2,'numeric');
+SpanBox2.Value = 0.1;
+SpanBox2.Limits = [0,1];
+SpanBox2.LowerLimitInclusive = 'off';
+SpanBox2.Tooltip = 'Fraction of points used to average';
+
+MethodLbl2 = uilabel(grid_l2);
+MethodLbl2.Text = 'Method';
+MethodLbl2.HorizontalAlignment = 'right';
+
+MethodDropDown2 = uidropdown(grid_l2);
+MethodDropDown2.Items = {'moving','sgolay','rloess'};
+
+
+[SpanLbl2.Enable,SpanBox2.Enable,MethodLbl2.Enable,...
+    MethodDropDown2.Enable] = deal(false);
+SmoothPlus.ValueChangedFcn = @(Check,l1,b1,l2,b2) SecondFilt(SmoothPlus.Value,SpanLbl2,SpanBox2,MethodLbl2,MethodDropDown2);
+
+
+NewCurveBtn = uibutton(p1,Text='New Curve');
+NewCurveBtn.Position(1:2) = [50,130];
+
+
+FinishBtn = uibutton(p1,Text='Continue',BackgroundColor=[0.78,0.96,0.55]);
+FinishBtn.Position(1:2) = [50,40];
+FinishBtn.Position(4) = 40;
+
+ax2 = uiaxes(grid_main);
+ax2.XLabel.String = 'V(mv)';
+ax2.YLabel.String = 'Conductance (\muS)';
+ax2.Title.String = 'I/V';
+ax2.Box = true;
+ax2.FontWeight = 'bold';
+ax2.FontSize = 12;
+% ax2.GridLineStyle = ;
+grid(ax2,"on")
+
+n = randi(Filas*Columnas);
+
+% % First, we load a random curve
+% % Current = MatrizCorriente(:,randi(size(MatrizCorriente,2)));
+% Current = MatrizCorriente(:,n);
+% % Smooth the current
+% Current_Smooth = smooth(Current,SpanBox.Value,MethodDropDown.Value);
+% % Obtain the zero bias current of the curve
+% Imin = interp1( VoltajeOffset,Current_Smooth,0);
+% 
+% % Calculate I/V
+% Test_G = (Current_Smooth-Imin)./VoltajeOffset;
+% 
+% % Remove NaN points if voltage is exactly zero at any point
+% if any( VoltajeOffset == 0 )
+%     center = find(VoltajeOffset == 0 );
+%     Test_G(center) = 0.5*(Test_G(center+1)+ Test_G(center-1));
+% end
+% 
+% % Here we would apply the secondary smoothing, but it is disabled initially
+% 
+% % Now we can just go ahead and plot the curve
+% 
+% plot(ax2,VoltajeOffset,Test_G,LineWidth = 1.5)
+
+SmoothCond(ax2,n,MatrizCorriente,VoltajeOffset,SpanBox.Value,MethodDropDown.Value,...
+    SpanBox2.Value,MethodDropDown2.Value,SmoothPlus.Value)
+
+% NewCurveBtn.ButtonPushedFcn = @(Filas,Columnas,ax,n,MatrizCorriente,VoltajeOffset,...
+%             Span,Method,Span2,Method2,DoubleSmooth)...
+%             ChangeCurve(Filas,Columnas,ax2,n,MatrizCorriente,VoltajeOffset,...
+%             SpanBox.Value,MethodDropDown.Value,...
+%             SpanBox2.Value,MethodDropDown2.Value,SmoothPlus.Value);
+
+% NewCurveBtn.ButtonPushedFcn = @(a,b,c,d,e,f,g,h,m) ...
+%     SmoothCond(ax2,randi(Filas*Columnas),MatrizCorriente,VoltajeOffset,...
+%     SpanBox.Value,MethodDropDown.Value,...
+%     SpanBox2.Value,MethodDropDown2.Value,SmoothPlus.Value);
+
+NewCurveBtn.ButtonPushedFcn = @(a,b,c,d,e,f,g,h,m,n,p) ...
+    ChangeCurve(Filas,Columnas,ax2,randi(Filas*Columnas),MatrizCorriente,VoltajeOffset,...
+    SpanBox.Value,MethodDropDown.Value,...
+    SpanBox2.Value,MethodDropDown2.Value,SmoothPlus.Value);
+
+
+
+    function SecondFilt(Value,SpanLbl2,SpanBox2,MethodLbl2,MethodDropDown2)
+    if Value
+        [SpanLbl2.Enable,...
+            SpanBox2.Enable,...
+            MethodLbl2.Enable,...
+            MethodDropDown2.Enable] = deal(true);
+    else
+        [SpanLbl2.Enable,...
+            SpanBox2.Enable,...
+            MethodLbl2.Enable,...
+            MethodDropDown2.Enable] = deal(false);
+    end
+    end
+
+    function SmoothCond(ax,n,MatrizCorriente,VoltajeOffset,...
+            Span,Method,Span2,Method2,DoubleSmooth)
+        Current = MatrizCorriente(:,n);
+        % Smooth the current
+        Current_Smooth = smooth(Current,Span,Method);
+        % Obtain the zero bias current of the curve
+        Imin = interp1( VoltajeOffset,Current_Smooth,0);
+
+        % Calculate I/V
+        Test_G = (Current_Smooth-Imin)./VoltajeOffset;
+
+        % Remove NaN points if voltage is exactly zero at any point
+        if any( VoltajeOffset == 0 )
+            center = find(VoltajeOffset == 0 );
+            Test_G(center) = 0.5*(Test_G(center+1)+ Test_G(center-1));
+        end
+
+        % Here we would apply the secondary smoothing, but it is disabled initially
+        if DoubleSmooth
+            [~,center] = min(VoltajeOffset,[],1,ComparisonMethod="abs");
+            midspan = floor(0.1*length(VoltajeOffset));
+            Test_G(center-midspan:center+midspan) = smooth(Test_G(center-midspan:center+midspan),Span2,Method2);
+        end
+        % Now we can just go ahead and plot the curve
+
+        plot(ax,VoltajeOffset,Test_G,LineWidth = 1.5)
+        ax.XLim = [min(VoltajeOffset), max(VoltajeOffset)];
+    end
+    function ChangeCurve(Filas,Columnas,ax,n,MatrizCorriente,VoltajeOffset,...
+            Span,Method,Span2,Method2,DoubleSmooth)
+        n = randi(Filas*Columnas);
+        SmoothCond(ax,n,MatrizCorriente,VoltajeOffset,...
+            Span,Method,Span2,Method2,DoubleSmooth)
+    end
+
+end
