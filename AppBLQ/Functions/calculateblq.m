@@ -36,8 +36,34 @@ if App.NormalizedButton.Value
                                           MatrizConductanciaTest,...
                                           1,NumeroCurvasValue);
     ConductanciaTunel = 1;
+elseif App.FeenstraNormButton.Value
+    NormalizationFlag = 1; %for now, but it has to change for the analysis
+    Ismooth = zeros(size(Struct.MatrizCorrienteTest));
+    for i=1:NumeroCurvasValue
+        Ismooth(:,i) = smooth(Struct.MatrizCorrienteTest(:,i),Struct.Fspan,Struct.Fmethod);
+    end
+    Imin = interp1(VoltajeOffset,Ismooth,0);
+
+    GTest = (Ismooth-Imin)./VoltajeOffset;
+    if any( VoltajeOffset == 0 )
+        center = find(VoltajeOffset == 0 );
+        GTest(center,:) = 0.5*(GTest(center+1,:)+ GTest(center-1,:));
+    end
+    
+    if Struct.F2check
+        [~,center] = min(VoltajeOffset,[],1,ComparisonMethod="abs");
+        midspan = floor(0.1*length(VoltajeOffset));
+        for i=1:NumeroCurvasValue
+            GTest(center-midspan:center+midspan,i) =...
+                smooth(GTest(center-midspan:center+midspan,i),Struct.Fspan2,Struct.Fmethod2);
+        end
+    end
+
+    MatrizNormalizadaTest = MatrizConductanciaTest./GTest;
+    ConductanciaTunel = 1;
 else
     MatrizNormalizadaTest = MatrizConductanciaTest; % units: uS
+        % This is not technically correct if the set point is negative
         ConductanciaTunel = mean(max(Struct.MatrizCorrienteTest))/max(Voltaje);
 end
 
@@ -86,6 +112,9 @@ if App.NormalizedButton.Value
     xline(App.ConductanceAxes,-VoltajeNormalizacionInferior,'b-',HandleVisibility='off')
     xline(App.ConductanceAxes,VoltajeNormalizacionSuperior,'r-',HandleVisibility='off')
     xline(App.ConductanceAxes,-VoltajeNormalizacionSuperior,'r-',HandleVisibility='off')
+    ylabel(App.ConductanceAxes,'Normalized conductance (a.u.)');
+    App.ConductanceAxes.YLim = [0,max( 1.1*max(MatrizNormalizadaTest,[],'all'), 2*ConductanciaTunel) ];
+elseif App.FeenstraNormButton.Value
     ylabel(App.ConductanceAxes,'Normalized conductance (a.u.)');
     App.ConductanceAxes.YLim = [0,max( 1.1*max(MatrizNormalizadaTest,[],'all'), 2*ConductanciaTunel) ];
 else
