@@ -40,7 +40,7 @@ SpanBox = uieditfield(grid_l1,'numeric');
 SpanBox.Value = 0.1;
 SpanBox.Limits = [0,1];
 SpanBox.LowerLimitInclusive = 'off';
-SpanBox.Tooltip = 'Fraction of points used to average';
+SpanBox.Tooltip = 'Fraction of points used to average. Setting the value to 1 applies no filter';
 
 MethodLbl = uilabel(grid_l1);
 MethodLbl.Text = 'Method';
@@ -60,7 +60,7 @@ SpanBox2 = uieditfield(grid_l2,'numeric');
 SpanBox2.Value = 0.1;
 SpanBox2.Limits = [0,1];
 SpanBox2.LowerLimitInclusive = 'off';
-SpanBox2.Tooltip = 'Fraction of points used to average';
+SpanBox2.Tooltip = 'Fraction of points used to average. Setting the value to 1 applies no filter';
 
 MethodLbl2 = uilabel(grid_l2);
 MethodLbl2.Text = 'Method';

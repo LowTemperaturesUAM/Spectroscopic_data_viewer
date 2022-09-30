@@ -99,8 +99,15 @@ switch Struct.NormalizationFlag
 
     case 'Feenstra'
         Ismooth = zeros(size(MatrizCorriente));
-        for i=1:size(MatrizCorriente,2)
-            Ismooth(:,i) = smooth(Struct.MatrizCorriente(:,i),Struct.Fspan,Struct.Fmethod);
+        switch Struct.Fmethod
+            case 'rloess' %it takes siginificantly longer
+                parfor i=1:size(MatrizCorriente,2)
+                    Ismooth(:,i) = smooth(Struct.MatrizCorriente(:,i),Struct.Fspan,Struct.Fmethod);
+                end
+            otherwise
+                for i=1:size(MatrizCorriente,2)
+                    Ismooth(:,i) = smooth(Struct.MatrizCorriente(:,i),Struct.Fspan,Struct.Fmethod);
+                end
         end
         Imin = interp1(Voltaje,Ismooth,0);
 
