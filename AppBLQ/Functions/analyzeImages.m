@@ -83,17 +83,43 @@ Struct.datosIniciales = customCurvesv3(Struct.SaveFolder, Struct.FileName, Struc
 % ------------------------------------------------------------------------
 % Normalizing (or not) the data
 % ------------------------------------------------------------------------
-	if Struct.NormalizationFlag
+tic
+switch Struct.NormalizationFlag
+    case 'mirror window'
         [MatrizNormalizada] = normalizacionPA(VoltajeNormalizacionSuperior,...
-                                              VoltajeNormalizacionInferior,...
-                                              Voltaje,...
-                                              MatrizConductancia,...
-                                              Filas,Columnas);
+            VoltajeNormalizacionInferior,...
+            Voltaje,...
+            MatrizConductancia,...
+            Filas,Columnas);
         ConductanciaTunel = 1;
-    else
+    case 'none'
+
         MatrizNormalizada = MatrizConductancia; % units: uS
         ConductanciaTunel = mean(max(MatrizCorriente))/max(Voltaje);
-	end
+
+    case 'Feenstra'
+        Ismooth = zeros(size(MatrizCorriente));
+        for i=1:size(MatrizCorriente,2)
+            Ismooth(:,i) = smooth(Struct.MatrizCorriente(:,i),Struct.Fspan,Struct.Fmethod);
+        end
+        Imin = interp1(Voltaje,Ismooth,0);
+
+        G = (Ismooth-Imin)./Voltaje;
+        if any( Voltaje == 0 )
+            center = find(Voltaje == 0 );
+            G(center,:) = 0.5*(G(center+1,:)+ G(center-1,:));
+        end
+        if Struct.F2check
+            [~,center] = min(Voltaje,[],1,ComparisonMethod="abs");
+            midspan = floor(0.1*length(Voltaje));
+            for i=1:length(Imin)
+                G(center-midspan:center+midspan,i) =...
+                    smooth(G(center-midspan:center+midspan,i),Struct.Fspan2,Struct.Fmethod2);
+            end
+        end
+        MatrizNormalizada = MatrizConductancia./G;
+end
+toc
 % ------------------------------------------------------------------------
 % Removing bad data points with the first cut
 % ------------------------------------------------------------------------

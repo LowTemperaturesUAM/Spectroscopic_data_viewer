@@ -27,9 +27,9 @@ VoltajeOffset = Voltaje*VoltajeEscala + OffsetVoltajeValue;
 IV = length(Voltaje);
 [MatrizConductanciaTest] = derivadorLeastSquaresPA(NPuntosDerivadaValue,Struct.MatrizCorrienteTest,Voltaje,1,NumeroCurvasValue);
 
-NormalizationFlag = 0; %Might need to use a more detail variable
+% NormalizationFlag = 0; %Might need to use a more detail variable
 if App.NormalizedButton.Value
-    NormalizationFlag = 1;
+    NormalizationFlag = 'mirror window';
     [MatrizNormalizadaTest] = normalizacionPA(VoltajeNormalizacionSuperior,...
                                           VoltajeNormalizacionInferior,...
                                           VoltajeOffset,...
@@ -37,7 +37,7 @@ if App.NormalizedButton.Value
                                           1,NumeroCurvasValue);
     ConductanciaTunel = 1;
 elseif App.FeenstraNormButton.Value
-    NormalizationFlag = 1; %for now, but it has to change for the analysis
+    NormalizationFlag = 'Feenstra'; %for now, but it has to change for the analysis
     Ismooth = zeros(size(Struct.MatrizCorrienteTest));
     for i=1:NumeroCurvasValue
         Ismooth(:,i) = smooth(Struct.MatrizCorrienteTest(:,i),Struct.Fspan,Struct.Fmethod);
@@ -63,8 +63,9 @@ elseif App.FeenstraNormButton.Value
     ConductanciaTunel = 1;
 else
     MatrizNormalizadaTest = MatrizConductanciaTest; % units: uS
-        % This is not technically correct if the set point is negative
-        ConductanciaTunel = mean(max(Struct.MatrizCorrienteTest))/max(Voltaje);
+    % This is not technically correct if the set point is negative
+    ConductanciaTunel = mean(max(Struct.MatrizCorrienteTest))/max(Voltaje);
+    NormalizationFlag = 'none';
 end
 
 % Plot current
