@@ -45,7 +45,19 @@ function [MatrizNormalizada] = normalizacionPA(VoltajeSuperior,VoltajeInferior,V
     Norma2 = mean(MatrizConductancia(Indices2,:),1);
     Norma = (Norma1(:,:) + Norma2(:,:))/2;
 
-MatrizNormalizada= bsxfun(@rdivide,MatrizConductancia,Norma);
+
+
+    % MatrizNormalizada= bsxfun(@rdivide,MatrizConductancia,Norma);
+    % If the input is a curve full of zeros, it would return NaN
+    % In this situation, it's better to output zeros instead so that we get
+    % a finite result and the FFT can be calculated
+    MatrizNormalizada = zeros(size(MatrizConductancia));
+    if size(MatrizConductancia(:,Norma~=0),2) > 0
+        MatrizNormalizada(:,Norma~=0) = bsxfun(@rdivide,MatrizConductancia(:,Norma~=0),Norma(Norma~=0));
+    end
+    % disp(size(MatrizConductancia(:,Norma~=0)))
+    % MatrizNormalizada(:,Norma=0) = zeros(size(MatrizConductancia(:,Norma~=0)));
+
 
 % % REPRESENTACIÓN
 % % Se cogen aleatoriamente unas curvas de conductancia para ver si el
