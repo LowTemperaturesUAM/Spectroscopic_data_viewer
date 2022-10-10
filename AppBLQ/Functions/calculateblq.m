@@ -83,7 +83,9 @@ plot(VoltajeOffset,Struct.MatrizCorrienteTest,'-','Parent',App.CurrentAxes);
 App.CurrentAxes.MinorGridLineStyle = ':';
 
 App.CurrentAxes.XLim = [min(VoltajeOffset), max(VoltajeOffset)];
-App.CurrentAxes.YLim = [mean(min(Struct.MatrizCorrienteTest)) mean(max(Struct.MatrizCorrienteTest))];
+if ~all(Struct.MatrizCorrienteTest==0)
+    App.CurrentAxes.YLim = [mean(min(Struct.MatrizCorrienteTest)) mean(max(Struct.MatrizCorrienteTest))];
+end
 App.CurrentAxes.XGrid = 'on';
 App.CurrentAxes.YGrid = 'on';
 App.CurrentAxes.Box = 'on';
@@ -121,7 +123,7 @@ elseif App.FeenstraNormButton.Value
 else
     ylabel(App.ConductanceAxes,'Conductance (\muS)');
 %         App.ConductanceAxes.YLim = [0, 2*ConductanciaTunel];
-App.ConductanceAxes.YLim = [0,1.1*max(MatrizNormalizadaTest,[],'all') ];
+    App.ConductanceAxes.YLim = [0,1.1*max(MatrizNormalizadaTest,[],'all') ];
 end
 
 % hold(App.ConductanceAxes,'off');
