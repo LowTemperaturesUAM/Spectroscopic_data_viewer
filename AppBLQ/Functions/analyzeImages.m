@@ -249,10 +249,12 @@ k = ceil(length(Energia)/2);
     Struct.MapasConductancia            = MapasConductancia;
     Struct.PuntosDerivada               = PuntosDerivada;
     Struct.kInicial                     = k;
-    if strcmp(choice_1,'Conductance')
-       Struct.MaxCorteConductancia         = 100;
-       Struct.MinCorteConductancia         = -100;
-    end
+    Struct.Type = choice_1;
+    Struct.Direction = choice_2;
+    %     if strcmp(choice_1,'Current')
+    %        Struct.MaxCorteConductancia         = 100;
+    %        Struct.MinCorteConductancia         = -100;
+    %     end
 % ------------------------------------------------------------------------
 
 end

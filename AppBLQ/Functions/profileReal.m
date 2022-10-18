@@ -13,8 +13,16 @@ MapasConductancia = Struct.MapasConductancia;
 DistanciaFilas = Struct.DistanciaFilas;
 DistanciaColumnas = Struct.DistanciaColumnas;
 % SaveFolder = Struct.SaveFolder;
-MatrizNormalizada = Struct.MatrizNormalizada;
-% MatrizNormalizada = Struct.MatrizCorriente;
+if isfield(Struct,'Type')
+    switch Struct.Type
+        case 'Conductance'
+            MatrizNormalizada = Struct.MatrizNormalizada;
+        case 'Current'
+            MatrizNormalizada = Struct.MatrizCorriente;
+    end
+else
+    MatrizNormalizada = Struct.MatrizNormalizada;
+end
 
 if ~strcmp(ax.Children(1).Tag,'lineProfile')
     return
@@ -23,27 +31,73 @@ else
     XinicioFinal = Position(:,1);
     YinicioFinal = Position(:,2);
     % k = round(handles.energySlider.Value);
-    [DistanciaPerfil,PerfilActual, CurvasPerfil] = perfilIVPA_v2(MapasConductancia{k}, Voltaje,MatrizNormalizada, DistanciaColumnas, DistanciaFilas,XinicioFinal,YinicioFinal);
-
+%     [DistanciaPerfil,PerfilActual, CurvasPerfil] = perfilIVPA_v2(MapasConductancia{k}, Voltaje,MatrizNormalizada, DistanciaColumnas, DistanciaFilas,XinicioFinal,YinicioFinal);
+    [DistanciaPerfil,PerfilActual, ~] = perfilIVPA_v3(MapasConductancia{k}, Voltaje,MatrizNormalizada, DistanciaColumnas, DistanciaFilas,XinicioFinal,YinicioFinal,ax.Colormap);
+    
     %   REPRESENTACION PERFIL
     % ----------------------------
-    FigPerfil = figure(233);
+    if isfield(Struct,'Type')
+        switch Struct.Type
+            case 'Conductance'
+                FigPerfil = figure(233);
+                clf(FigPerfil)
+                FigPerfil.Color = [1 1 1];
+                EjePerfil = axes('Parent',FigPerfil,'FontSize',14,'FontName','Arial','FontWeight','bold');
+                hold(EjePerfil,'on');
+                plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
+                scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
+                    'Parent',EjePerfil);
+                ylabel(EjePerfil,'Normalized conductance (0 mV)','FontSize',16);
+                xlabel(EjePerfil,'Distance (nm)','FontSize',16);
+                box on;
+                a=gca;
+                a.Colormap = ax.Colormap;
+                a.LineWidth = 2;
+                a.TickLength(1) = 0.015;
+                a.XColor = 'k';
+                a.YColor = 'k';
+                hold(EjePerfil,'off');
+            case 'Current'
+                FigPerfil = figure(233);
+                clf(FigPerfil)
+                FigPerfil.Color = [1 1 1];
+                EjePerfil = axes('Parent',FigPerfil,'FontSize',14,'FontName','Arial','FontWeight','bold');
+                hold(EjePerfil,'on');
+                plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
+                scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
+                    'Parent',EjePerfil);
+                ylabel(EjePerfil,'Zero Bias Current','FontSize',16);
+                xlabel(EjePerfil,'Distance (nm)','FontSize',16);
+                box on;
+                a=gca;
+                a.Colormap = ax.Colormap;
+                a.LineWidth = 2;
+                a.TickLength(1) = 0.015;
+                a.XColor = 'k';
+                a.YColor = 'k';
+                hold(EjePerfil,'off');
+        end
+    else
+        FigPerfil = figure(233);
+        clf(FigPerfil)
         FigPerfil.Color = [1 1 1];
         EjePerfil = axes('Parent',FigPerfil,'FontSize',14,'FontName','Arial','FontWeight','bold');
         hold(EjePerfil,'on');
-            plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
-            scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
-                'Parent',EjePerfil);
+        plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
+        scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
+            'Parent',EjePerfil);
         ylabel(EjePerfil,'Normalized conductance (0 mV)','FontSize',16);
         xlabel(EjePerfil,'Distance (nm)','FontSize',16);
         box on;
         a=gca;
-        a.Colormap = Struct.Colormap;
+        a.Colormap = ax.Colormap;
         a.LineWidth = 2;
         a.TickLength(1) = 0.015;
         a.XColor = 'k';
         a.YColor = 'k';
         hold(EjePerfil,'off');
+    end
+
 
 %     FigSurfPerfil = figure('Color',[1 1 1]);
 %         FigSurfPerfil.Position = [367   286   727   590];

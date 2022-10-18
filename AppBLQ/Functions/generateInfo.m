@@ -23,7 +23,8 @@ App.CallingApp.InfoStruct.XLimReal                     = [Struct.DistanciaColumn
 App.CallingApp.InfoStruct.YLimReal                     = [Struct.DistanciaFilas(1) Struct.DistanciaFilas(end)];
 App.CallingApp.InfoStruct.XLimFFT                      = [Struct.DistanciaFourierColumnas(1) Struct.DistanciaFourierColumnas(end)];
 App.CallingApp.InfoStruct.YLimFFT                      = [Struct.DistanciaFourierFilas(1) Struct.DistanciaFourierFilas(end)];
-
+App.CallingApp.InfoStruct.Type                         = Struct.Type;
+App.CallingApp.InfoStruct.Direction                    = Struct.Direction;
 
 ContrastReal = zeros(2, length(Struct.Energia));
 ContrastFFT = zeros(2, length(Struct.Energia));

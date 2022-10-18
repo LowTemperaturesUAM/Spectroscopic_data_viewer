@@ -42,21 +42,29 @@ Tranformadasf = zeros(Columnas,Filas,length(Energia));
 TranformadasfAUX = permute(Tranformadasf,[3 2 1]);
 TranformadasfAUX = reshape(TranformadasfAUX,[length(Energia),Filas*Columnas]);
 
-[DistanciaPerfil,PerfilActual, CurvasPerfil] = perfilIVPA_v2(Transformadas{k}, Energia,TranformadasfAUX, DistanciaFourierColumnas, DistanciaFourierFilas,XinicioFinal,YinicioFinal);
+% [DistanciaPerfil,PerfilActual, CurvasPerfil] = perfilIVPA_v2(Transformadas{k}, Energia,TranformadasfAUX, DistanciaFourierColumnas, DistanciaFourierFilas,XinicioFinal,YinicioFinal);
+[DistanciaPerfil,PerfilActual, ~] = perfilIVPA_v3(Transformadas{k}, Energia,TranformadasfAUX, DistanciaFourierColumnas, DistanciaFourierFilas,XinicioFinal,YinicioFinal,ax.Colormap);
 
 %   REPRESENTACION PERFIL
     % ----------------------------
     FigPerfil = figure(233);
-        FigPerfil.Color = [1 1 1];
-        EjePerfil = axes('Parent',FigPerfil,'FontSize',14,'FontName','Arial');
-        hold(EjePerfil,'on');
-            plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
-            scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
-                'Parent',EjePerfil);
-        ylabel(EjePerfil,'Normalized conductance','FontSize',16);
-        xlabel(EjePerfil,'Distance (nm)','FontSize',16);
-        box on;
-        hold(EjePerfil,'off');
+    clf(FigPerfil)
+    FigPerfil.Color = [1 1 1];
+    EjePerfil = axes('Parent',FigPerfil,'FontSize',14,'FontName','Arial','FontWeight','bold');
+    hold(EjePerfil,'on');
+    plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
+    scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
+        'Parent',EjePerfil);
+    ylabel(EjePerfil,'Intensity','FontSize',16);
+    xlabel(EjePerfil,'Distance (nm)','FontSize',16);
+    box on;
+    a=gca;
+    a.Colormap = ax.Colormap;
+    a.LineWidth = 2;
+    a.TickLength(1) = 0.015;
+    a.XColor = 'k';
+    a.YColor = 'k';
+    hold(EjePerfil,'off');
 
 %     FigSurfPerfil = figure('Color',[1 1 1]);
 %         FigSurfPerfil.Position = [367   286   727   590];
