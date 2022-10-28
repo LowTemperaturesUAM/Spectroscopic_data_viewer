@@ -75,7 +75,7 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
     % y en todo caso utilizarla luego.
         if Eleccion(1)
             for c = 2:ColumnasBLQ % En caso de que haya más cosas guardadas por ristra
-                [Data, readFlag,Factor] = readSet(FileID,  PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
+                [Data, readFlag,DataFormat] = readSet(FileID,  PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
 %                 fprintf('Factor: %g\n',Factor)
                 if readFlag
                     ColIda = ColIda+1;
@@ -110,7 +110,7 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
            %-------------------------------------------------------------------------------------------
 %            [~, ~] = readSet(FileID, PuntosIV); % Dr Fran: Esto lee la segunda columna y sudamos de ella.
            %-------------------------------------------------------------------------------------------
-           [Data, readFlag] = readSetFast(FileID, PuntosIV,4); % Esto lee la corriente y guardamos
+           [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat); % Esto lee la corriente y guardamos.
             NumeroCurvaG = NumeroCurva - initialPoint+1; % Este es el contador que determina si toca guardar esa ristra o no
        
             % [~, ~] = readSet(FileID, PuntosIV); Si hay mas de dos

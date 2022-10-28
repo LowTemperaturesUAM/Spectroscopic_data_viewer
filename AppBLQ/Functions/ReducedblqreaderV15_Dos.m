@@ -85,7 +85,7 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
                     [~, ~] = readSet(FileID,  PuntosIV); % Salto la 2ª columna
                     [Data, readFlag] = readSet(FileID,  PuntosIV); % Guardo la 3ª columna
                 else
-                    brake
+                    break
                 end
                 
                 if readFlag
@@ -124,7 +124,7 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
                fseek(FileID,bskip,'cof'); % Salto la 2ª columna
                [Data, readFlag] = readSet(FileID,  PuntosIV); % Guardo la 3ª columna
            else
-               brake
+               break
            end
 
 %            [Data, readFlag] = readSet(FileID, PuntosIV); % Esto lee la corriente y guardamos

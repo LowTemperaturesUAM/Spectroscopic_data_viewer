@@ -2,15 +2,6 @@
 %cosa. Vale para BLQs de cualquier electronica. 
 
 function [Data, readFlag] = readSetFast(FileID, NumeroFilas,DataFormat)%,HeaderSizeDataFormat)
-%             TamanhoDatos =  fread(FileID, 2, 'uint16'); % Nos da el formato de los datos
-%             DataFormat =  TamanhoDatos(2);
-%         fread(FileID, 2, 'int32'); % Hay que leer esto que no sabemos lo que es
-%         hofss      =  fread (FileID, 4, 'float64'); % Esto contiene varios datos del experimento en cada curva
-%             Offset =  hofss(1);
-%             Factor =  hofss(2); % este valor es un float64, al multiplicarlo, todos los datos serán float... hay que sacarlo de aquí      
-%             Start  =  hofss(3); 
-%             Size   =  hofss(4);
-%         fread(FileID,84,'uchar'); % Esto también hay que leerlo y no sabemos lo que es   
         %En una espectro, toda esta informacion deberia ser la misma en
         %cada curva, y estamos gastando el 70% del tiempo de ejecucion de
         %esta funcion en ello
