@@ -1,7 +1,7 @@
 %Esto telee columnas del BLQ, ya sean voltaje o corriente, o cualquier otra
 %cosa. Vale para BLQs de cualquier electronica. 
 
-function [Data, readFlag] = readSet(FileID, NumeroFilas)
+function [Data, readFlag,Factor] = readSet(FileID, NumeroFilas)
             TamanhoDatos =  fread(FileID, 2, 'uint16'); % Nos da el formato de los datos
             DataFormat =  TamanhoDatos(2);
         fread(FileID, 2, 'int32'); % Hay que leer esto que no sabemos lo que es
