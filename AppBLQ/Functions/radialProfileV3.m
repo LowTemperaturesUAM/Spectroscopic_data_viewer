@@ -6,17 +6,19 @@
         %Matrix       : Matrix to calculate profile
         %NOfPoints    : Length of the radial profile wanted (pixels)
         %MaximumRadius: Maximum radius to calculate the profile (pixels).
-        %AngleLim     : Array of minumum and maximum angle values 
+        %AngleLim     : Upper and lower bounds of angle values between -180
+        %and 180 degrees. 
+%The chosen circular section is given by the area between the angles
+%specified, starting with the first value and turning in the
+%counterclockwise direction
+
 % If AngleLim is not given it is assumed a complete radial average
 
 function [R_values, profile_complete] = radialProfileV3(Center,  Matrix, NOfPoints, MaximumRadius, AngleLim)
     [Filas, Columnas] = size(Matrix);
 %     SizeOfRings = TamanhoImagen/NOfPoints;
     Step = MaximumRadius/NOfPoints;
-    if nargin < 5 || isempty(AngleLim)
-        AngleLim = [-180, 180];
-    end
-
+    
     %Creation of a cartesian matrix of X and Y centered in "center"
     indX = (1:Columnas) - Center(1);
     indY = (1:Filas) - Center(2);
@@ -26,9 +28,31 @@ function [R_values, profile_complete] = radialProfileV3(Center,  Matrix, NOfPoin
     CordMod = abs(Z);
     % Obtain angle(deg) direction respect to center. Zero is towards right.
     CordAng = rad2deg(angle(Z));
+    
+    %Assume full circle if empty or missing
+    if nargin < 5 || isempty(AngleLim)
+        AngleLim = [-180, 180];
+        Inverted= false;
+    else
+        if any(abs(AngleLim)>180) %check angles out of bounds
+            error('The angles provided are outside the expected bounds. Please keep the values between -180 and 180 degrees')
+        end
 
-    % Establish condition for circular section
-    Condition = CordAng>=AngleLim(1) & CordAng<=AngleLim(2);
+        % Check order of angle limits
+        Inverted = AngleLim(2) <= AngleLim(1);
+    end
+
+    
+    if Inverted
+        % Establish condition for circular section
+        Condition = CordAng>=AngleLim(1) | CordAng<=AngleLim(2);
+    else
+        Condition = CordAng>=AngleLim(1) & CordAng<=AngleLim(2);
+    end
+
+
+    
+
     % Always include center point.
     Condition(Center(2), Center(1)) = 1;
 
