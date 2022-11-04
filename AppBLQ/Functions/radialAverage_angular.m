@@ -90,6 +90,8 @@ radii = radii(~isnan(Average));
 Average = Average(~isnan(Average));
 
 % Inform how many circles are outside the image. 
-disp(['There are ', num2str(nancount), ' distance values outside the image.'])
+if nancount
+    disp(['There are ', num2str(nancount), ' distance values outside the image.'])
+end
 end
 
