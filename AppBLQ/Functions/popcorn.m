@@ -1,7 +1,7 @@
 function CellPopcorn = popcorn(Cell,sigma,Info)
 CellPopcorn = Cell;
 
-for k=1:length(Info.Energia)
+for k=1:length(Cell)
     MatrizTopo = Cell{k};
     L=length(MatrizTopo);
     M=mean(mean(MatrizTopo));
