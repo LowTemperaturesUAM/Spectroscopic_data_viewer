@@ -5,7 +5,7 @@ Filas    = length(Info.DistanciaFourierFilas);
 
 CellRotated = Cell;
 
-for k=1:length(Info.Energia)
+for k=1:length(Cell)
     TransformadasRotadaAUX = imrotate(Cell{k},Angle); 
         [FilasMatrizRotada, ColumnasMatrizRotada] = size(TransformadasRotadaAUX);
         CentroX = floor(ColumnasMatrizRotada/2);

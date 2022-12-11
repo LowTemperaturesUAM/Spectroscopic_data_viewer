@@ -2,7 +2,7 @@ function [CellFlatten] = FlattenCell(Cell, flag, Info)
 
 CellFlatten = Cell;
 
-for k=1:length(Info.Energia)
+for k=1:length(Cell)
     ValorNormSup = max(max(Cell{k}));
     ValorNormInf = min(min(Cell{k}));
     
