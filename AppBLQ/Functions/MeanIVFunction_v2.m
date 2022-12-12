@@ -30,7 +30,7 @@ end
 meanIVFig.Name = 'meanIVFig';
 
 hold on
-a=gca;
+a=meanIVFig.CurrentAxes;
 % a.ColorOrder = jet(50);
 if ~isCond
     a.ColorOrderIndex = ax.ColorOrderIndex;
@@ -44,7 +44,7 @@ else
 end
 
 % plot(Voltaje(1+Info.PuntosDerivada:length(Info.Voltaje)-Info.PuntosDerivada), mean(1+Info.PuntosDerivada:length(Info.Voltaje)-Info.PuntosDerivada),'-','LineWidth',2)
-plot(Voltaje, Mean,'-','LineWidth',2)
+plot(a,Voltaje, Mean,'-','LineWidth',2)
 if ~isCond
     a.XLabel.String = '\fontsize{18} Voltage (mV)';
     % a.YLabel.String = 'Conductance(\muS)';
@@ -54,6 +54,7 @@ else
     % a.YLabel.String = 'Conductance(\muS)';
     a.YLabel.String = '\fontsize{18} Current (nA)';
 end
+a.XLimitMethod = 'tight';
 % a.Children.LineWidth = 2;
 % a.Children.Color = [0 0 0];
 a.FontWeight = 'bold';
