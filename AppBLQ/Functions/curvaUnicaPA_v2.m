@@ -75,21 +75,16 @@ for i=1:length(PixelXinicioFinal)
         end
     end
     
-    FigCurvas = plot(Voltaje,...
-                     ConductanciaCurvaUnica,...
-                     '-','LineWidth',2);
+    FigCurvas = plot(Voltaje,ConductanciaCurvaUnica,'-','LineWidth',2);
 %         FigCurvas.Color = color(i,:);
          
-        xlabel('Energy (meV)',...
-                'FontSize',18);
-            xlim([min(Voltaje),max(Voltaje)]);
+        xlabel('Energy (meV)','FontSize',18);
+        xlim([min(Voltaje),max(Voltaje)]);
         
         if ~isCond
-            ylabel('Normalized conductance',...
-                'FontSize',18);
+            ylabel('Normalized conductance','FontSize',18);
         else
-            ylabel('Current (nA)',...
-                'FontSize',18);
+            ylabel('Current (nA)','FontSize',18);
         end
 %             
     

@@ -1,6 +1,7 @@
 %BLQREADER para blqs corruptas cuadradas o rectangulares
 
-function  [Voltaje, IdaIda, IdaVuelta, VueltaIda, VueltaVuelta] = ReducedblqreaderV16( FileName, Filas, Columnas, Eleccion, initialPoint)
+function  [Voltaje, IdaIda, IdaVuelta, VueltaIda, VueltaVuelta] = ReducedblqreaderV16( FileName, Filas, Columnas, Eleccion, initialPoint,LeerColumna)
+
 
 FileID = fopen (FileName,'r'); % FileID es el nombre que le damos a todo lo que Matlab lea desde el BLQ
 fprintf('ABRIENDO BLQ ...');
@@ -11,6 +12,13 @@ fprintf('ABRIENDO BLQ ...');
 %     IdaVuelta    = zeros(PuntosIV,Filas*Columnas);
 %     VueltaIda    = zeros(PuntosIV,Filas*Columnas);
 %     VueltaVuelta = zeros(PuntosIV,Filas*Columnas);
+
+if nargin == 5
+    LeerColumna = 2;
+else
+%     disp([' Leyendo columna ', num2str(LeerColumna)]);
+    fprintf(' Leyendo columna %i\n',LeerColumna)
+end
 
 ColIda = 0;
 ColIV = 0;
@@ -24,10 +32,11 @@ VueltaVuelta = 0;
 
 finalPoint = 4*Filas*Columnas;
 
-IICeros = [];
-IVCeros = [];
-VICeros = [];
-VVCeros = [];
+%Aqui guardamos los indices de las curvas que empiezan en cero
+% IICeros = [];
+% IVCeros = [];
+% VICeros = [];
+% VVCeros = [];
 for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
 % -------------------------------------------------------------------------
     % Cabecera general de 400 bytes - Solo leo lo absolutamente necesario.
@@ -41,8 +50,7 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
     TamanoDatos = fread (FileID, 2, 'int32'); 
         PuntosIV    = TamanoDatos(2); % Número de puntos de las IV
         ColumnasBLQ = TamanoDatos(1); % Ristras guardadas en cada IV: En principio sólo hay V e I pero puede haber más casillas marcadas en el Liner.exe
-    %Como no sabemos lo que es podemos saltarlo
-    %fread(FileID,352,'uchar'); % Otra cosa que no se sabe lo que es pero hay que leer.
+    %Saltamos el resto de la cabecera porque no nos interesa
     fseek(FileID,352,'cof');
     
 % -------------------------------------------------------------------------
@@ -68,6 +76,12 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
             end
             disp(['  Puntos en las IV: ',num2str(PuntosIV),'    Nº total de curvas: ',num2str(finalPoint)]);
             Voltaje(:,1) = Data; % Relleno el vector voltaje
+
+            %Comprobamos que existe la columna que queremos leer
+            if LeerColumna > ColumnasBLQ
+                fprintf('The desired column cannot be read. The file cointains only %i columns\n',ColumnasBLQ)
+                break
+            end
 % ------------------------------------------------------------------------- 
     % Como ya hemos leído el voltaje de la primera curva, si no queremos
     % perder la información de la corriente de esa curva tenemos que
@@ -77,14 +91,24 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
             for c = 2:ColumnasBLQ % En caso de que haya más cosas guardadas por ristra
                 [Data, readFlag,DataFormat] = readSet(FileID,  PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
 %                 fprintf('Factor: %g\n',Factor)
-                if readFlag
+                if readFlag && c==LeerColumna
                     ColIda = ColIda+1;
                     IdaIda(:,ColIda) = Data;
                 end
             end
         else
-            for c = 2:ColumnasBLQ % En caso de que haya más cosas guardadas por ristra
-                readSet(FileID,  PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
+            if LeerColumna > 2
+                for c=2:LeerColumna-1
+                    fseek(FileID,bskip,'cof');
+                end
+            end
+%             for c = 2:ColumnasBLQ % En caso de que haya más cosas guardadas por ristra
+            [~, readFlag,DataFormat] = readSet(FileID,  PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
+%             end
+            if LeerColumna<ColumnasBLQ
+                for c=LeerColumna+1:ColumnasBLQ
+                    fseek(FileID,bskip,'cof');
+                end
             end
         end
 % -------------------------------------------------------------------------
@@ -102,68 +126,104 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
     % Y finalmente leemos el resto de curvas que sí nos interesan y las
     % guardamos en las matrices de salida.
     else
-        for c = 2:ColumnasBLQ % Notar que ahora empezamos de 1 porque también hay que leer el voltaje en cada curva aunque no lo guardemos      
-           %[~, ~] = readSet(FileID, PuntosIV); % Dr Pepe: Esto lee el voltaje y sudamos de el.
-           %Como ya sabemos el numero de bytes(lo podemos calcular en la primera curva), podemos utilizar fseek para saltarlo
-           %nos lleva un tercio del tiempo leer estos datos para desecharlos cada vez
-           fseek(FileID,bskip,'cof');
-           %-------------------------------------------------------------------------------------------
-%            [~, ~] = readSet(FileID, PuntosIV); % Dr Fran: Esto lee la segunda columna y sudamos de ella.
-           %-------------------------------------------------------------------------------------------
-           [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat); % Esto lee la corriente y guardamos.
-            NumeroCurvaG = NumeroCurva - initialPoint+1; % Este es el contador que determina si toca guardar esa ristra o no
-       
-            % [~, ~] = readSet(FileID, PuntosIV); Si hay mas de dos
-            % columnas, hay que meter tantos readSet como columnas haya
-            % demas. Hay que tener cuidado donde se guarda la corriente. Por
-            % ejemplo, si el blq guarda: Voltaje, Corriente, Z, al final de
-            % este for, hay que poner un readSet. Si fuese Voltaje, Z y
-            % Corriente, habrá que poner el readSet antes de que guarde los
-            % datos de corriente.
-            
+        %Como ya sabemos el numero de bytes(lo podemos calcular en la primera curva), podemos utilizar fseek para saltarlo
+        fseek(FileID,bskip,'cof');
+%         for c = 2:ColumnasBLQ
+        % Saltamos las columnas hasta la que buscamos
+%         if LeerColumna > 2
+%             for c=2:LeerColumna-1
+%                 fseek(FileID,bskip,'cof');
+%             end
+%         end
+%         %Leemos la columnas que buscamos
+%         %-------------------------------------------------------------------------------------------
+%         [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat); % Esto lee la corriente y guardamos.
+%         NumeroCurvaG = NumeroCurva - initialPoint+1; % Este es el contador que determina si toca guardar esa ristra o no
+%         
+%         if LeerColumna<ColumnasBLQ
+%             for c=LeerColumna+1:ColumnasBLQ
+%                 fseek(FileID,bskip,'cof');
+%             end
+%         end
+        % [~, ~] = readSet(FileID, PuntosIV); Si hay mas de dos
+        % columnas, hay que meter tantos readSet como columnas haya
+        % demas. Hay que tener cuidado donde se guarda la corriente. Por
+        % ejemplo, si el blq guarda: Voltaje, Corriente, Z, al final de
+        % este for, hay que poner un readSet. Si fuese Voltaje, Z y
+        % Corriente, habrá que poner el readSet antes de que guarde los
+        % datos de corriente.
 
-            if mod(floor((NumeroCurvaG +1)/(2*Columnas)),2) == 0
-                if mod(NumeroCurvaG +1,2) == 0 && Eleccion(1) == 1    
-                    ColIda = ColIda + 1;
-                    if ~readFlag IICeros = [IICeros ColIda]; end
-                    IdaIda(:,ColIda) = Data;
-                elseif mod(NumeroCurvaG+1,2) ~= 0 && Eleccion(2) == 1
-                    ColIV = ColIV + 1;
-                    if ~readFlag IVCeros = [IVCeros ColIV]; end
-                    IdaVuelta(:,ColIV) = Data;
-                end
-            else
-                if mod(NumeroCurvaG+1,2) == 0 && Eleccion(3) == 1
-                    ColVI = ColVI + 1;
-                    if ~readFlag VICeros = [VICeros ColVI]; end
-                    VueltaIda(:,ColVI) = Data;
-                elseif mod(NumeroCurvaG+1,2) ~= 0 && Eleccion(4) == 1
-                    ColVV = ColVV + 1;
-                    if ~readFlag VVCeros = [VVCeros ColVV]; end
-                    VueltaVuelta(:,ColVV) = Data;
-                end
-            end
-
-
-            %Sabiendo que la estructura ida/vuelta se repite, podriamos
-            %evitarnos estos calculos y directamente saltar las curvas que
-            %no queramos. 
-            %-------------------------------------------------------------------------------------------
-%            [~, ~] = readSet(FileID, PuntosIV); % Dr Fran: Esto lee la tercera columna y sudamos de ella.
-            %-------------------------------------------------------------------------------------------
+        NumeroCurvaG = NumeroCurva - initialPoint+1; % Este es el contador que determina si toca guardar esa ristra o no
+        if LeerColumna > 2
+%             for c=2:LeerColumna-1
+%                 fseek(FileID,bskip,'cof');
+%             end
+            fseek(FileID,bskip*(LeerColumna-2),'cof');
         end
+
+        if mod(floor((NumeroCurvaG +1)/(2*Columnas)),2) == 0
+            if mod(NumeroCurvaG +1,2) == 0 && Eleccion(1) == 1
+                [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat); % Esto lee la corriente y guardamos.
+                ColIda = ColIda + 1;
+                %if ~readFlag IICeros = [IICeros ColIda]; end
+                IdaIda(:,ColIda) = Data;
+            elseif mod(NumeroCurvaG+1,2) ~= 0 && Eleccion(2) == 1
+                [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat); % Esto lee la corriente y guardamos.
+                ColIV = ColIV + 1;
+                %if ~readFlag IVCeros = [IVCeros ColIV]; end
+                IdaVuelta(:,ColIV) = Data;
+            else
+                fseek(FileID,bskip,'cof');
+            end
+            
+        else
+            if mod(NumeroCurvaG+1,2) == 0 && Eleccion(3) == 1
+                [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat); % Esto lee la corriente y guardamos.
+                ColVI = ColVI + 1;
+                %if ~readFlag VICeros = [VICeros ColVI]; end
+                VueltaIda(:,ColVI) = Data;
+            elseif mod(NumeroCurvaG+1,2) ~= 0 && Eleccion(4) == 1
+                [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat); % Esto lee la corriente y guardamos.
+                ColVV = ColVV + 1;
+                %if ~readFlag VVCeros = [VVCeros ColVV]; end
+                VueltaVuelta(:,ColVV) = Data;
+            else
+                fseek(FileID,bskip,'cof');
+            end
+        end
+
+        if LeerColumna<ColumnasBLQ
+%             for c=LeerColumna+1:ColumnasBLQ
+%                 fseek(FileID,bskip,'cof');
+%             end
+            fseek(FileID,bskip*(ColumnasBLQ-LeerColumna),'cof');
+        end
+
+
+        %Sabiendo que la estructura ida/vuelta se repite, podriamos
+        %evitarnos estos calculos y directamente saltar las curvas que
+        %no queramos.
+        %-------------------------------------------------------------------------------------------
+        %            [~, ~] = readSet(FileID, PuntosIV); % Dr Fran: Esto lee la tercera columna y sudamos de ella.
+        %-------------------------------------------------------------------------------------------
+        %         end
     end
 end
 %disp(['Numeros = ', num2str([ColIda,ColIV,ColVI,ColVV])]);
 
 %Interpolamos las curvas adyacentes para aquellas que nos hayan dado
 %ceros al principio
+%Eliminamos cualquier tipo de interpolacion
 
-IdaIda(:,IICeros)=(IdaIda(:,IICeros+1)+IdaIda(:,IICeros-1))/2;
-IdaVuelta(:,IVCeros)=(IdaVuelta(:,IVCeros+1)+IdaVuelta(:,IVCeros-1))/2;
-VueltaIda(:,VICeros)=(VueltaIda(:,VICeros+1)+VueltaIda(:,VICeros-1))/2;
-VueltaVuelta(:,VVCeros)=(VueltaVuelta(:,VVCeros+1)+VueltaVuelta(:,VVCeros-1))/2;
+% IdaIda(:,IICeros)=(IdaIda(:,IICeros+1)+IdaIda(:,IICeros-1))/2;
+% IdaVuelta(:,IVCeros)=(IdaVuelta(:,IVCeros+1)+IdaVuelta(:,IVCeros-1))/2;
+% VueltaIda(:,VICeros)=(VueltaIda(:,VICeros+1)+VueltaIda(:,VICeros-1))/2;
+% VueltaVuelta(:,VVCeros)=(VueltaVuelta(:,VVCeros+1)+VueltaVuelta(:,VVCeros-1))/2;
 
+
+%Sacamos el indice de la ultima curva para controlar si nos queda
+%incompleto
+% fprintf('Last index for each direction: \n II: %i \n IV: %i \n VI: %i \n VV: %i \n',ColIda,ColIV,ColVI,ColVV);
 % -------------------------------------------------------------------------
     % Ahora toca reordenar las matrices de salida para que todas 'empiecen'
     % y 'acaben' en los mismos valores de voltaje y posición
@@ -195,10 +255,11 @@ else
         clear VueltaIdaAUX;
     end
 end
-    if Eleccion(2) ==1    
-        IdaVuelta = flipud(IdaVuelta);
-    end
-    if Eleccion(4) ==1
-        VueltaVuelta = flipud(VueltaVuelta);
-    end
+if Eleccion(2) ==1
+    IdaVuelta = flipud(IdaVuelta);
+end
+if Eleccion(4) ==1
+    VueltaVuelta = flipud(VueltaVuelta);
+end
+% fprintf('Value: %g\n',mod(floor((NumeroCurvaG +1)/(2*Columnas)),2))
 fclose(FileID);
