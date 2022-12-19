@@ -16,7 +16,6 @@ fprintf('ABRIENDO BLQ ...');
 if nargin == 5
     LeerColumna = 2;
 else
-%     disp([' Leyendo columna ', num2str(LeerColumna)]);
     fprintf(' Leyendo columna %i\n',LeerColumna)
 end
 
@@ -209,24 +208,14 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
         %         end
     end
 end
-%disp(['Numeros = ', num2str([ColIda,ColIV,ColVI,ColVV])]);
-
-%Interpolamos las curvas adyacentes para aquellas que nos hayan dado
-%ceros al principio
-%Eliminamos cualquier tipo de interpolacion
-
-% IdaIda(:,IICeros)=(IdaIda(:,IICeros+1)+IdaIda(:,IICeros-1))/2;
-% IdaVuelta(:,IVCeros)=(IdaVuelta(:,IVCeros+1)+IdaVuelta(:,IVCeros-1))/2;
-% VueltaIda(:,VICeros)=(VueltaIda(:,VICeros+1)+VueltaIda(:,VICeros-1))/2;
-% VueltaVuelta(:,VVCeros)=(VueltaVuelta(:,VVCeros+1)+VueltaVuelta(:,VVCeros-1))/2;
-
 
 %Sacamos el indice de la ultima curva para controlar si nos queda
 %incompleto
 % fprintf('Last index for each direction: \n II: %i \n IV: %i \n VI: %i \n VV: %i \n',ColIda,ColIV,ColVI,ColVV);
+
 % -------------------------------------------------------------------------
-    % Ahora toca reordenar las matrices de salida para que todas 'empiecen'
-    % y 'acaben' en los mismos valores de voltaje y posición
+% Ahora toca reordenar las matrices de salida para que todas 'empiecen'
+% y 'acaben' en los mismos valores de voltaje y posición
 if Eleccion(3) == 1 && Eleccion(4) == 1
     VueltaIdaAUX = VueltaIda;
     VueltaVueltaAUX = VueltaVuelta;
@@ -261,5 +250,4 @@ end
 if Eleccion(4) ==1
     VueltaVuelta = flipud(VueltaVuelta);
 end
-% fprintf('Value: %g\n',mod(floor((NumeroCurvaG +1)/(2*Columnas)),2))
 fclose(FileID);

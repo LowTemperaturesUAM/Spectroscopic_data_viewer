@@ -1,8 +1,13 @@
 function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
     [FileName, FilePath] = uigetfile('*.blq','Load blq');
+    if isequal(FileName,0) %Exit if no file is selected
+        Struct = 0;
+        MatrizCorriente = 0;
+        Voltaje = 0;
+        return
+    else
         Struct.FileName = FileName;
         Struct.FilePath = FilePath;
-    
     
     [FileNameTopo, FilePathTopo] = uigetfile({'*.stp;*.img','Image Files (*.stp,*.img)';'*.stp','WSxM Images';'*.img','IMG files';'*.*','All Files'},'Load topography');
 
@@ -130,4 +135,5 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
     Struct.MatrizCorrienteTest = MatrizCorrienteTest;
 
     msgbox('blq succesfully loaded.','Congratulations','help')
+    end
 end

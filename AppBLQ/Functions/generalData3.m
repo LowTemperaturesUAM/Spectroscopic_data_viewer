@@ -57,14 +57,6 @@ editCampo = uieditfield(f,'numeric','Position',[200 topRow-2*hRow 100 20],...
     if remember;11; editCampo.Value = data1(4) ;end  
 
 %temperatura:
-% txtTemperatura = uilabel(f,'Position',[40 topRow-3*hRow 150 20],...
-%         'Text', 'Temperatura:','HorizontalAlignment','right');
-% 
-% editTemperatura = uieditfield(f,'numeric','Position',[200 topRow-3*hRow 100 20],...
-%     HorizontalAlignment='center',ValueDisplayFormat='%11.4g K');
-%      if remember;11; editTemperatura.Value = data1(3) ;end  
-
-%temperatura:
 txtTemperatura = uilabel(f,'Position',[300 topRow-2*hRow 180 20],...
     'Text', 'Temperatura:','HorizontalAlignment','right');
 
@@ -144,13 +136,7 @@ LeerColumna             = spinblqCol.Value;
 data = [Filas Columnas Temperatura Campo TamanhoRealFilas TamanhoRealColumnas ...
     ParametroRedFilas ParametroRedColumnas];
 
-%It is not necessary to open the file first to use dlmwrite, but if you do,
-%make sure to close it again
-%fileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'sample.ini'],'w');
-%dlmwrite([[SaveFolder,filesep],FileName(1:length(FileName)-4),'sample.ini'],data)
-%fclose(fileID)
-
-%We replace it by writematrix because is the recomended way
+%Save the updated parameters to the file
 writematrix(data,[[SaveFolder,filesep],FileName(1:length(FileName)-4),'sample.ini'],'FileType','text', 'WriteMode','overwrite')
 
 
