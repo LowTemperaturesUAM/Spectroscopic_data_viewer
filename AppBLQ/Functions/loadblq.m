@@ -3,11 +3,6 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
         Struct.FileName = FileName;
         Struct.FilePath = FilePath;
     
-    a = ChooseMatrixApp;    % Usando App
-    uiwait(a.UIFigure)
-    eleccionMatrices = evalin('base','eleccionMatrices');
-    evalin ('base','clear eleccionMatrices')
-%     uiwait(ChooseMatrix) %Para poner en pausa el programa % Usando GUIDE
     
     [FileNameTopo, FilePathTopo] = uigetfile({'*.stp;*.img','Image Files (*.stp,*.img)';'*.stp','WSxM Images';'*.img','IMG files';'*.*','All Files'},'Load topography');
 
@@ -17,7 +12,7 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
         Struct.SaveFolder = SaveFolder;
    
 	[Campo, Temperatura, TamanhoRealFilas, TamanhoRealColumnas, ParametroRedFilas,...
-        ParametroRedColumnas, Filas, Columnas] = generalData2(TopoLineas, Struct);
+        ParametroRedColumnas, Filas, Columnas,eleccionMatrices,LeerColumna] = generalData3(TopoLineas, Struct);
 
         Struct.Campo                = Campo;
         Struct.Temperatura          = Temperatura;
@@ -32,37 +27,16 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
         msgbox('Numbers of rows and columns are not the same','Be careful...','warn')
     end
     
+    
+    % Loading data from BLQ file into matlab matrices
+    % ------------------------------------------------------------------------ 
+    tic
+    [Voltaje,IdaIda,IdaVuelta,VueltaIda,VueltaVuelta] = ...
+        ReducedblqreaderV16([FilePath,FileName],Filas,Columnas, eleccionMatrices, initialPoint, LeerColumna);
+    toc
+    Voltaje = Voltaje*1000; % Para ponerlo en mV
 
     
-    choice_1 = questdlg('Number of columns in blq file:','Confirmation','2','3','2');
-    if strcmp(choice_1,'2')
-        % Loading data from BLQ file into matlab matrices
-    % ------------------------------------------------------------------------ 
-        tic
-        [Voltaje,...
-            IdaIda,...
-            IdaVuelta,...
-            VueltaIda,...
-            VueltaVuelta] = ReducedblqreaderV16([FilePath,FileName],Filas,Columnas, eleccionMatrices, initialPoint);
-        toc
-        Voltaje = Voltaje*1000; % Para ponerlo en mV
-        
-    elseif strcmp(choice_1,'3')
-        choice_2 = questdlg('Column to read:','Confirmation','2','3','2');
-        LeerColumna = str2double(choice_2);
-        
-        % Loading data from BLQ file into matlab matrices
-    % ------------------------------------------------------------------------ 
-        tic
-        [Voltaje,...
-            IdaIda,...
-            IdaVuelta,...
-            VueltaIda,...
-            VueltaVuelta] = ReducedblqreaderV16([FilePath,FileName],Filas,Columnas, eleccionMatrices, initialPoint, LeerColumna);
-        toc
-        Voltaje = Voltaje*1000; % Para ponerlo en mV
-
-    end
     
     % Checking which current matricex exists and putting them in nA for simplcity
 % ------------------------------------------------------------------------

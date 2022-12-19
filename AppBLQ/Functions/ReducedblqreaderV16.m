@@ -154,12 +154,12 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
         % datos de corriente.
 
         NumeroCurvaG = NumeroCurva - initialPoint+1; % Este es el contador que determina si toca guardar esa ristra o no
-        if LeerColumna > 2
+%         if LeerColumna > 2
 %             for c=2:LeerColumna-1
 %                 fseek(FileID,bskip,'cof');
 %             end
-            fseek(FileID,bskip*(LeerColumna-2),'cof');
-        end
+        fseek(FileID,bskip*(LeerColumna-2),'cof');
+%         end
 
         if mod(floor((NumeroCurvaG +1)/(2*Columnas)),2) == 0
             if mod(NumeroCurvaG +1,2) == 0 && Eleccion(1) == 1
@@ -192,12 +192,12 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
             end
         end
 
-        if LeerColumna<ColumnasBLQ
+%         if LeerColumna<ColumnasBLQ
 %             for c=LeerColumna+1:ColumnasBLQ
 %                 fseek(FileID,bskip,'cof');
 %             end
-            fseek(FileID,bskip*(ColumnasBLQ-LeerColumna),'cof');
-        end
+          fseek(FileID,bskip*(ColumnasBLQ-LeerColumna),'cof');
+%         end
 
 
         %Sabiendo que la estructura ida/vuelta se repite, podriamos
