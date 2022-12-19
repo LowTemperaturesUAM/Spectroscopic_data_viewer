@@ -16,8 +16,12 @@ FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'a')
         fprintf(FileID, 'Normalize max         : %g mV\r\n', Struct.VoltajeNormalizacionSuperior); 
         fclose(FileID);
 
-Struct.datosIniciales = customCurvesv4(Struct.SaveFolder, Struct.FileName, Struct);
-
+[datosIniciales,scandir, maptype] = customCurvesv4(Struct.SaveFolder, Struct.FileName, Struct);
+if isequal(datosIniciales,0)
+    Struct = 0;
+    return
+else
+Struct.datosIniciales  = datosIniciales;
 %------------------------------------------------------------------------
 % CONSTANTS:
 % -----------------------------------------------------------------------
@@ -170,18 +174,16 @@ end
     MapasConductanciaAUX = cell(1,length(Energia));
     Transformadas = cell(1,length(Energia));
     
-    choice_1 = questdlg('Conductance maps or current maps?','Confirmation','Conductance','Current','Conductance');
-    choice_2 = questdlg('Sweep direction?','Confirmation','X','Y','X');
     
     FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'a');
-    fprintf(FileID, 'Map type              : %s\r\n',choice_1);
-    fprintf(FileID, 'Sweep direction       : %s \r\n',choice_2);
+    fprintf(FileID, 'Map type              : %s\r\n',maptype);
+    fprintf(FileID, 'Sweep direction       : %s \r\n',scandir);
     fprintf(FileID, '-------------------------------\r\n');
     fclose(FileID);
     
     %Si la imagen se ha tomado en Y, reordenamos las curvas del blq antes
     %de obtener los mapas correspondientes
-    if strcmp(choice_2,'Y')
+    if strcmp(scandir,'Y')
         ordeny=zeros(1,Filas*Columnas);
         for i=1:Columnas
             ordeny((i-1)*Filas+1:(i-1)*Filas+Columnas) = i:Filas:(Filas-1)*Columnas+i; 
@@ -189,7 +191,7 @@ end
         MatrizNormalizadaCortada = MatrizNormalizadaCortada(:,ordeny);
         MatrizCorriente = MatrizCorriente(:,ordeny);
     end
-    if strcmp(choice_1,'Conductance')
+    if strcmp(maptype,'Conductance')
         for k = 1:length(Energia)
             Indices{k} = find(Energia(k)- DeltaEnergia < Voltaje & Energia(k)+ DeltaEnergia > Voltaje);
             MapasConductanciaAUX{k} = mean(MatrizNormalizadaCortada(Indices{k},:),1);
@@ -249,12 +251,12 @@ k = ceil(length(Energia)/2);
     Struct.MapasConductancia            = MapasConductancia;
     Struct.PuntosDerivada               = PuntosDerivada;
     Struct.kInicial                     = k;
-    Struct.Type = choice_1;
-    Struct.Direction = choice_2;
+    Struct.Type = maptype;
+    Struct.Direction = scandir;
     %     if strcmp(choice_1,'Current')
     %        Struct.MaxCorteConductancia         = 100;
     %        Struct.MinCorteConductancia         = -100;
     %     end
 % ------------------------------------------------------------------------
-
+end
 end
