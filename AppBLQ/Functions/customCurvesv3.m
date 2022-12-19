@@ -1,10 +1,6 @@
 %Objetivo: Elegir los distintos valores iniciales para comenzar los
 %          calculos del analisis.
 %Input   : Ninguno
-%Output  :-eleccionMatrices: Vector de 1x4 con 1 y 0 segun si se ha
-%                            clickado a cada opcion. Despues multiplico
-%                            este vector por cada una de las matrices
-%                            y divido entre el numero de 1s en el vector.
 %         -datosIniciales: Estructura que contiene las siguientes
 %                          categorias:
 %                                     o corteInferior
@@ -30,8 +26,10 @@ f.Position(3:4)=[350 365];
 if exist([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.in'], 'file') == 2
     [[SaveFolder,filesep],FileName(1:length(FileName)-4),'.in'];
     existeIni = true;
-    fileIni   = fopen( [[SaveFolder,filesep],FileName(1:length(FileName)-4),'.in']);
-    remember  = fscanf(fileIni, '%20f');
+%     fileIni   = fopen( [[SaveFolder,filesep],FileName(1:length(FileName)-4),'.in']);
+%     remember  = fscanf(fileIni, '%20f');
+%     fclose(fileIni)
+    remember = readmatrix([SaveFolder,filesep,FileName(1:length(FileName)-4),'.in'],FileType='text');
 else
     existeIni = false;
 end

@@ -16,7 +16,7 @@ FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'a')
         fprintf(FileID, 'Normalize max         : %g mV\r\n', Struct.VoltajeNormalizacionSuperior); 
         fclose(FileID);
 
-Struct.datosIniciales = customCurvesv3(Struct.SaveFolder, Struct.FileName, Struct);
+Struct.datosIniciales = customCurvesv4(Struct.SaveFolder, Struct.FileName, Struct);
 
 %------------------------------------------------------------------------
 % CONSTANTS:
