@@ -35,7 +35,7 @@ editFilas = uieditfield(f,'numeric','Position',[200 topRow-hRow 100 20],...
     if remember 
         editFilas.Value = data1(1);
     elseif round(TopoLineas) == TopoLineas
-        editFilas.Value = num2str(TopoLineas);
+        editFilas.Value = TopoLineas;
     end
 % Columnas:Por defecto escribe el valor que obtiene del tamaño de la topo.
 % Solo si es número redondo
@@ -46,7 +46,7 @@ editColumnas = uieditfield(f,'numeric','Position',[490 topRow-hRow 100 20],Horiz
     if remember 
         editColumnas.Value = data1(2); 
     elseif round(TopoLineas) == TopoLineas
-        editColumnas.Value = num2str(TopoLineas);
+        editColumnas.Value = TopoLineas;
     end
 %Campo:
 txtCampo= uilabel(f,'Position',[40 topRow-2*hRow 150 20],...
@@ -73,7 +73,7 @@ editTamanhoRealFilas = uieditfield(f,'numeric','Position',[200 topRow-3*hRow 100
     if remember
         editTamanhoRealFilas.Value = data1(5);
     elseif isfield(Struct,'TamanhoRealFilas')
-        editTamanhoRealFilas.Value = num2str(Struct.TamanhoRealFilas);
+        editTamanhoRealFilas.Value = Struct.TamanhoRealFilas;
     end
         
 % Tamaño Columnas
@@ -86,7 +86,7 @@ editTamanhoRealColumnas = uieditfield(f,'numeric','Position',[490 topRow-3*hRow 
     if remember
         editTamanhoRealColumnas.Value = data1(5);
     elseif isfield(Struct,'TamanhoRealFilas')
-        editTamanhoRealColumnas.Value = num2str(Struct.TamanhoRealColumnas);
+        editTamanhoRealColumnas.Value = Struct.TamanhoRealColumnas;
     end
 
 % Parámetro de red Filas:   
