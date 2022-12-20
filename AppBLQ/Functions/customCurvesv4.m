@@ -13,6 +13,7 @@
 function [datosIniciales,direction,maptype] = customCurvesv4(SaveFolder, FileName, Struct)
 f = uifigure;
 f.Position(3:4)=[350 500];
+f.Position(2) = f.Position(2)-80;
 f.Name = 'Map analysis settings';
 rpos = f.Position(3);
 hrow = 50;
@@ -122,6 +123,8 @@ uiwait(f);
 %Comprobamos si la figura ha sido cerrada para seguir
 if ~ishghandle(f)
     datosIniciales = 0;
+    direction = 0;
+    maptype = 0;
     return
 else
 
