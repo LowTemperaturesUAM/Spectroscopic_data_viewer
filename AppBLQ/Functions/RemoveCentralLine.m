@@ -1,26 +1,24 @@
-function [CellRemoved] = RemoveCentralLine(Cell, Info, V, H)
+function [CellRemoved] = RemoveCentralLine(Cell, ~, V, H)
 % V y H son variables lógicas
-Columnas = length(Info.DistanciaFourierColumnas);
-Filas    = length(Info.DistanciaFourierFilas);
+[Filas,Columnas] = size(Cell{1});
 
 CellRemoved = Cell;
-for k=1:length(Info.Energia)
+
+for k=1:length(Cell)
     %---------
     %Vertical
     %---------
     if V
-        for i=1:Columnas
-           CellRemoved{k}(i,(Columnas/2)+1) = mean([Cell{k}(i,Columnas/2),...
-                Cell{k}(i,(Columnas/2)+2)]);
-        end
+        CellRemoved{k}(:,floor(Columnas/2)+1) = mean([CellRemoved{k}(:,floor(Columnas/2)),...
+            CellRemoved{k}(:,floor(Columnas/2)+2)],2);
     end
+
     %----------
     %Horizontal
     %----------
     if H
-        for j=1:Filas
-            CellRemoved{k}((Filas/2)+1,j) = mean([Cell{k}(Filas/2,j),...
-                Cell{k}((Filas/2)+2,j)]);
-        end
+        CellRemoved{k}(floor(Filas/2)+1,:) = mean([CellRemoved{k}(floor(Filas/2),:);...
+            CellRemoved{k}(floor(Filas/2)+2,:)],1);
     end
 end
+
