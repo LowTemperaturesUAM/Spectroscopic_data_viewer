@@ -1,4 +1,4 @@
-function [CellSmooth] = GaussSmooth(Cell, Value, Info)
+function [CellSmooth] = GaussSmooth(Cell, Value, ~)
 
 CellSmooth = Cell;
 
