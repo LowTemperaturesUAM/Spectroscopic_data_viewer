@@ -1,4 +1,4 @@
-function MeanIVFunction_v2(ax, Rectangulo, MatrizNormalizada, Voltaje, Columnas, Filas, DistanciaColumnas, isCurrent)
+function MeanIVFunction_v2(ax, Rectangulo, MatrizCurvas, Voltaje, Columnas, Filas, DistanciaColumnas, isCurrent)
 % Turn Rectangulo coordinates into pixels
 Rectangulo1 = Columnas.*Rectangulo./(DistanciaColumnas(end) );
 Inicio = [round(Rectangulo1(1)), round(Rectangulo1(2))];
@@ -12,7 +12,7 @@ Coordenadas = Coordenadas(X>=Inicio(1) & X<=Final(1) & Y>=Inicio(2) & Y<=Final(2
 
 if length(Coordenadas)>1
 % I rename variable mean to Mean to avoid conflict with the function.
-Mean = mean(MatrizNormalizada(:,Coordenadas),2);
+Mean = mean(MatrizCurvas(:,Coordenadas),2);
 
 %assignin('base','mean',[Voltaje, mean])
 % b=findobj('Name', 'mainFig');
@@ -32,16 +32,16 @@ end
 
 hold on
 a=meanIVFig.CurrentAxes;
-% a.ColorOrder = jet(50);
-if ~isCurrent
-    a.ColorOrderIndex = ax.ColorOrderIndex;
-else
+
+if isCurrent
     switch ax.ColorOrderIndex
         case 1
             a.ColorOrderIndex   = length(a.ColorOrder);
         otherwise
             a.ColorOrderIndex = ax.ColorOrderIndex-1;
     end
+else
+    a.ColorOrderIndex = ax.ColorOrderIndex;
 end
 
 % plot(Voltaje(1+Info.PuntosDerivada:length(Info.Voltaje)-Info.PuntosDerivada), mean(1+Info.PuntosDerivada:length(Info.Voltaje)-Info.PuntosDerivada),'-','LineWidth',2)
