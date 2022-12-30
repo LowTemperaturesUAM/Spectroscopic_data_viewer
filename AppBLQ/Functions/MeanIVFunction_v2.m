@@ -1,5 +1,4 @@
-function MeanIVFunction_v2(ax, Rectangulo, MatrizNormalizada, Voltaje, Columnas, Filas, DistanciaColumnas, isCond)
-
+function MeanIVFunction_v2(ax, Rectangulo, MatrizNormalizada, Voltaje, Columnas, Filas, DistanciaColumnas, isCurrent)
 % Turn Rectangulo coordinates into pixels
 Rectangulo1 = Columnas.*Rectangulo./(DistanciaColumnas(end) );
 Inicio = [round(Rectangulo1(1)), round(Rectangulo1(2))];
@@ -17,22 +16,24 @@ Mean = mean(MatrizNormalizada(:,Coordenadas),2);
 
 %assignin('base','mean',[Voltaje, mean])
 % b=findobj('Name', 'mainFig');
-if isCond
+if isCurrent
     meanIVFig = figure(37289);
+    meanIVFig.Name = 'meanIVFig';
 else
     meanIVFig = figure(37290);
+    meanIVFig.Name = 'meandI/dVFig';
+%     meanIVFig.Name = 'meanIVFig';
 end
 
-if ~isCond
+if ~isCurrent
     meanIVFig.CloseRequestFcn = 'kill_v2';
 end
 
-meanIVFig.Name = 'meanIVFig';
 
 hold on
 a=meanIVFig.CurrentAxes;
 % a.ColorOrder = jet(50);
-if ~isCond
+if ~isCurrent
     a.ColorOrderIndex = ax.ColorOrderIndex;
 else
     switch ax.ColorOrderIndex
@@ -45,7 +46,7 @@ end
 
 % plot(Voltaje(1+Info.PuntosDerivada:length(Info.Voltaje)-Info.PuntosDerivada), mean(1+Info.PuntosDerivada:length(Info.Voltaje)-Info.PuntosDerivada),'-','LineWidth',2)
 plot(a,Voltaje, Mean,'-','LineWidth',2)
-if ~isCond
+if ~isCurrent
     a.XLabel.String = '\fontsize{18} Voltage (mV)';
     % a.YLabel.String = 'Conductance(\muS)';
     a.YLabel.String = '\fontsize{18} Normalized conductance';
@@ -75,13 +76,23 @@ if ~isfield(meanIVFig.UserData, 'curves')
 else
     meanIVFig.UserData.curves = [meanIVFig.UserData.curves curves];
 end
-    
-if ~isCond
-    uicontrol('Style', 'pushbutton', 'String', '<html>Curves to<br>Workspace',...
-    'Position', [1 1 60 50], 'Callback', @(src,eventdata)curves2Workspace('meanConductanceRegion'));
+%Add new field to save the rectangle locations
+if ~isfield(meanIVFig.UserData, 'areas')
+    meanIVFig.UserData.areas = [Inicio, Final];
 else
-    uicontrol('Style', 'pushbutton', 'String', '<html>Curves to<br>Workspace',...
-    'Position', [1 1 60 50], 'Callback', @(src,eventdata)curves2Workspace('meanIVRegion'));
+    meanIVFig.UserData.areas = [meanIVFig.UserData.areas;[Inicio, Final]];
+end
+
+
+% Check if the button is present before drawing a new one
+if isempty(findobj(meanIVFig,'Type','UIControl'))
+    if ~isCurrent
+        uicontrol(meanIVFig,'Style', 'pushbutton', 'String', '<html>Curves to<br>Workspace',...
+            'Position', [1 1 60 50], 'Callback', @(src,eventdata)curves2Workspace('meanConductanceRegion'));
+    else
+        uicontrol(meanIVFig,'Style', 'pushbutton', 'String', '<html>Curves to<br>Workspace',...
+            'Position', [1 1 60 50], 'Callback', @(src,eventdata)curves2Workspace('meanIVRegion'));
+    end
 end
 
 x1=Rectangulo(1);
@@ -92,10 +103,10 @@ b1=Rectangulo(4);
 % b=findobj('Name', 'mainFig');
 hold(ax, 'on');
 
-if ~isCond % This condition makes it so the rectangle is only made once
+if ~isCurrent % This condition makes it so the rectangle is only made once
     area = plot(ax,[x1 x1+a1 x1+a1 x1 x1], [y1 y1 y1+b1 y1+b1 y1],'LineWidth',2);
 end
 
-area.Tag = 'meanIVFig';
+area.Tag = 'meandI/dVFig';
 % rectangle('Position',Rectangulo,'EdgeColor','white')
 end
