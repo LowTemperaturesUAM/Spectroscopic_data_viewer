@@ -25,8 +25,8 @@ MatrizCorriente                 = Info.MatrizCorriente;
 if strcmp(btn, 'alt') && Movimiento 
     Rectangle = ax.UserData.Rectangle;
 %  MeanIVFunction(Rectangle, MatrizNormalizada, Voltaje, Columnas, Filas, DistanciaColumnas)
-        MeanIVFunction_v2(ax,Rectangle, MatrizNormalizada, Voltaje, Columnas, Filas, DistanciaColumnas, 0) %Conductancia vs V
-        MeanIVFunction_v2(ax,Rectangle, MatrizCorriente, Voltaje, Columnas, Filas, DistanciaColumnas, 1) %Corriente vs V
+        MeanIVFunction_v3(ax,Rectangle, MatrizNormalizada, Voltaje, Columnas, Filas, DistanciaColumnas, 0) %Conductancia vs V
+        MeanIVFunction_v3(ax,Rectangle, MatrizCorriente, Voltaje, Columnas, Filas, DistanciaColumnas, 1) %Corriente vs V
 end
     
 if strcmp(btn, 'normal') && ~Movimiento

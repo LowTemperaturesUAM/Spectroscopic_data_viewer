@@ -29,8 +29,8 @@ switch nargin
                     disp('No position data is available')
                 end
             else
-                warning(sprintf(['No Figure %i was found ' ...
-                    'or doesn''t contain suitable data'],number))
+                warning(['No Figure %i was found ' ...
+                    'or doesn''t contain suitable data'],number)
             end
         end
     otherwise % if no number is given, it takes the first figure that if finds
