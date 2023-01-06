@@ -7,7 +7,5 @@ function FFT = fft2d(RSI)% La entrada es una matriz con la imagen en el espacio 
     FFT = fftshift(FFT);    % Pone la componente de frecuencia cero en el centro del espectro
     FFT = abs(FFT);         % Valor absoluto para evitar problemas con la parte imaginaria
 %      FFT = log((FFT+1)+1);   % Logaritmo para que la escalca quede mejor
-
-%   FFT = mat2gray(FFT);    % Escala de grises (opcional)
 end
 
