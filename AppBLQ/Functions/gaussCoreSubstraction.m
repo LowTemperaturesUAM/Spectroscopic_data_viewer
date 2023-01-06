@@ -1,4 +1,4 @@
-function [CellFiltered] = gaussCoreSubstraction(Cell, ~, Sigma)
+function [CellFiltered] = gaussCoreSubstraction(Cell,Sigma)
 
 [Filas,Columnas] = size(Cell{1});
 
