@@ -22,34 +22,28 @@ MatrizCorriente                 = Info.MatrizCorriente;
 %    else
 %        ax.Position = [PosicionAx(1), PosicionAx(2), PosicionAx(3) PosicionAx(4)/Ratio];
 %    end
-if strcmp(btn, 'alt') && Movimiento 
+if strcmp(btn, 'alt') && Movimiento && strcmp(ax.Tag,'RealAxes')
     Rectangle = ax.UserData.Rectangle;
-%  MeanIVFunction(Rectangle, MatrizNormalizada, Voltaje, Columnas, Filas, DistanciaColumnas)
-        MeanIVFunction_v3(ax,Rectangle, MatrizNormalizada, Voltaje, Columnas, Filas, DistanciaColumnas, 0) %Conductancia vs V
-        MeanIVFunction_v3(ax,Rectangle, MatrizCorriente, Voltaje, Columnas, Filas, DistanciaColumnas, 1) %Corriente vs V
-end
+    MeanIVFunction_v3(ax,Rectangle, MatrizNormalizada, Voltaje, Columnas, Filas, DistanciaColumnas, 0) %Conductancia vs V
+    MeanIVFunction_v3(ax,Rectangle, MatrizCorriente, Voltaje, Columnas, Filas, DistanciaColumnas, 1) %Corriente vs V
     
-if strcmp(btn, 'normal') && ~Movimiento
+elseif strcmp(btn, 'normal') && ~Movimiento
    
     if strcmp(ax.Tag,'RealAxes') 
         punteroT = App.Axes.CurrentPoint;
-        
-%         k = find(Energia == App.EnergySpinner.Value);
         
         if exist('Info.Puntero','var')
             Info.Puntero = [struct.Puntero; punteroT(1,1), punteroT(1,2)];
         else
             Info.Puntero = [punteroT(1,1), punteroT(1,2)];
         end
-%          size(MatrizCorriente)
-%         curvaUnicaPA(Struct.Puntero, MapasConductancia{k}, Voltaje,MatrizNormalizada, DistanciaColumnas,DistanciaFilas,true);
-        curvaUnicaPA_v2(App.Axes, Info.Puntero, Voltaje,MatrizNormalizada, DistanciaColumnas,DistanciaFilas, true, 0)  %Conductancia vs V
-        curvaUnicaPA_v2(App.Axes, Info.Puntero, Voltaje,MatrizCorriente, DistanciaColumnas,DistanciaFilas, true, 1) %Corriente vs V
+
+        curvaUnicaPA_v3(App.Axes, Info.Puntero, Voltaje,MatrizNormalizada, DistanciaColumnas,DistanciaFilas, true, 0)  %Conductancia vs V
+        curvaUnicaPA_v3(App.Axes, Info.Puntero, Voltaje,MatrizCorriente, DistanciaColumnas,DistanciaFilas, true, 1) %Corriente vs V
         
     elseif strcmp(ax.Tag,'FFTAxes')
         punteroT = App.Axes.CurrentPoint;
 
-%         k = find(Energia == App.EnergySpinner.Value);
         TransformadasEqualizadosf = zeros(Filas,Columnas,length(Energia));
         
         if exist('Info.Puntero','var')
@@ -57,8 +51,6 @@ if strcmp(btn, 'normal') && ~Movimiento
         else
             Info.PunteroFFT = [punteroT(1,1), punteroT(1,2)];
         end
-        
-%         size(Struct.PunteroFFT);
        
         for i = 1:length(Energia)
             TransformadasEqualizadosf(:,:,i) = Transformadas{i};
@@ -68,11 +60,10 @@ if strcmp(btn, 'normal') && ~Movimiento
         TransformadasEqualizadosfAUX = permute(TransformadasEqualizadosf,[3 2 1]);
         TransformadasEqualizadosfAUX = reshape(TransformadasEqualizadosfAUX,[length(Energia),Filas*Columnas]);
    
-        curvaUnicaPA_v2(App.Axes,Info.PunteroFFT, Energia', TransformadasEqualizadosfAUX, DistanciaFourierColumnas,DistanciaFourierFilas, false,0); %Intensidad FFT vs E
+        curvaUnicaPA_v3(App.Axes,Info.PunteroFFT, Energia', TransformadasEqualizadosfAUX, DistanciaFourierColumnas,DistanciaFourierFilas, false,0); %Intensidad FFT vs E
     end
-end
 
-if strcmp(btn, 'extend') && ~Movimiento
+elseif strcmp(btn, 'extend') && ~Movimiento
     App.EnergySpinner.Value = min(abs(Energia));    % Vuelve al mapa a 0 bias
 
 end

@@ -1,4 +1,4 @@
-function [a] = plotMeanCur(ax,Voltaje,Curve,Inicio,Final,isCurrent)
+function [meanIVFig] = plotMeanCur(ax,Voltaje,Curve,Inicio,Final,isCurrent)
 if isCurrent
     meanIVFig = figure(37289);
     meanIVFig.Name = 'meanIVFig';
@@ -17,7 +17,7 @@ a=meanIVFig.CurrentAxes;
 if isCurrent
     switch ax.ColorOrderIndex
         case 1
-            a.ColorOrderIndex   = length(a.ColorOrder);
+            a.ColorOrderIndex = length(a.ColorOrder);
         otherwise
             a.ColorOrderIndex = ax.ColorOrderIndex-1;
     end

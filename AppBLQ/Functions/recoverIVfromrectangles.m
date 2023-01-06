@@ -1,5 +1,5 @@
 function recoverIVfromrectangles(ax,Info)
-%     try %if the variable is not in workspace it would fail
+    try %if the variable is not in workspace it would fail
         Rectangles = evalin("base","AvgRectAreas");
         Filas = numel(Info.DistanciaFilas);
         Columnas = numel(Info.DistanciaColumnas);
@@ -28,8 +28,7 @@ function recoverIVfromrectangles(ax,Info)
             MeanCurrent = mean(Info.MatrizCorriente(:,Coordenadas),2);
             plotMeanCur(ax,Info.Voltaje,MeanCurrent,Inicio,Final,isCurrent);
         end
-
-%     catch
-%         disp('The variable AvgRectAreas is not present on the workspace')
-%     end
+    catch
+        disp('The variable AvgRectAreas is not present on the workspace')
+    end
 end
