@@ -234,7 +234,8 @@ clear k Indices DeltaEnergia MapasConductanciaAUX;
 % ------------------------------------------------------------------------
 % Creating structures to pass to GUI analysis
 % ------------------------------------------------------------------------
-k = ceil(length(Energia)/2);
+% Find the closest map to zero even for an asymmetric energy range
+[~,k] = min(Energia,[],ComparisonMethod="abs");
 
     Struct.Energia                      = Energia;
     Struct.DistanciaColumnas            = DistanciaColumnas;
@@ -256,10 +257,6 @@ k = ceil(length(Energia)/2);
     Struct.kInicial                     = k;
     Struct.Type = maptype;
     Struct.Direction = scandir;
-    %     if strcmp(choice_1,'Current')
-    %        Struct.MaxCorteConductancia         = 100;
-    %        Struct.MinCorteConductancia         = -100;
-    %     end
 % ------------------------------------------------------------------------
 end
 end
