@@ -38,8 +38,8 @@ Struct.datosIniciales  = datosIniciales;
 	VoltajeNormalizacionInferior        = Struct.VoltajeNormalizacionInferior;
 	VoltajeNormalizacionSuperior        = Struct.VoltajeNormalizacionSuperior;
 
-	CorteInferiorInicialConductancia    = Struct.datosIniciales.corteInferior;
-	CorteSuperiorInicialConductancia    = Struct.datosIniciales.corteSuperior;
+	CorteInferiorInicial    = Struct.datosIniciales.corteInferior;
+	CorteSuperiorInicial    = Struct.datosIniciales.corteSuperior;
         
     DeltaEnergia                        = Struct.datosIniciales.DeltaEnergia;
     PasoMapas                           = Struct.datosIniciales.PasoMapas;
@@ -134,9 +134,9 @@ toc
 % ------------------------------------------------------------------------
 % Removing bad data points with the first cut
 % ------------------------------------------------------------------------
-    MatrizNormalizadaCortada = MatrizNormalizada;
-    MatrizNormalizadaCortada(MatrizNormalizadaCortada < CorteInferiorInicialConductancia) = CorteInferiorInicialConductancia;
-    MatrizNormalizadaCortada(MatrizNormalizadaCortada > CorteSuperiorInicialConductancia) = CorteSuperiorInicialConductancia;
+%     MatrizNormalizadaCortada = MatrizNormalizada;
+%     MatrizNormalizadaCortada(MatrizNormalizadaCortada < CorteInferiorInicialConductancia) = CorteInferiorInicialConductancia;
+%     MatrizNormalizadaCortada(MatrizNormalizadaCortada > CorteSuperiorInicialConductancia) = CorteSuperiorInicialConductancia;
 % ------------------------------------------------------------------------   
 % Considering conductance curves at each point creates conductance maps
 % averaging points around a certain DeltaEnergia and its 2D-FFT map
@@ -188,10 +188,14 @@ end
         for i=1:Columnas
             ordeny((i-1)*Filas+1:(i-1)*Filas+Columnas) = i:Filas:(Filas-1)*Columnas+i; 
         end
-        MatrizNormalizadaCortada = MatrizNormalizadaCortada(:,ordeny);
+        MatrizNormalizada = MatrizNormalizada(:,ordeny);
         MatrizCorriente = MatrizCorriente(:,ordeny);
     end
     if strcmp(maptype,'Conductance')
+        MatrizCorrienteCortada = MatrizCorriente;
+        MatrizNormalizadaCortada = MatrizNormalizada;
+        MatrizNormalizadaCortada(MatrizNormalizadaCortada < CorteInferiorInicial) = CorteInferiorInicial;
+        MatrizNormalizadaCortada(MatrizNormalizadaCortada > CorteSuperiorInicial) = CorteSuperiorInicial;
         for k = 1:length(Energia)
             Indices{k} = find(Energia(k)- DeltaEnergia < Voltaje & Energia(k)+ DeltaEnergia > Voltaje);
             MapasConductanciaAUX{k} = mean(MatrizNormalizadaCortada(Indices{k},:),1);
@@ -214,17 +218,16 @@ end
 %         Transformadas = cellfun(@fft2d, MapasConductancia, 'UniformOutput',0);
 
     else
+        MatrizCorrienteCortada = MatrizCorriente;
+        MatrizCorrienteCortada(MatrizCorrienteCortada < CorteInferiorInicial) = CorteInferiorInicial;
+        MatrizCorrienteCortada(MatrizCorrienteCortada > CorteSuperiorInicial) = CorteSuperiorInicial;
+        MatrizNormalizadaCortada = MatrizNormalizada;
         for k = 1:length(Energia)
             Indices{k} = find(Energia(k)- DeltaEnergia < Voltaje & Energia(k)+ DeltaEnergia > Voltaje);
-            MapasConductanciaAUX{k} = mean(MatrizCorriente(Indices{k},:),1);
+            MapasConductanciaAUX{k} = mean(MatrizCorrienteCortada(Indices{k},:),1);
             MapasConductancia{k} = reshape(MapasConductanciaAUX{k},[Columnas,Filas]);
             MapasConductancia{k} = MapasConductancia{k}';
-%             if strcmp(choice_2,'Y')
-%                 MapasConductancia{k} = imrotate(MapasConductancia{k},-90);
-%                 MapasConductancia{k} = fliplr(MapasConductancia{k} );
-%             end
             Transformadas{k} = fft2d(MapasConductancia{k});
-    %         Transformadas{k} = Transformadas{k}/(TamanhoRealFilas*TamanhoRealColumnas); % Lo comento porque no entiendo nada
         end
     end
 clear k Indices DeltaEnergia MapasConductanciaAUX;
@@ -236,7 +239,7 @@ k = ceil(length(Energia)/2);
     Struct.Energia                      = Energia;
     Struct.DistanciaColumnas            = DistanciaColumnas;
     Struct.DistanciaFilas               = DistanciaFilas;
-    Struct.MatrizCorriente              = MatrizCorriente;
+    Struct.MatrizCorriente              = MatrizCorrienteCortada;
     Struct.MatrizNormalizada            = MatrizNormalizadaCortada;
     Struct.Voltaje                      = Voltaje;
     Struct.TamanhoRealFilas             = TamanhoRealFilas;
@@ -245,8 +248,8 @@ k = ceil(length(Energia)/2);
     Struct.DistanciaFourierFilas        = DistanciaFourierFilas;
     Struct.Filas                        = Filas;
     Struct.Columnas                     = Columnas;
-    Struct.MaxCorteConductancia         = CorteSuperiorInicialConductancia;
-    Struct.MinCorteConductancia         = CorteInferiorInicialConductancia;
+    Struct.MaxCorteConductancia         = CorteSuperiorInicial;
+    Struct.MinCorteConductancia         = CorteInferiorInicial;
     Struct.Transformadas                = Transformadas;
     Struct.MapasConductancia            = MapasConductancia;
     Struct.PuntosDerivada               = PuntosDerivada;
