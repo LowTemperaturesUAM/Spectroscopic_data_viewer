@@ -28,20 +28,6 @@ app.CallingApp.InfoStruct.Direction                    = Struct.Direction;
 
 ContrastReal = zeros(2, length(Struct.Energia));
 ContrastFFT = zeros(2, length(Struct.Energia));
-% for i=1:length(Struct.Energia)
-%     ContrastReal (1,i) = app.RealMinSlider.Value;
-%     ContrastReal (2,i) = app.RealMaxSlider.Value;
-%     ContrastFFT (1,i) = app.FFTMinSlider.Value;
-%     ContrastFFT (2,i) = app.FFTMaxSlider.Value;
-% end
-
-%Shouldn't use the value. It only applies to the current map and it's not
-%great for other maps of the same dataset. We should use the clamp values
-%instead
-% ContrastReal (1,:) = app.RealMinSlider.Value;
-% ContrastReal (2,:) = app.RealMaxSlider.Value;
-% ContrastFFT (1,:) = app.FFTMinSlider.Value;
-% ContrastFFT (2,:) = app.FFTMaxSlider.Value;
 
 ContrastReal (1,:) = app.RealMaxSlider.Limits(1);
 ContrastReal (2,:) = app.RealMaxSlider.Limits(2);
