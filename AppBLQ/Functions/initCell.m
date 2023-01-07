@@ -1,37 +1,16 @@
-function initCell(app, Cell, flag)
-if flag %Real
-%     minVector = zeros(length(Cell),1);
-%     maxVector = zeros(length(Cell),1);
-    
-    for i=1:length(Cell)
-        minVector(i) = min(min(Cell{i}));
-        maxVector(i) = max(max(Cell{i}));
-    end
-    
+function initCell(app, Cell, isReal)
+if isReal %Real
+    minVector = cellfun(@(x) min(x,[],"all"),Cell);
+    maxVector = cellfun(@(x) max(x,[],"all"),Cell);
     minValue = min(minVector);
-    maxValue = max(maxVector);
-    
-    app.MinSlider.Limits = [minValue maxValue];
-    app.MaxSlider.Limits = [minValue maxValue];
 else %FFT
-%     minVector = zeros(length(Cell),1);
-%     maxVector = zeros(length(Cell),1);
-    
-    [Filas, Columnas] = size(Cell{1});
-    
-%     minVector = zeros(1:length(Cell));
-%     maxVector = zeros(1:length(Cell));
-%     
-    for i=1:length(Cell)
-        Cell{i}(floor(Filas/2)+1, floor(Columnas/2)+1) = 0;
-        minVector(i) = min(min(Cell{i}));
-        maxVector(i) = max(max(Cell{i}));
-    end
-    
-    minValue = min(minVector);
-    maxValue = max(maxVector);
-    
-    app.MinSlider.Limits = [minValue maxValue];
-    app.MaxSlider.Limits = [minValue maxValue];
+    %We take the second largest point for the max, as the first one is always
+    %the center point
+    maxVector = cellfun(@(x) max(x(x~=max(x,[],"all")),[],"all"),Cell);
+    minValue = 0; %always fix the lower limit to zero for FFT
 end
+    maxValue = max(maxVector);
+    %Compare this to the current slider limits and take the wider
+    values = chooseContrast([minValue maxValue],app.MinSlider.Limits(1),app.MinSlider.Limits(2));
+    [app.MinSlider.Limits,app.MaxSlider.Limits] = deal(values);
 end

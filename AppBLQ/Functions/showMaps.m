@@ -13,8 +13,8 @@ DistanciaFourierColumnas     = Struct.DistanciaFourierColumnas;
 % MatrizNormalizada            = Struct.MatrizNormalizada;
 Filas                        = Struct.Filas;
 Columnas                     = Struct.Columnas;
-% MaxCorteConductancia         = Struct.MaxCorteConductancia;
-% MinCorteConductancia         = Struct.MinCorteConductancia;
+% MaxCorteReal        = Struct.MaxCorteConductancia;
+% MinCorteReal         = Struct.MinCorteConductancia;
 % SaveFolder                   = Struct.SaveFolder;
 % MatrizCorriente              = Struct.MatrizCorriente;
 MapasConductancia            = Struct.MapasConductancia;
@@ -37,14 +37,15 @@ Ratio = (App.RealAxes.XLim(2) - App.RealAxes.XLim(1))/...
 (App.RealAxes.YLim(2) - App.RealAxes.YLim(1));
 App.RealAxes.DataAspectRatio = [100,100*Ratio,1];
 
+
 if ~App.RealLockContrastCheckBox.Value
-    App.RealMinSlider.Limits = [min(min(MapasConductancia{k})) max(max(MapasConductancia{k}))];
-    App.RealMaxSlider.Limits = [min(min(MapasConductancia{k})) max(max(MapasConductancia{k}))];
-%     App.RealMinSlider.Value = App.RealMinSlider.Limits(1);
-%     App.RealMaxSlider.Value = App.RealMaxSlider.Limits(2);
+    App.RealMinSlider.Value = min(MapasConductancia{k},[],'all');
+    App.RealMaxSlider.Value = max(MapasConductancia{k},[],'all');
 end
 
 App.RealAxes.CLim = [App.RealMinSlider.Value App.RealMaxSlider.Value];
+App.RealMaxEdit.Value = App.RealMaxSlider.Value;
+App.RealMinEdit.Value = App.RealMinSlider.Value;
 
 %Iniciacion de la figura en espacio reciproco
 cla(App.FFTAxes); %Clear axes
@@ -64,16 +65,16 @@ App.FFTAxes.DataAspectRatio = [100,100*Ratio,1];
 
 % Quito el punto central para calcular el máximo de las transformadas
 TransformadasAUX = Transformadas{k};
-TransformadasAUX(Filas/2+1, Columnas/2+1) = 0;
+TransformadasAUX(floor(Filas)/2+1, floor(Columnas)/2+1) = 0;
 
-if ~App.RealLockContrastCheckBox.Value
-    App.FFTMinSlider.Limits = [min(min(Transformadas{k})) max(max(TransformadasAUX))];
-    App.FFTMaxSlider.Limits = [min(min(Transformadas{k})) max(max(TransformadasAUX))];
-%     App.FFTMinSlider.Value = App.FFTMinSlider.Limits(1);
-%     App.FFTMaxSlider.Value = App.FFTMaxSlider.Limits(2);
+if ~App.FFTLockContrastCheckBox.Value
+    App.FFTMinSlider.Value = min(Transformadas{k},[],'all');
+    App.FFTMaxSlider.Value = max(TransformadasAUX,[],'all');
 end
 
 App.FFTAxes.CLim = [App.FFTMinSlider.Value App.FFTMaxSlider.Value];
+App.FFTMaxEdit.Value = App.FFTMaxSlider.Value;
+App.FFTMinEdit.Value = App.FFTMinSlider.Value;
 clear TransformadasAUX
 
 end

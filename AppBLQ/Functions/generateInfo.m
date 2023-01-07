@@ -1,53 +1,69 @@
-function generateInfo(App, Struct)
+function generateInfo(app, Struct)
 
-App.CallingApp.InfoStruct.Transformadas                = Struct.Transformadas;
-App.CallingApp.InfoStruct.MapasConductancia            = Struct.MapasConductancia;
-App.CallingApp.InfoStruct.DistanciaFourierColumnas     = Struct.DistanciaFourierColumnas;
-App.CallingApp.InfoStruct.DistanciaFourierFilas        = Struct.DistanciaFourierFilas;
-App.CallingApp.InfoStruct.DistanciaColumnas            = Struct.DistanciaColumnas;
-App.CallingApp.InfoStruct.DistanciaFilas               = Struct.DistanciaFilas;
-App.CallingApp.InfoStruct.Energia                      = Struct.Energia;
-App.CallingApp.InfoStruct.TamanhoRealColumnas          = Struct.TamanhoRealColumnas;
-App.CallingApp.InfoStruct.TamanhoRealFilas             = Struct.TamanhoRealFilas;
-App.CallingApp.InfoStruct.ParametroRedColumnas         = Struct.ParametroRedColumnas;
-App.CallingApp.InfoStruct.ParametroRedFilas            = Struct.ParametroRedFilas;
-App.CallingApp.InfoStruct.MatrizCorriente              = Struct.MatrizCorriente;
-App.CallingApp.InfoStruct.MatrizNormalizada            = Struct.MatrizNormalizada;
-App.CallingApp.InfoStruct.PuntosDerivada               = Struct.PuntosDerivada;
-App.CallingApp.InfoStruct.Voltaje                      = Struct.Voltaje;
-App.CallingApp.InfoStruct.Bias                         = App.CallingApp.InfoStruct.Voltaje(1);
-App.CallingApp.InfoStruct.Colormap                     = eval(App.FFTColormapDropDown.Value);
-App.CallingApp.InfoStruct.ColormapName                 = (App.FFTColormapDropDown.Value);
+app.CallingApp.InfoStruct.Transformadas                = Struct.Transformadas;
+app.CallingApp.InfoStruct.MapasConductancia            = Struct.MapasConductancia;
+app.CallingApp.InfoStruct.DistanciaFourierColumnas     = Struct.DistanciaFourierColumnas;
+app.CallingApp.InfoStruct.DistanciaFourierFilas        = Struct.DistanciaFourierFilas;
+app.CallingApp.InfoStruct.DistanciaColumnas            = Struct.DistanciaColumnas;
+app.CallingApp.InfoStruct.DistanciaFilas               = Struct.DistanciaFilas;
+app.CallingApp.InfoStruct.Energia                      = Struct.Energia;
+app.CallingApp.InfoStruct.TamanhoRealColumnas          = Struct.TamanhoRealColumnas;
+app.CallingApp.InfoStruct.TamanhoRealFilas             = Struct.TamanhoRealFilas;
+app.CallingApp.InfoStruct.ParametroRedColumnas         = Struct.ParametroRedColumnas;
+app.CallingApp.InfoStruct.ParametroRedFilas            = Struct.ParametroRedFilas;
+app.CallingApp.InfoStruct.MatrizCorriente              = Struct.MatrizCorriente;
+app.CallingApp.InfoStruct.MatrizNormalizada            = Struct.MatrizNormalizada;
+app.CallingApp.InfoStruct.PuntosDerivada               = Struct.PuntosDerivada;
+app.CallingApp.InfoStruct.Voltaje                      = Struct.Voltaje;
+app.CallingApp.InfoStruct.Bias                         = app.CallingApp.InfoStruct.Voltaje(1);
+app.CallingApp.InfoStruct.Colormap                     = eval(app.FFTColormapDropDown.Value);
+app.CallingApp.InfoStruct.ColormapName                 = (app.FFTColormapDropDown.Value);
 
-App.CallingApp.InfoStruct.XLimReal                     = [Struct.DistanciaColumnas(1) Struct.DistanciaColumnas(end)];
-App.CallingApp.InfoStruct.YLimReal                     = [Struct.DistanciaFilas(1) Struct.DistanciaFilas(end)];
-App.CallingApp.InfoStruct.XLimFFT                      = [Struct.DistanciaFourierColumnas(1) Struct.DistanciaFourierColumnas(end)];
-App.CallingApp.InfoStruct.YLimFFT                      = [Struct.DistanciaFourierFilas(1) Struct.DistanciaFourierFilas(end)];
-App.CallingApp.InfoStruct.Type                         = Struct.Type;
-App.CallingApp.InfoStruct.Direction                    = Struct.Direction;
+app.CallingApp.InfoStruct.XLimReal                     = [Struct.DistanciaColumnas(1) Struct.DistanciaColumnas(end)];
+app.CallingApp.InfoStruct.YLimReal                     = [Struct.DistanciaFilas(1) Struct.DistanciaFilas(end)];
+app.CallingApp.InfoStruct.XLimFFT                      = [Struct.DistanciaFourierColumnas(1) Struct.DistanciaFourierColumnas(end)];
+app.CallingApp.InfoStruct.YLimFFT                      = [Struct.DistanciaFourierFilas(1) Struct.DistanciaFourierFilas(end)];
+app.CallingApp.InfoStruct.Type                         = Struct.Type;
+app.CallingApp.InfoStruct.Direction                    = Struct.Direction;
 
 ContrastReal = zeros(2, length(Struct.Energia));
 ContrastFFT = zeros(2, length(Struct.Energia));
-for i=1:length(Struct.Energia)
-    ContrastReal (1,i) = App.RealMinSlider.Value;
-    ContrastReal (2,i) = App.RealMaxSlider.Value;
-    ContrastFFT (1,i) = App.FFTMinSlider.Value;
-    ContrastFFT (2,i) = App.FFTMaxSlider.Value;
-end
+% for i=1:length(Struct.Energia)
+%     ContrastReal (1,i) = app.RealMinSlider.Value;
+%     ContrastReal (2,i) = app.RealMaxSlider.Value;
+%     ContrastFFT (1,i) = app.FFTMinSlider.Value;
+%     ContrastFFT (2,i) = app.FFTMaxSlider.Value;
+% end
 
-App.CallingApp.InfoStruct.ContrastReal                  = ContrastReal;
-App.CallingApp.InfoStruct.ContrastFFT                   = ContrastFFT;
+%Shouldn't use the value. It only applies to the current map and it's not
+%great for other maps of the same dataset. We should use the clamp values
+%instead
+% ContrastReal (1,:) = app.RealMinSlider.Value;
+% ContrastReal (2,:) = app.RealMaxSlider.Value;
+% ContrastFFT (1,:) = app.FFTMinSlider.Value;
+% ContrastFFT (2,:) = app.FFTMaxSlider.Value;
+
+ContrastReal (1,:) = app.RealMaxSlider.Limits(1);
+ContrastReal (2,:) = app.RealMaxSlider.Limits(2);
+ContrastFFT (1,:) = app.FFTMinSlider.Limits(1);
+ContrastFFT (2,:) = app.FFTMaxSlider.Limits(2);
+disp(ContrastReal(:,1))
+disp(ContrastFFT(:,1))
 
 
-App.CallingApp.MagneticFieldLabel.Visible = true;
-App.CallingApp.MagneticFieldValue.Visible = true;
-App.CallingApp.MagneticFieldValue.Text = [num2str(Struct.Campo), ' T'];
-App.CallingApp.TemperatureLabel.Visible = true;
-App.CallingApp.TemperatureValue.Visible = true;
-App.CallingApp.TemperatureValue.Text = [num2str(Struct.Temperatura), ' K'];
-App.CallingApp.CurrentblqLabel.Visible = true;
-App.CallingApp.CurrentblqName.Visible = true;
-App.CallingApp.CurrentblqName.Text = Struct.FileName;
+app.CallingApp.InfoStruct.ContrastReal                  = ContrastReal;
+app.CallingApp.InfoStruct.ContrastFFT                   = ContrastFFT;
+
+
+app.CallingApp.MagneticFieldLabel.Visible = true;
+app.CallingApp.MagneticFieldValue.Visible = true;
+app.CallingApp.MagneticFieldValue.Text = [num2str(Struct.Campo), ' T'];
+app.CallingApp.TemperatureLabel.Visible = true;
+app.CallingApp.TemperatureValue.Visible = true;
+app.CallingApp.TemperatureValue.Text = [num2str(Struct.Temperatura), ' K'];
+app.CallingApp.CurrentblqLabel.Visible = true;
+app.CallingApp.CurrentblqName.Visible = true;
+app.CallingApp.CurrentblqName.Text = Struct.FileName;
 
 msgbox('InfoStruct succesfully generated.','Well done','help')
 end
