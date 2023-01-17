@@ -88,7 +88,7 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
     % y en todo caso utilizarla luego.
         if Eleccion(1)
             for c = 2:ColumnasBLQ % En caso de que haya más cosas guardadas por ristra
-                [Data, readFlag,DataFormat] = readSet(FileID,  PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
+                [Data, readFlag,DataFormat,Factor] = readSet(FileID,  PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
 %                 fprintf('Factor: %g\n',Factor)
                 if readFlag && c==LeerColumna
                     ColIda = ColIda+1;
@@ -102,7 +102,8 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
                 end
             end
 %             for c = 2:ColumnasBLQ % En caso de que haya más cosas guardadas por ristra
-            [~, readFlag,DataFormat] = readSet(FileID,  PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
+            [~, readFlag,DataFormat,Factor] = readSet(FileID,  PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
+            disp(DataFormat)
 %             end
             if LeerColumna<ColumnasBLQ
                 for c=LeerColumna+1:ColumnasBLQ
@@ -136,7 +137,7 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
 %         end
 %         %Leemos la columnas que buscamos
 %         %-------------------------------------------------------------------------------------------
-%         [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat); % Esto lee la corriente y guardamos.
+%         [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat,Factor); % Esto lee la corriente y guardamos.
 %         NumeroCurvaG = NumeroCurva - initialPoint+1; % Este es el contador que determina si toca guardar esa ristra o no
 %         
 %         if LeerColumna<ColumnasBLQ
@@ -162,12 +163,12 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
 
         if mod(floor((NumeroCurvaG +1)/(2*Columnas)),2) == 0
             if mod(NumeroCurvaG +1,2) == 0 && Eleccion(1) == 1
-                [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat); % Esto lee la corriente y guardamos.
+                [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat,Factor); % Esto lee la corriente y guardamos.
                 ColIda = ColIda + 1;
                 %if ~readFlag IICeros = [IICeros ColIda]; end
                 IdaIda(:,ColIda) = Data;
             elseif mod(NumeroCurvaG+1,2) ~= 0 && Eleccion(2) == 1
-                [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat); % Esto lee la corriente y guardamos.
+                [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat,Factor); % Esto lee la corriente y guardamos.
                 ColIV = ColIV + 1;
                 %if ~readFlag IVCeros = [IVCeros ColIV]; end
                 IdaVuelta(:,ColIV) = Data;
@@ -177,12 +178,12 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
             
         else
             if mod(NumeroCurvaG+1,2) == 0 && Eleccion(3) == 1
-                [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat); % Esto lee la corriente y guardamos.
+                [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat,Factor); % Esto lee la corriente y guardamos.
                 ColVI = ColVI + 1;
                 %if ~readFlag VICeros = [VICeros ColVI]; end
                 VueltaIda(:,ColVI) = Data;
             elseif mod(NumeroCurvaG+1,2) ~= 0 && Eleccion(4) == 1
-                [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat); % Esto lee la corriente y guardamos.
+                [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat,Factor); % Esto lee la corriente y guardamos.
                 ColVV = ColVV + 1;
                 %if ~readFlag VVCeros = [VVCeros ColVV]; end
                 VueltaVuelta(:,ColVV) = Data;
