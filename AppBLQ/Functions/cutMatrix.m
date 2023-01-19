@@ -1,7 +1,7 @@
 function InfoCut = cutMatrix(Info)
     InfoCut = Info;
-    XLim = Info.XLim(:,1);
-    YLim = Info.YLim(:,1);
+    XLim = Info.XLimFFT;%(:,1);
+    YLim = Info.YLimFFT;%(:,1);
     
     [~,XInicio] = min(abs(Info.DistanciaFourierColumnas - (XLim(1))));
     [~,XFinal] = min(abs(Info.DistanciaFourierColumnas - (XLim(2))));
