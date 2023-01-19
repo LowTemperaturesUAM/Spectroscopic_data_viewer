@@ -1,7 +1,6 @@
-function [CellRotated] = RotateMatrix(Cell, Angle, Info)
+function [CellRotated] = RotateMatrix(Cell, Angle)
+[Filas,Columnas] = size(Cell);
 
-Columnas = length(Info.DistanciaFourierColumnas);
-Filas    = length(Info.DistanciaFourierFilas);
 
 CellRotated = Cell;
 
@@ -13,6 +12,5 @@ for k=1:length(Cell)
     MatrizRotadaZoom = TransformadasRotadaAUX(CentroY-Filas/2+1:CentroY+Filas/2,CentroX-Columnas/2+1:CentroX+Columnas/2);
         CellRotated{k} = MatrizRotadaZoom;
         
-        clear TransformadasRotadaAUX MatrizRotadaZoom ;
-        clear CentroX CentroY FilasMatrizRotada ColumnasMatrizRotada;
+       
 end
