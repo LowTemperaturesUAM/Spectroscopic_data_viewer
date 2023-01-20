@@ -196,39 +196,27 @@ end
         MatrizNormalizadaCortada = MatrizNormalizada;
         MatrizNormalizadaCortada(MatrizNormalizadaCortada < CorteInferiorInicial) = CorteInferiorInicial;
         MatrizNormalizadaCortada(MatrizNormalizadaCortada > CorteSuperiorInicial) = CorteSuperiorInicial;
-        for k = 1:length(Energia)
-            Indices{k} = find(Energia(k)- DeltaEnergia < Voltaje & Energia(k)+ DeltaEnergia > Voltaje);
-            MapasConductanciaAUX{k} = mean(MatrizNormalizadaCortada(Indices{k},:),1);
-            MapasConductancia{k} = reshape(MapasConductanciaAUX{k},[Columnas,Filas]);
-            MapasConductancia{k} = MapasConductancia{k}';
-%             if strcmp(choice_2,'Y') %Cambiamos los mapas para que esten orientados correctamente, pero no como asignamos las curvas
-%                 MapasConductancia{k} = imrotate(MapasConductancia{k},-90);
-%                 MapasConductancia{k} = fliplr(MapasConductancia{k} );
-%             end
-            Transformadas{k} = fft2d(MapasConductancia{k});
-    %         Transformadas{k} = Transformadas{k}/(TamanhoRealFilas*TamanhoRealColumnas); % Lo comento porque no entiendo nada
-        end
-        
-%         %Implementacion con arrayfun. Las pruebas con imagenes de 512pts y
-%         %curvas de 128pts no parecen tardar lo mismo en R2021b.
-%         % Como no aporta nada por ahora lo dejo comentado
-%         Indices =cellfun(@(E) find(E- DeltaEnergia < Voltaje & E+ DeltaEnergia > Voltaje),num2cell(Energia)', 'UniformOutput',0 );
-%         MapasConductanciaAUX =cellfun(@(x) mean(MatrizNormalizadaCortada(x,:),1), Indices,'UniformOutput',0);
-%         MapasConductancia =cellfun(@(x) reshape(x,[Columnas,Filas])',MapasConductanciaAUX, 'UniformOutput',0);
-%         Transformadas = cellfun(@fft2d, MapasConductancia, 'UniformOutput',0);
+
+        Indices =cellfun(@(E) find(E- DeltaEnergia < Voltaje & ...
+            E+ DeltaEnergia > Voltaje),num2cell(Energia)', 'UniformOutput',0 );
+        MapasConductanciaAUX =cellfun(@(x) mean(MatrizNormalizadaCortada(x,:),1), Indices,'UniformOutput',0);
+        MapasConductancia =cellfun(@(x) reshape(x,[Columnas,Filas]).',MapasConductanciaAUX, 'UniformOutput',0);
+        Transformadas = cellfun(@fft2d, MapasConductancia, 'UniformOutput',0);
+        Fase = cellfun(@fft2dphase, MapasConductancia, 'UniformOutput',0);
 
     else
         MatrizCorrienteCortada = MatrizCorriente;
         MatrizCorrienteCortada(MatrizCorrienteCortada < CorteInferiorInicial) = CorteInferiorInicial;
         MatrizCorrienteCortada(MatrizCorrienteCortada > CorteSuperiorInicial) = CorteSuperiorInicial;
         MatrizNormalizadaCortada = MatrizNormalizada;
-        for k = 1:length(Energia)
-            Indices{k} = find(Energia(k)- DeltaEnergia < Voltaje & Energia(k)+ DeltaEnergia > Voltaje);
-            MapasConductanciaAUX{k} = mean(MatrizCorrienteCortada(Indices{k},:),1);
-            MapasConductancia{k} = reshape(MapasConductanciaAUX{k},[Columnas,Filas]);
-            MapasConductancia{k} = MapasConductancia{k}';
-            Transformadas{k} = fft2d(MapasConductancia{k});
-        end
+
+        Indices =cellfun(@(E) find(E- DeltaEnergia < Voltaje & ...
+            E+ DeltaEnergia > Voltaje),num2cell(Energia)', 'UniformOutput',0 );
+        MapasConductanciaAUX =cellfun(@(x) mean(MatrizCorrienteCortada(x,:),1), Indices,'UniformOutput',0);
+        MapasConductancia =cellfun(@(x) reshape(x,[Columnas,Filas]).',MapasConductanciaAUX, 'UniformOutput',0);
+        Transformadas = cellfun(@fft2d, MapasConductancia, 'UniformOutput',0);
+        Fase = cellfun(@fft2dphase, MapasConductancia, 'UniformOutput',0);
+        
     end
 clear k Indices DeltaEnergia MapasConductanciaAUX;
 % ------------------------------------------------------------------------
@@ -255,6 +243,7 @@ clear k Indices DeltaEnergia MapasConductanciaAUX;
     Struct.MapasConductancia            = MapasConductancia;
     Struct.PuntosDerivada               = PuntosDerivada;
     Struct.kInicial                     = k;
+    Struct.Fase                         = Fase;
     Struct.Type = maptype;
     Struct.Direction = scandir;
 % ------------------------------------------------------------------------
