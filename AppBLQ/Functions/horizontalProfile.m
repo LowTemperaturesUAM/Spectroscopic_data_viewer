@@ -1,16 +1,11 @@
 function horizontalProfile(Info)
-%LineasPromedio = 3;
-% if rem(length(Info.DistanciaColumnas),2)
-%     LongitudPerfil = length(Info.DistanciaColumnas)+1; %Poner ese +1 sólo si se ha ajustado el (0,0) previamente en QPIStudy.m
-% else
-%     LongitudPerfil = length(Info.DistanciaColumnas);
-% end
+
 LongitudPerfil = length(Info.DistanciaFourierColumnas);
 Perfiles = zeros(length(Info.Energia),LongitudPerfil);
 %Perfiles2 = zeros(length(Energia),LongitudPerfil);
 
 for k=1:length(Info.Energia)
-    Perfiles(k,:) = Info.Transformadas{k}(length(Info.DistanciaColumnas)/2+1,:)';
+    Perfiles(k,:) = Info.Transformadas{k}(floor(LongitudPerfil/2)+1,:)';
     %Perfiles2(k,:) = TransformadasSimetrizadas{k}(:,1+Filas/2);
     %Perfiles(k,1:LongitudPerfil-1)= diff(Perfiles(k,:));
 end
