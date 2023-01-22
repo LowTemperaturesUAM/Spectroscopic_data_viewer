@@ -1,6 +1,7 @@
 function generateInfo(app, Struct)
 
 app.CallingApp.InfoStruct.Transformadas                = Struct.Transformadas;
+app.CallingApp.InfoStruct.Fase                         = Struct.Fase;
 app.CallingApp.InfoStruct.MapasConductancia            = Struct.MapasConductancia;
 app.CallingApp.InfoStruct.DistanciaFourierColumnas     = Struct.DistanciaFourierColumnas;
 app.CallingApp.InfoStruct.DistanciaFourierFilas        = Struct.DistanciaFourierFilas;
