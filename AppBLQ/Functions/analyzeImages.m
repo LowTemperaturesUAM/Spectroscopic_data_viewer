@@ -169,10 +169,6 @@ end
 %   Transformadas:      2D-FFT of the corresponding conductance map in the
 %                       corresponding conductance units.
 % ------------------------------------------------------------------------
-    Indices = cell(length(Energia),1);
-    MapasConductancia = cell(1,length(Energia));
-    MapasConductanciaAUX = cell(1,length(Energia));
-    Transformadas = cell(1,length(Energia));
     
     
     FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'a');
@@ -198,11 +194,11 @@ end
         MatrizNormalizadaCortada(MatrizNormalizadaCortada > CorteSuperiorInicial) = CorteSuperiorInicial;
 
         Indices =cellfun(@(E) find(E- DeltaEnergia < Voltaje & ...
-            E+ DeltaEnergia > Voltaje),num2cell(Energia)', 'UniformOutput',0 );
-        MapasConductanciaAUX =cellfun(@(x) mean(MatrizNormalizadaCortada(x,:),1), Indices,'UniformOutput',0);
-        MapasConductancia =cellfun(@(x) reshape(x,[Columnas,Filas]).',MapasConductanciaAUX, 'UniformOutput',0);
-        Transformadas = cellfun(@fft2d, MapasConductancia, 'UniformOutput',0);
-        Fase = cellfun(@fft2dphase, MapasConductancia, 'UniformOutput',0);
+            E+ DeltaEnergia > Voltaje),num2cell(Energia)', 'UniformOutput',false);
+        MapasConductanciaAUX =cellfun(@(x) mean(MatrizNormalizadaCortada(x,:),1), Indices,'UniformOutput',false);
+        MapasConductancia =cellfun(@(x) reshape(x,[Columnas,Filas]).',MapasConductanciaAUX, 'UniformOutput',false);
+        [Transformadas,Fase] = cellfun(@fft2d, MapasConductancia, 'UniformOutput',false);
+%         Fase = cellfun(@fft2dphase, MapasConductancia, 'UniformOutput',false);
 
     else
         MatrizCorrienteCortada = MatrizCorriente;
@@ -211,11 +207,11 @@ end
         MatrizNormalizadaCortada = MatrizNormalizada;
 
         Indices =cellfun(@(E) find(E- DeltaEnergia < Voltaje & ...
-            E+ DeltaEnergia > Voltaje),num2cell(Energia)', 'UniformOutput',0 );
-        MapasConductanciaAUX =cellfun(@(x) mean(MatrizCorrienteCortada(x,:),1), Indices,'UniformOutput',0);
-        MapasConductancia =cellfun(@(x) reshape(x,[Columnas,Filas]).',MapasConductanciaAUX, 'UniformOutput',0);
-        Transformadas = cellfun(@fft2d, MapasConductancia, 'UniformOutput',0);
-        Fase = cellfun(@fft2dphase, MapasConductancia, 'UniformOutput',0);
+            E+ DeltaEnergia > Voltaje),num2cell(Energia)', 'UniformOutput',false);
+        MapasConductanciaAUX =cellfun(@(x) mean(MatrizCorrienteCortada(x,:),1), Indices,'UniformOutput',false);
+        MapasConductancia =cellfun(@(x) reshape(x,[Columnas,Filas]).',MapasConductanciaAUX, 'UniformOutput',false);
+        [Transformadas,Fase] = cellfun(@fft2d, MapasConductancia, 'UniformOutput',false);
+%         Fase = cellfun(@fft2dphase, MapasConductancia, 'UniformOutput',false);
         
     end
 clear k Indices DeltaEnergia MapasConductanciaAUX;
