@@ -1,10 +1,20 @@
 function [CellWarped] = WarpMatrixv2(Cell,XShear,YShear,YXratio,Info)
-%We need to find out how to allow values for XYratio lower than 1
-Columnas = length(Info.DistanciaFourierColumnas)
-Filas    = length(Info.DistanciaFourierFilas)
+% This function applies an affine transformation to FFT maps in order to
+% correct image warping.
+% The function make slight adjustments to the input
+% parameters of the transformation to ensure that each dimension of the
+% maps keeps the same parity. If the original image is of size NxM,
+% the output of the transform of size PxQ will always satisfy
+% mod(N,2) = mod(P,2) and mod(M,2) == mod(Q,2).
+% The output images are then cut to the size of the input images, filling
+% the missing points with zeros, if necessary.
+
+
+Columnas = length(Info.DistanciaFourierColumnas);
+Filas    = length(Info.DistanciaFourierFilas);
 tform = affine2d([1,YShear,0;-XShear,YXratio,0;0,0,1]);
 %The first element is the equivalent parameter for XYratio but for the
-%x-axis. We keep it in one as we only want to change the relative size of
+%x-axis. We fix it as 1 as we only want to change the relative size of
 % one axis to the other
 
     CellWarpedAUX = cellfun(@(x) imwarp(x,tform),...
@@ -15,7 +25,7 @@ tform = affine2d([1,YShear,0;-XShear,YXratio,0;0,0,1]);
 %         CellWarpedAUX,UniformOutput = false);
 %     CentroX = cellfun(@(x) size(x,2),...
 %         CellWarpedAUX,UniformOutput = false);
-    [TestFilas, TestColumnas] = size(CellWarpedAUX{1})
+    [TestFilas, TestColumnas] = size(CellWarpedAUX{1});
     %Compare if both are even/odd of othewise.
     parityFilas = mod(TestFilas,2) - mod(Filas,2);
    
@@ -27,7 +37,7 @@ tform = affine2d([1,YShear,0;-XShear,YXratio,0;0,0,1]);
         CellWarpedAUX = cellfun(@(x) imwarp(x,tform),...
             Cell,UniformOutput = false);
         disp('New size:')
-        [TestFilas, TestColumnas] = size(CellWarpedAUX{1})
+        [TestFilas, TestColumnas] = size(CellWarpedAUX{1});
         %Sanity check
         assert((mod(TestFilas,2) - mod(Filas,2))==0)
 
@@ -39,7 +49,7 @@ tform = affine2d([1,YShear,0;-XShear,YXratio,0;0,0,1]);
         CellWarpedAUX = cellfun(@(x) imwarp(x,tform),...
             Cell,UniformOutput = false);
         disp('New size:')
-        [TestFilas, TestColumnas] = size(CellWarpedAUX{1})
+        [TestFilas, TestColumnas] = size(CellWarpedAUX{1});
         %Sanity check
         assert((mod(TestFilas,2) - mod(Filas,2))==0)
     end
@@ -55,7 +65,7 @@ tform = affine2d([1,YShear,0;-XShear,YXratio,0;0,0,1]);
         CellWarpedAUX = cellfun(@(x) imwarp(x,tform),...
             Cell,UniformOutput = false);
         disp('New size:')
-        [TestFilas, TestColumnas] = size(CellWarpedAUX{1})
+        [TestFilas, TestColumnas] = size(CellWarpedAUX{1});
         %Sanity check
         assert((mod(TestFilas,2) - mod(Filas,2))==0)
 
@@ -67,7 +77,7 @@ tform = affine2d([1,YShear,0;-XShear,YXratio,0;0,0,1]);
         CellWarpedAUX = cellfun(@(x) imwarp(x,tform),...
             Cell,UniformOutput = false);
         disp('New size:')
-        [TestFilas, TestColumnas] = size(CellWarpedAUX{1})
+        [TestFilas, TestColumnas] = size(CellWarpedAUX{1});
         %Sanity check
         assert((mod(TestFilas,2) - mod(Filas,2))==0)
     end
@@ -97,7 +107,6 @@ tform = affine2d([1,YShear,0;-XShear,YXratio,0;0,0,1]);
 
     end
     
-    clear CellWarpedAUX CellWarpedZoom ;
-    clear CentroX CentroY FilasCellWarped ColumnasCellWarped;
+    clear CellWarpedAUX CentroX CentroY NewFilas NewColumnas
     
 end
