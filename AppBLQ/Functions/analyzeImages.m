@@ -16,7 +16,7 @@ FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'a')
         fprintf(FileID, 'Normalize max         : %g mV\r\n', Struct.VoltajeNormalizacionSuperior); 
         fclose(FileID);
 
-[datosIniciales,scandir, maptype] = customCurvesv4(Struct.SaveFolder, Struct.FileName, Struct);
+[datosIniciales, scandir, maptype, mapmethod] = customCurvesv5(Struct.SaveFolder, Struct.FileName, Struct);
 if isequal(datosIniciales,0)
     Struct = 0;
     return
@@ -192,9 +192,14 @@ end
         MatrizNormalizadaCortada = MatrizNormalizada;
         MatrizNormalizadaCortada(MatrizNormalizadaCortada < CorteInferiorInicial) = CorteInferiorInicial;
         MatrizNormalizadaCortada(MatrizNormalizadaCortada > CorteSuperiorInicial) = CorteSuperiorInicial;
-
-        MapasConductancia = GetMapsMeanWindow(Voltaje,...
-            MatrizNormalizadaCortada,Energia,DeltaEnergia,Filas,Columnas);
+        switch mapmethod
+            case 'mean'
+                MapasConductancia = GetMapsMeanWindow(Voltaje,...
+                    MatrizNormalizadaCortada,Energia,DeltaEnergia,Filas,Columnas);
+            case {'nearest','linear','makima'}
+                MapasConductancia = GetMapsInterpolate(Voltaje,...
+                    MatrizNormalizadaCortada,Energia,Filas,Columnas,mapmethod);
+        end
 %         Indices =cellfun(@(E) find(E- DeltaEnergia < Voltaje & ...
 %             E+ DeltaEnergia > Voltaje),num2cell(Energia)', 'UniformOutput',false);
 %         MapasConductanciaAUX =cellfun(@(x) mean(MatrizNormalizadaCortada(x,:),1), Indices,'UniformOutput',false);
@@ -210,6 +215,14 @@ end
 
         MapasConductancia = GetMapsMeanWindow(Voltaje,...
             MatrizCorrienteCortada,Energia,DeltaEnergia,Filas,Columnas);
+        switch mapmethod
+            case 'mean'
+                MapasConductancia = GetMapsMeanWindow(Voltaje,...
+                    MatrizCorrienteCortada,Energia,DeltaEnergia,Filas,Columnas);
+            case {'nearest','linear','makima'}
+                MapasConductancia = GetMapsInterpolate(Voltaje,...
+                    MatrizCorrienteCortada,Energia,Filas,Columnas,mapmethod);
+        end
 %         Indices =cellfun(@(E) find(E- DeltaEnergia < Voltaje & ...
 %             E+ DeltaEnergia > Voltaje),num2cell(Energia)', 'UniformOutput',false);
 %         MapasConductanciaAUX =cellfun(@(x) mean(MatrizCorrienteCortada(x,:),1), Indices,'UniformOutput',false);
