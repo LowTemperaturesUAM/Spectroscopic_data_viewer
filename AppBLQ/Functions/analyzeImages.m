@@ -151,13 +151,16 @@ toc
 % ------------------------------------------------------------------------
 % Warning for empty matrices
 % ------------------------------------------------------------------------
-if abs(Voltaje(2) - Voltaje(1)) > 2*DeltaEnergia
-    fprintf('AVISO: El paso de voltaje es MAYOR que el intervalo seleccionado. Es posible que aparezcan MATRICES en BLANCO.\n');
-elseif abs(Voltaje(2) - Voltaje(1)) < 2*DeltaEnergia
-    fprintf('El paso de voltaje es menor que el intervalo seleccionado.\n');
-else
-    fprintf('El paso de voltaje es justamente el intervalo seleccionado.\n');
-end
+       switch mapmethod
+           case 'mean'
+               if abs(Voltaje(2) - Voltaje(1)) > 2*DeltaEnergia
+                   fprintf('AVISO: El paso de voltaje es MAYOR que el intervalo seleccionado. Es posible que aparezcan MATRICES en BLANCO.\n');
+               elseif abs(Voltaje(2) - Voltaje(1)) < 2*DeltaEnergia
+                   fprintf('El paso de voltaje es menor que el intervalo seleccionado.\n');
+               else
+                   fprintf('El paso de voltaje es justamente el intervalo seleccionado.\n');
+               end
+       end
 % ------------------------------------------------------------------------
 % Arrays to use in this part
 % ------------------------------------------------------------------------

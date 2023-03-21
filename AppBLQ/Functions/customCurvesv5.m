@@ -98,9 +98,13 @@ editDeltaEnergia = uieditfield(f,'numeric','Position',[rpos-130 toprow-6*hrow 90
     HorizontalAlignment='center',ValueDisplayFormat='%11.4g mV');
 uilabel(f,'Position',[40 toprow-6*hrow 120 20],...
     'Text', 'ΔE:');
-%Si existe coge el valor del archivo
+% Si existe coge el valor del archivo, si no, utiliza la mitad del espaciado
+% entre puntos
 if existeIni
     editDeltaEnergia.Value = (remember(5));
+else
+    editDeltaEnergia.Value = round(0.5*abs(max(Struct.Voltaje) - min(Struct.Voltaje))...
+        /numel(Struct.Voltaje),3);
 end    
 
 % Interpolation Method
@@ -171,7 +175,11 @@ writematrix([editCorteInferior.Value; editCorteSuperior.Value;...
         fprintf(FileID, 'Dibuja de             : %g mV\r\n',editEnergiaMin.Value);
         fprintf(FileID, ' a                    : %g mV\r\n',editEnergiaMax.Value);
         fprintf(FileID, 'con pasos de          : %g mV\r\n',editPasoMapas.Value);
-        fprintf(FileID, 'Delta de Energia      : %g mV\r\n',editDeltaEnergia.Value );
+        switch mapmethod
+            case 'mean'
+                fprintf(FileID, 'Delta de Energia      : %g mV\r\n',editDeltaEnergia.Value );
+        end
+        fprintf(FileID, 'Metodo de interpolado : %s mV\r\n',mapmethod);
  fclose(FileID);
  close(f);
  clear fileIni
@@ -183,10 +191,8 @@ function  changeMethod(methodsel,editDeltaEnergia)
     method = methodsel.Value;
     switch method
         case 'mean'
-%             fprintf('Mean Enabled\n')
             editDeltaEnergia.Enable = true;
         otherwise
-%             fprintf('Mean disabled\n')
             editDeltaEnergia.Enable = false;
     end
 end
