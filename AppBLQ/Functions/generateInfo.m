@@ -26,6 +26,9 @@ app.CallingApp.InfoStruct.XLimFFT                      = [Struct.DistanciaFourie
 app.CallingApp.InfoStruct.YLimFFT                      = [Struct.DistanciaFourierFilas(1) Struct.DistanciaFourierFilas(end)];
 app.CallingApp.InfoStruct.Type                         = Struct.Type;
 app.CallingApp.InfoStruct.Direction                    = Struct.Direction;
+if isfield(Struct,'Topo')
+    app.CallingApp.InfoStruct.Topo                     = Struct.Topo;
+end
 
 ContrastReal = zeros(2, length(Struct.Energia));
 ContrastFFT = zeros(2, length(Struct.Energia));

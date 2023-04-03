@@ -11,11 +11,11 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
     
     [FileNameTopo, FilePathTopo] = uigetfile({'*.stp;*.img','Image Files (*.stp,*.img)';'*.stp','WSxM Images';'*.img','IMG files';'*.*','All Files'},'Load topography');
 
-    [Struct,TopoLineas] = ReadTopo(FileNameTopo,FilePathTopo,Struct);
+    [Struct,TopoLineas,Topo] = ReadTopoV2(FileNameTopo,FilePathTopo,Struct);
 
 	[SaveFolder] = uigetdir(FilePath,'Save Files of Analysis');
         Struct.SaveFolder = SaveFolder;
-   
+
 	[Campo, Temperatura, TamanhoRealFilas, TamanhoRealColumnas, ParametroRedFilas,...
         ParametroRedColumnas, Filas, Columnas,eleccionMatrices,LeerColumna] = generalData3(TopoLineas, Struct);
 
@@ -27,6 +27,9 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
         Struct.ParametroRedColumnas = ParametroRedColumnas;
         Struct.Filas                = Filas;
         Struct.Columnas             = Columnas;
+        if ~isempty(Topo) %If we loaded the topography, we save it to the struct
+            Struct.Topo             = Topo;
+        end
         
     if Filas ~= Columnas
         msgbox('Numbers of rows and columns are not the same','Be careful...','warn')
@@ -59,8 +62,8 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
             VueltaVuelta = VueltaVuelta*1e9;
         end
 
-        display('Matrices: IdaIda IdaVuelta VueltaIda VueltaVuelta');
-        display(['Cargadas:    ', num2str(eleccionMatrices(1)),...
+        disp('Matrices: IdaIda IdaVuelta VueltaIda VueltaVuelta');
+        disp(['Cargadas:    ', num2str(eleccionMatrices(1)),...
                        '       ', num2str(eleccionMatrices(2)),...
                      '         ', num2str(eleccionMatrices(3)),...
                     '          ', num2str(eleccionMatrices(4))]);
