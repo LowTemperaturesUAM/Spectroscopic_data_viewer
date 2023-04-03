@@ -146,6 +146,7 @@ if ~ishghandle(f)
     datosIniciales = 0;
     direction = 0;
     maptype = 0;
+    mapmethod = 0;
     return
 else
 
