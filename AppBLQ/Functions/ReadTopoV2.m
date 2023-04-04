@@ -31,8 +31,6 @@ else
         disp('Img file loaded')
         Struct.FileNameTopo = Name;
         Struct.FilePathTopo = Path;
-%         TopoProperties      = dir([Path Name]);
-%         TopoLineas          = sqrt((TopoProperties.bytes - 1032)/4);
         FileIMG=fopen([Path Name],'r');
         % identifier and version
         fread(FileIMG,2,'int32');
@@ -55,7 +53,6 @@ else
         % Comment
         fread(FileIMG,512,'char*1');
 
-        disp(readall)
         if readall
             Matrix = fread(FileIMG,Msize.','single')*1e9;
             Matrix = rot90(Matrix,-1);
