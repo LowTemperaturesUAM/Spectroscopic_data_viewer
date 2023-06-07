@@ -1,5 +1,7 @@
 % Módulo de la transformada de Fourier 2D
 % Nota para mejor comprensión: RSI = Real Space Image
+% Para obtener las unidades "verdaderas" del modulo de la FFT es necesario
+% dividir por el numero de puntos de la RSI.
 
 function [MODULE,PHASE] = fft2d(RSI)% La entrada es una matriz con la imagen en el espacio real
 
