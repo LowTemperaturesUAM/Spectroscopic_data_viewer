@@ -7,6 +7,10 @@ Info.MapasConductancia = cellfun(@(x) x(y1:y2,x1:x2),...
     Info.MapasConductancia,UniformOutput=false);
 Info.Transformadas = cellfun(@(x) fft2d(x),...
     Info.MapasConductancia,UniformOutput=false);
+%Cut the topography as well if it's present
+if isfield(Info,'Topo')
+    Info.Topo  = Info.Topo(y1:y2,x1:x2);
+end
 %Obtain the size from the cut down maps
 [Filas,Columnas] = size(Info.MapasConductancia{1});
 
