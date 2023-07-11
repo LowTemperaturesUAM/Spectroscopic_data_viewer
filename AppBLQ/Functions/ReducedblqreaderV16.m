@@ -44,6 +44,7 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
     fseek(FileID,8,'cof');
     Control = fread (FileID, 32,'uchar'); % Contiene el nombre del fichero, cuando no está, está vacío
     if isempty(Control) % Cuando los 32 bits de Control están vacíos (no hay más datos) deja de leer.
+        fprintf('Last curve available: %i\n',NumeroCurva)
         break; 
     end
     TamanoDatos = fread (FileID, 2, 'int32'); 
@@ -51,7 +52,6 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
         ColumnasBLQ = TamanoDatos(1); % Ristras guardadas en cada IV: En principio sólo hay V e I pero puede haber más casillas marcadas en el Liner.exe
     %Saltamos el resto de la cabecera porque no nos interesa
     fseek(FileID,352,'cof');
-    
 % -------------------------------------------------------------------------
     % Ahora queremos definir el vector Voltaje.
     
@@ -59,7 +59,7 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
        bstart=ftell(FileID); %bytes antes de leer el voltaje
        [Data] = readSet(FileID,PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
        bend=ftell(FileID); %bytes despues de leer el voltaje
-       bskip=bend-bstart;
+       bskip(1)=bend-bstart;
        Voltaje      = zeros(PuntosIV,1); % Defino el vector vacío voltaje
             if Eleccion(1)
                 IdaIda       = zeros(PuntosIV,Filas*Columnas);
@@ -88,7 +88,13 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
     % y en todo caso utilizarla luego.
         if Eleccion(1)
             for c = 2:ColumnasBLQ % En caso de que haya más cosas guardadas por ristra
+                bstart2=ftell(FileID);
                 [Data, readFlag,DataFormat,Factor] = readSet(FileID,  PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
+                bend2=ftell(FileID);
+                %el tamaño en bytes del eje y no tiene por qué ser el mismo
+                %que el de voltaje. Asumimos por ahora que todas las
+                %columnas posteriores son iguales.
+                bskip(2)=bend2-bstart2;
 %                 fprintf('Factor: %g\n',Factor)
                 if readFlag && c==LeerColumna
                     ColIda = ColIda+1;
@@ -98,15 +104,18 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
         else
             if LeerColumna > 2
                 for c=2:LeerColumna-1
-                    fseek(FileID,bskip,'cof');
+                    fseek(FileID,bskip(2),'cof');
                 end
             end
 %             for c = 2:ColumnasBLQ % En caso de que haya más cosas guardadas por ristra
+            bstart2=ftell(FileID);
             [~, readFlag,DataFormat,Factor] = readSet(FileID,  PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
 %             end
+            bend2=ftell(FileID);
+            bskip(2)=bend2-bstart2;
             if LeerColumna<ColumnasBLQ
                 for c=LeerColumna+1:ColumnasBLQ
-                    fseek(FileID,bskip,'cof');
+                    fseek(FileID,bskip(2),'cof');
                 end
             end
         end
@@ -126,7 +135,7 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
     % guardamos en las matrices de salida.
     else
         %Como ya sabemos el numero de bytes(lo podemos calcular en la primera curva), podemos utilizar fseek para saltarlo
-        fseek(FileID,bskip,'cof');
+        fseek(FileID,bskip(1),'cof');
 %         for c = 2:ColumnasBLQ
         % Saltamos las columnas hasta la que buscamos
 %         if LeerColumna > 2
@@ -144,22 +153,14 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
 %                 fseek(FileID,bskip,'cof');
 %             end
 %         end
-        % [~, ~] = readSet(FileID, PuntosIV); Si hay mas de dos
-        % columnas, hay que meter tantos readSet como columnas haya
-        % demas. Hay que tener cuidado donde se guarda la corriente. Por
-        % ejemplo, si el blq guarda: Voltaje, Corriente, Z, al final de
-        % este for, hay que poner un readSet. Si fuese Voltaje, Z y
-        % Corriente, habrá que poner el readSet antes de que guarde los
-        % datos de corriente.
 
         NumeroCurvaG = NumeroCurva - initialPoint+1; % Este es el contador que determina si toca guardar esa ristra o no
 %         if LeerColumna > 2
 %             for c=2:LeerColumna-1
 %                 fseek(FileID,bskip,'cof');
 %             end
-        fseek(FileID,bskip*(LeerColumna-2),'cof');
+        fseek(FileID,bskip(2)*(LeerColumna-2),'cof');
 %         end
-
         if mod(floor((NumeroCurvaG +1)/(2*Columnas)),2) == 0
             if mod(NumeroCurvaG +1,2) == 0 && Eleccion(1) == 1
                 [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat,Factor); % Esto lee la corriente y guardamos.
@@ -172,7 +173,7 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
                 %if ~readFlag IVCeros = [IVCeros ColIV]; end
                 IdaVuelta(:,ColIV) = Data;
             else
-                fseek(FileID,bskip,'cof');
+                fseek(FileID,bskip(2),'cof');
             end
             
         else
@@ -187,25 +188,16 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
                 %if ~readFlag VVCeros = [VVCeros ColVV]; end
                 VueltaVuelta(:,ColVV) = Data;
             else
-                fseek(FileID,bskip,'cof');
+                fseek(FileID,bskip(2),'cof');
             end
         end
-
 %         if LeerColumna<ColumnasBLQ
 %             for c=LeerColumna+1:ColumnasBLQ
 %                 fseek(FileID,bskip,'cof');
 %             end
-          fseek(FileID,bskip*(ColumnasBLQ-LeerColumna),'cof');
+          fseek(FileID,bskip(2)*(ColumnasBLQ-LeerColumna),'cof');
 %         end
 
-
-        %Sabiendo que la estructura ida/vuelta se repite, podriamos
-        %evitarnos estos calculos y directamente saltar las curvas que
-        %no queramos.
-        %-------------------------------------------------------------------------------------------
-        %            [~, ~] = readSet(FileID, PuntosIV); % Dr Fran: Esto lee la tercera columna y sudamos de ella.
-        %-------------------------------------------------------------------------------------------
-        %         end
     end
 end
 
