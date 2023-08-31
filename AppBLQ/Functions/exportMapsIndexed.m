@@ -28,7 +28,7 @@ end
 %   exportMapsIndexed(InfoStruct.Transformadas,InfoStruct.Energia,...
 %       InfoStruct.ContrastReal,InfoStruct.Colormap,uigetdir)
 
-for k = 1:length(Cell)
+for k = 1:length(Energy)
     % Convert to grayscale in the desired contrast range
     % We also need to flip vertically to be consistent with the graphs
     Cspan = size(Colormap,1)-1;
