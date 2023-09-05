@@ -8,6 +8,7 @@ function profileReal(ax, Struct, k)
 
 % Filas = Struct.Filas;
 % Columnas = Struct.Columnas;
+Energia = Struct.Energia(k);
 Voltaje = Struct.Voltaje;
 MapasConductancia = Struct.MapasConductancia;
 DistanciaFilas = Struct.DistanciaFilas;
@@ -34,7 +35,7 @@ else
 %     [DistanciaPerfil,PerfilActual, CurvasPerfil] = perfilIVPA_v2(MapasConductancia{k}, Voltaje,MatrizNormalizada, DistanciaColumnas, DistanciaFilas,XinicioFinal,YinicioFinal);
     [DistanciaPerfil,PerfilActual, ~] = perfilIVPA_v3(MapasConductancia{k}, Voltaje,MatrizNormalizada, DistanciaColumnas, DistanciaFilas,XinicioFinal,YinicioFinal,ax.Colormap);
     
-    %   REPRESENTACION PERFIL
+    %   REPRESENTACION PERFIL A LA ENERGIA SELECCIONADA
     % ----------------------------
     if isfield(Struct,'Type')
         switch Struct.Type
@@ -47,7 +48,7 @@ else
                 plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
                 scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
                     'Parent',EjePerfil);
-                ylabel(EjePerfil,'Normalized conductance (0 mV)','FontSize',16);
+                ylabel(EjePerfil,['Normalized conductance (',num2str(Energia),' mV)'],'FontSize',16);
                 xlabel(EjePerfil,'Distance (nm)','FontSize',16);
                 box on;
                 a=gca;
@@ -66,7 +67,8 @@ else
                 plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
                 scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
                     'Parent',EjePerfil);
-                ylabel(EjePerfil,'Zero Bias Current','FontSize',16);
+                %ylabel(EjePerfil,'Zero Bias Current','FontSize',16);
+                ylabel(EjePerfil,['Current (',num2str(Energia),' mV)'],'FontSize',16);
                 xlabel(EjePerfil,'Distance (nm)','FontSize',16);
                 box on;
                 a=gca;
@@ -86,7 +88,7 @@ else
         plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
         scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
             'Parent',EjePerfil);
-        ylabel(EjePerfil,'Normalized conductance (0 mV)','FontSize',16);
+        ylabel(EjePerfil,'Normalized conductance ',num2str(Energia),' mV)','FontSize',16);
         xlabel(EjePerfil,'Distance (nm)','FontSize',16);
         box on;
         a=gca;

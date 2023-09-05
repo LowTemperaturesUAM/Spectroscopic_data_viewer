@@ -57,7 +57,7 @@ function [Distancia, Perfil, MatrizSurf] = perfilIVPA_v3(ConductanceMap,Voltaje,
 % número de puntos que decidimos tomar en el perfil. En este caso, tantos
 % como el eje que varía más.
 
-nPuntosPerfil = max([abs(PixelXinicioFinal(2) - PixelXinicioFinal(1)), abs(PixelYinicioFinal(2) - PixelYinicioFinal(1))])
+nPuntosPerfil = max([abs(PixelXinicioFinal(2) - PixelXinicioFinal(1)), abs(PixelYinicioFinal(2) - PixelYinicioFinal(1))])+1;
  abs(PixelXinicioFinal(2) - PixelXinicioFinal(1))
  abs(PixelYinicioFinal(2) - PixelYinicioFinal(1))
 % Hago el perfil y me da valores en el mapa usando improfile. Devuelve las
