@@ -50,8 +50,7 @@ b.TickDir = 'out';
 b.CLim = Info.ContrastFFT(:,(end+1)/2);  %Usamos el contraste a 0 mV para empezar
 %colormap gray
 
-% Renombro eje X para que vaya desde -1 a 1 [-pi/a,pi/a];
-b.Children.XData = b.Children.XData./max(b.XLim); 
+% (Primera zona) Restringe eje X para que vaya desde -1 a 1 [-pi/a,pi/a]; 
 b.XLim = [-1 1];
 
 QPI.Vertical.Map = Perfiles;
