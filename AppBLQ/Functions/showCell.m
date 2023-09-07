@@ -113,7 +113,7 @@ switch Axes.Tag
     App.MaxEditField.Value = App.MaxSlider.Value;
     App.Axes.CLim = [App.MinSlider.Value, App.MaxSlider.Value];
 %     clear TransformadasAUX
-    case 'DiffAxes'
+    case 'DiffAxes' % Used in EnergySymmetry
         DistanciaFilas = Info.DistanciaFilas;
         DistanciaColumnas = Info.DistanciaColumnas;
 
@@ -137,8 +137,15 @@ switch Axes.Tag
         Axes.Colormap = previousColormap;
         Axes.DataAspectRatio = [1,1,1];
 
-        values = chooseContrast(Info.ContrastRestasReal(:,k),...
+        switch App.OperationButton
+            case 1  % Difference
+                values = chooseContrast(Info.ContrastRestasReal(:,k),...
             -App.LimitsSlider.Limits(2),App.LimitsSlider.Limits(2));
+            case 2  % Division
+                values = chooseContrast(Info.ContrastDivisionReal(:,k),...
+            -App.LimitsSlider.Limits(2),App.LimitsSlider.Limits(2));
+        end
+
         % I choose second value because it is positive
         App.LimitsSlider.Value = values(2);
         App.LimitsEditField.Value = values(2);
