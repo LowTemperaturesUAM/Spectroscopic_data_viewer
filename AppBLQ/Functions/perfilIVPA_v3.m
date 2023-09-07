@@ -27,8 +27,8 @@ function [Distancia, Perfil, MatrizSurf] = perfilIVPA_v3(ConductanceMap,Voltaje,
 
 
 [IV, ~] = size(NormMatrizDatos);
-    Filas       = length(VectorTamanhoY);
-    Columnas    = length(VectorTamanhoX);
+Filas       = length(VectorTamanhoY);
+Columnas    = length(VectorTamanhoX);
 
 
 % Dado que la imagen tiene en x e y la distancia como parámetro (y no los
@@ -44,35 +44,37 @@ function [Distancia, Perfil, MatrizSurf] = perfilIVPA_v3(ConductanceMap,Voltaje,
 
 % Paso las input a pixeles para elegir el numero de puntos e el perfil
  
-	PixelXinicioFinal = zeros(length(XinicioFinal),1);
-    PixelYinicioFinal = zeros(length(YinicioFinal),1);
- 
-    for i = 1:length(XinicioFinal)
-        [~, PixelXinicioFinal(i)] = min(abs(XinicioFinal(i)-VectorTamanhoX));
-        [~, PixelYinicioFinal(i)] = min(abs(YinicioFinal(i)-VectorTamanhoY));
-    end
+PixelXinicioFinal = zeros(length(XinicioFinal),1);
+PixelYinicioFinal = zeros(length(YinicioFinal),1);
+
+for i = 1:length(XinicioFinal)
+    [~, PixelXinicioFinal(i)] = min(abs(XinicioFinal(i)-VectorTamanhoX));
+    [~, PixelYinicioFinal(i)] = min(abs(YinicioFinal(i)-VectorTamanhoY));
+end
 
 % El numero de puntos sera el mayor numero entre los pixeles de X e Y.
 % (Elección arbitraria en esta función). nPuntosPerfil es un escalar con el
 % número de puntos que decidimos tomar en el perfil. En este caso, tantos
 % como el eje que varía más.
 
-nPuntosPerfil = max([abs(PixelXinicioFinal(2) - PixelXinicioFinal(1)), abs(PixelYinicioFinal(2) - PixelYinicioFinal(1))])+1;
- abs(PixelXinicioFinal(2) - PixelXinicioFinal(1))
- abs(PixelYinicioFinal(2) - PixelYinicioFinal(1))
+nPuntosPerfil = max([abs(PixelXinicioFinal(2) - PixelXinicioFinal(1)),...
+    abs(PixelYinicioFinal(2) - PixelYinicioFinal(1))])+1;
+abs(PixelXinicioFinal(2) - PixelXinicioFinal(1))
+abs(PixelYinicioFinal(2) - PixelYinicioFinal(1))
 % Hago el perfil y me da valores en el mapa usando improfile. Devuelve las
 % coordenadas que al venir de la imagen, están en unidades de distancia. y
 % hay que pasarlas de nuevo a píxeles
 
-    [CoordenadasX,CoordenadasY,~] = improfile(ConductanceMap,XinicioFinal, YinicioFinal,nPuntosPerfil);
+[CoordenadasX,CoordenadasY,~] = improfile(ConductanceMap,XinicioFinal,...
+    YinicioFinal,nPuntosPerfil,'bilinear');
 
-    PixelX = zeros(length(CoordenadasX),1);
-    PixelY = zeros(length(CoordenadasY),1);
+PixelX = zeros(length(CoordenadasX),1);
+PixelY = zeros(length(CoordenadasY),1);
 
-    for i =1:length(CoordenadasX)
-        [~, PixelX(i)] = min(abs(CoordenadasX(i)-VectorTamanhoX));
-        [~, PixelY(i)] = min(abs(CoordenadasY(i)-VectorTamanhoY));
-    end
+for i =1:length(CoordenadasX)
+    [~, PixelX(i)] = min(abs(CoordenadasX(i)-VectorTamanhoX));
+    [~, PixelY(i)] = min(abs(CoordenadasY(i)-VectorTamanhoY));
+end
 
 % Aquí se pinta sobre la imagen del Gui los puntos correspondientes al
 % perfil con un scatter.
@@ -132,11 +134,11 @@ MatrizSurf = zeros(IV,length(PixelX));
 
 IndiceCurva = zeros(length(PixelX),1);
     
-    for contador = 1:length(PixelX)
-        IndiceCurva(contador) = (PixelY(contador)-1)*Columnas + PixelX(contador);
+for contador = 1:length(PixelX)
+    IndiceCurva(contador) = (PixelY(contador)-1)*Columnas + PixelX(contador);
 %         MatrizSurf(:,contador)= smooth(NormMatrizDatos(:,IndiceCurva(contador)));
-        MatrizSurf(:,contador)= NormMatrizDatos(:,IndiceCurva(contador));
-    end
+    MatrizSurf(:,contador)= NormMatrizDatos(:,IndiceCurva(contador));
+end
 %      (MatrizSurf)
  
 % Para la visualización de las curvas se puede usar un surf. Quizá fuera
