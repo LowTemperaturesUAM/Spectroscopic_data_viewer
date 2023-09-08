@@ -43,12 +43,18 @@ Info.Division = Division;
 Info.DivisionFFT = cellfun(@fft2d,Info.Division, 'UniformOutput', false);
 
 % Obtain default contrast values for Difference maps
-value = app.LimitsSlider.Value;
-Info.ContrastRestasReal = [-value; value] .* ones(2,numdifs);
+editField = findobj(app.EnergySymmetryUIFigure,...
+    'Type', 'uiNumericEditField', 'Tag', 'Symmetry');
+% Order by Values so first element is Min and 2nd is Max.
+[~,idx] = sort([editField.Value],'ascend');
+editField = editField(idx);
+
+value = [editField.Value]';
+Info.ContrastRestasReal = value .* ones(2,numdifs);
 
 % Obtain default contrast values for Division maps
-value = app.LimitsSlider.Value;
-Info.ContrastDivisionReal = [-value; value] .* ones(2,numdifs);
+%value = app.LimitsSlider.Value;
+Info.ContrastDivisionReal = value .* ones(2,numdifs);
 
 % Delete center peak of FFT.
 [Filas, Columnas] = size(Info.RestasFFT{1});
