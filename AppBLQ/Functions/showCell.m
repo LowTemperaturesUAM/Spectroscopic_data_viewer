@@ -116,6 +116,16 @@ switch Axes.Tag
     case 'DiffAxes' % Used in EnergySymmetry
         DistanciaFilas = Info.DistanciaFilas;
         DistanciaColumnas = Info.DistanciaColumnas;
+        % Search for sliders of this object
+        Slider = findobj(App.EnergySymmetryUIFigure,...
+            'Type', 'uiSlider', 'Tag', 'Symmetry');
+        editField = findobj(App.EnergySymmetryUIFigure,...
+            'Type', 'uiNumericEditField', 'Tag', 'Symmetry');
+        % Order by Values so first element is Min and 2nd is Max.
+        [~,idx] = sort([Slider.Value],'ascend');
+        Slider = Slider(idx);
+        [~,idx] = sort([editField.Value],'ascend');
+        editField = editField(idx);
 
         % Defines axis limits in case they are not in InfoStruct
         % DETECT THE AXES AND SELECT LIMITS
@@ -140,15 +150,17 @@ switch Axes.Tag
         switch App.OperationButton
             case 1  % Difference
                 values = chooseContrast(Info.ContrastRestasReal(:,k),...
-            -App.LimitsSlider.Limits(2),App.LimitsSlider.Limits(2));
+                    Slider(1).Limits(1),Slider(2).Limits(2));
             case 2  % Division
                 values = chooseContrast(Info.ContrastDivisionReal(:,k),...
-            -App.LimitsSlider.Limits(2),App.LimitsSlider.Limits(2));
+                    Slider(1).Limits(1),Slider(2).Limits(2));
         end
 
-        % I choose second value because it is positive
-        App.LimitsSlider.Value = values(2);
-        App.LimitsEditField.Value = values(2);
+        % Place these values in Slider and EditFields
+        Slider(1).Value = values(1);
+        Slider(2).Value = values(2);
+        editField(1).Value = values(1);
+        editField(2).Value = values(2);
         Axes.CLim = values;
 
 end
