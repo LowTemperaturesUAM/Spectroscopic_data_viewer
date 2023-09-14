@@ -64,16 +64,17 @@ savefields = {'FileName','Campo',...
               'Temperatura','Filas',...
               'Columnas','IV'};
 allfields = fieldnames(FullStruct);
-if all(isfield(FullStruct,savefields))
-    %Remove all fields but the ones we want to save
-    Struct = rmfield(FullStruct,allfields(~ismember(allfields,savefields)));
-    %save([SaveFolder filesep 'infostruct.mat'], 'InfoStruct','Struct');
-    save([SaveFolder StructName], 'InfoStruct','Struct');
-    msgbox('InfoStruct succesfully saved with info.','You are amazing','help')
-else
-    %save([SaveFolder filesep 'infostruct.mat'], 'InfoStruct');
-    save([SaveFolder StructName], 'InfoStruct');
-    msgbox('InfoStruct succesfully saved.','You are amazing','help')
+if ~isequal(StructName,0)
+    if all(isfield(FullStruct,savefields))
+        %Remove all fields but the ones we want to save
+        Struct = rmfield(FullStruct,allfields(~ismember(allfields,savefields)));
+        %save([SaveFolder filesep 'infostruct.mat'], 'InfoStruct','Struct');
+        save([SaveFolder StructName], 'InfoStruct','Struct');
+        msgbox('InfoStruct succesfully saved with info.','You are amazing','help')
+    else
+        %save([SaveFolder filesep 'infostruct.mat'], 'InfoStruct');
+        save([SaveFolder StructName], 'InfoStruct');
+        msgbox('InfoStruct succesfully saved.','You are amazing','help')
+    end
 end
-
 end
