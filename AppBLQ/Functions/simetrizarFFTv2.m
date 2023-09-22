@@ -63,11 +63,11 @@ switch Type
         
     case {'C6','C6h'}
         M1 = cellfun(@(x) 0.5*(x+flipud(x)),Maps,UniformOutput=false);
-        M2 = cellfun(@(x) imrotate(x,120,"crop"),M1,UniformOutput=false);
-        M3 = cellfun(@(x) imrotate(x,240,"crop"),M1,UniformOutput=false);
-        M4 = cellfun(@(x) imrotate(x,120,"crop"),M1,UniformOutput=false);
+        M2 = cellfun(@(x) imrotate(x,60,"crop"),M1,UniformOutput=false);
+        M3 = cellfun(@(x) imrotate(x,120,"crop"),M1,UniformOutput=false);
+        M4 = cellfun(@(x) imrotate(x,180,"crop"),M1,UniformOutput=false);
         M5 = cellfun(@(x) imrotate(x,240,"crop"),M1,UniformOutput=false);
-        M6 = cellfun(@(x) imrotate(x,120,"crop"),M1,UniformOutput=false);
+        M6 = cellfun(@(x) imrotate(x,300,"crop"),M1,UniformOutput=false);
         Symmetric = cellfun(@(a,b,c,d,e,f) (a+b+c+d+e+f)/6,...
             M1,M2,M3,M4,M5,M6,UniformOutput=false);
     otherwise
