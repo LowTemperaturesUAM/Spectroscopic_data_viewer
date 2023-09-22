@@ -154,6 +154,9 @@ switch Axes.Tag
             case 2  % Division
                 values = chooseContrast(Info.ContrastDivisionReal(:,k),...
                     Slider(1).Limits(1),Slider(2).Limits(2));
+            case 3  % Bogoliubov Angle
+                values = chooseContrast(Info.ContrastBogolAngleReal(:,k),...
+                    Slider(1).Limits(1),Slider(2).Limits(2));
         end
 
         % Place these values in Slider and EditFields
