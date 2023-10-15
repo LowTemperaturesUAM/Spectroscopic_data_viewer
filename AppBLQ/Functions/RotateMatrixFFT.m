@@ -6,6 +6,14 @@ if mod(Filas,2)==0 && mod(Columnas,2) == 0
     CellRotated = cellfun(@(x) imrotate(x([1:end 1],[1:end 1]),Angle,'crop')...
         ,Cell,UniformOutput=false);
     CellRotated = cellfun(@(x) x(1:end-1,1:end-1),CellRotated,UniformOutput=false);
+elseif mod(Filas,2)==0 % only rows are even
+    CellRotated = cellfun(@(x) imrotate(x([1:end 1],:),Angle,'crop')...
+        ,Cell,UniformOutput=false);
+    CellRotated = cellfun(@(x) x(1:end-1,:),CellRotated,UniformOutput=false);
+elseif mod(Columnas,2) == 0 %only columns are even
+    CellRotated = cellfun(@(x) imrotate(x(:,[1:end 1]),Angle,'crop')...
+        ,Cell,UniformOutput=false);
+    CellRotated = cellfun(@(x) x(:,1:end-1),CellRotated,UniformOutput=false);
 else
     CellRotated = cellfun(@(x) imrotate(x,Angle,'crop'),Cell,UniformOutput=false);
 end
