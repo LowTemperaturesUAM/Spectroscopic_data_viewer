@@ -1,19 +1,10 @@
 function profileReal(ax, Struct, k)
-% global DistanciaColumnas
-% global DistanciaFilas
-% global Voltaje
-% global MatrizNormalizada
-% global MapasConductanciaEqualizados
-% global SaveFolder
 
-% Filas = Struct.Filas;
-% Columnas = Struct.Columnas;
 Energia = Struct.Energia(k);
 Voltaje = Struct.Voltaje;
 MapasConductancia = Struct.MapasConductancia;
 DistanciaFilas = Struct.DistanciaFilas;
 DistanciaColumnas = Struct.DistanciaColumnas;
-% SaveFolder = Struct.SaveFolder;
 if isfield(Struct,'Type')
     switch Struct.Type
         case 'Conductance'
@@ -25,15 +16,16 @@ else
     MatrizNormalizada = Struct.MatrizNormalizada;
 end
 
-if ~strcmp(ax.Children(1).Tag,'lineProfile')
+LineObj = findobj(ax,'Tag','lineProfile');
+if isempty(LineObj)
     return
 else
-    Position = ax.Children(1).Position;
+    Position = LineObj(1).Position; %Take the last drawn profile
     XinicioFinal = Position(:,1);
     YinicioFinal = Position(:,2);
-    % k = round(handles.energySlider.Value);
-%     [DistanciaPerfil,PerfilActual, CurvasPerfil] = perfilIVPA_v2(MapasConductancia{k}, Voltaje,MatrizNormalizada, DistanciaColumnas, DistanciaFilas,XinicioFinal,YinicioFinal);
-    [DistanciaPerfil,PerfilActual, ~] = perfilIVPA_v3(MapasConductancia{k}, Voltaje,MatrizNormalizada, DistanciaColumnas, DistanciaFilas,XinicioFinal,YinicioFinal,ax.Colormap);
+    [DistanciaPerfil,PerfilActual, ~] = perfilIVPA_v3(MapasConductancia{k},...
+        Voltaje,MatrizNormalizada, DistanciaColumnas, DistanciaFilas,...
+        XinicioFinal,YinicioFinal,ax.Colormap);
     
     %   REPRESENTACION PERFIL A LA ENERGIA SELECCIONADA
     % ----------------------------
@@ -67,7 +59,6 @@ else
                 plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
                 scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
                     'Parent',EjePerfil);
-                %ylabel(EjePerfil,'Zero Bias Current','FontSize',16);
                 ylabel(EjePerfil,['Current (',num2str(Energia),' mV)'],'FontSize',16);
                 xlabel(EjePerfil,'Distance (nm)','FontSize',16);
                 box on;
