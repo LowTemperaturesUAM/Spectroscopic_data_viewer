@@ -64,21 +64,21 @@ else
 % http://projecteuclid.org/download/pdf_1/euclid.rae/1272376232
 % -----------------------------------------------------------------
 
-	for c = 1+NPuntosDer:IV-NPuntosDer
-                
-        Numerador = zeros(1,Filas*Columnas);
-        Ajuste = zeros(1,Filas*Columnas);
-        Denominador = 0;
-                
-        for k = -NPuntosDer:NPuntosDer
-        	Numerador = Numerador + MatrizCorriente(c+k,:)*(Voltaje(c+k)-Voltaje(c));
-            Denominador = Denominador + (Voltaje(c+k)-Voltaje(c))*(Voltaje(c+k)-Voltaje(c));
-        end
-                
-        Ajuste(:) = Numerador(:)./Denominador;
-        MatrizConductancia(c-NPuntosDer,:) = Ajuste(:);
-                
-	end
+for c = 1+NPuntosDer:IV-NPuntosDer
+
+    Numerador = zeros(1,Filas*Columnas);
+    Ajuste = zeros(1,Filas*Columnas);
+    Denominador = 0;
+
+    for k = -NPuntosDer:NPuntosDer
+        Numerador = Numerador + MatrizCorriente(c+k,:)*(Voltaje(c+k)-Voltaje(c));
+        Denominador = Denominador + (Voltaje(c+k)-Voltaje(c))*(Voltaje(c+k)-Voltaje(c));
+    end
+
+    Ajuste(:) = Numerador(:)./Denominador;
+    MatrizConductancia(c-NPuntosDer,:) = Ajuste(:);
+
+end
 
 end 
 
@@ -94,8 +94,8 @@ MatrizConductancia = zeros(IV,Filas*Columnas);
 MatrizConductancia(1+NPuntosDer:IV-NPuntosDer,:) = MatrizConductanciaAUX;
 
 for i = 1:NPuntosDer
-    MatrizConductancia(i,:) = MatrizConductanciaAUX(2*NPuntosDer,:);
-    MatrizConductancia(IV-(i-1),:) = MatrizConductanciaAUX(IV-2*NPuntosDer,:);
+    MatrizConductancia(i,:) = MatrizConductanciaAUX(1,:);
+    MatrizConductancia(IV-(i-1),:) = MatrizConductanciaAUX(end,:);
 end
 
 clear i MatrizConductanciaAUX
