@@ -18,7 +18,7 @@ for k=1:length(Cell)
 
     for i=2:L-1
         for j=2:L-1
-            if BadPointsMatrix(i,j)
+            if ~BadPointsMatrix(i,j)
                 neigh=MatrizTopo(i-1:i+1,j-1:j+1).*BadPointsMatrix(i-1:i+1,j-1:j+1);
                 window = sum(BadPointsMatrix(i-1:i+1,j-1:j+1),"all");
                 if window == 0
