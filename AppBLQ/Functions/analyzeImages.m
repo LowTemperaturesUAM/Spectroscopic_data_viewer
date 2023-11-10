@@ -12,8 +12,14 @@ FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'a')
         fprintf(FileID, 'Number of curves      : %g \r\n', Struct.NumeroCurvas );
         fprintf(FileID, 'Deriv points          : %g \r\n', Struct.NPuntosDerivada ); 
         fprintf(FileID, 'Offset                : %g mV\r\n', Struct.OffsetVoltaje);
-        fprintf(FileID, 'Normalize min         : %g mV\r\n', Struct.VoltajeNormalizacionInferior);
-        fprintf(FileID, 'Normalize max         : %g mV\r\n', Struct.VoltajeNormalizacionSuperior); 
+        switch Struct.NormalizationFlag
+            case {'mirror window','single side'}
+                fprintf(FileID, 'Normalize min         : %g mV\r\n', Struct.VoltajeNormalizacionInferior);
+                fprintf(FileID, 'Normalize max         : %g mV\r\n', Struct.VoltajeNormalizacionSuperior);
+            case 'none'
+                fprintf(FileID, 'Normalization         : none\r\n');
+%             case 'Feenstra'
+        end
         fclose(FileID);
 
 [datosIniciales, scandir, maptype, mapmethod] = customCurvesv5(Struct.SaveFolder, Struct.FileName, Struct);
@@ -43,7 +49,18 @@ Struct.datosIniciales  = datosIniciales;
         
     DeltaEnergia                        = Struct.datosIniciales.DeltaEnergia;
     PasoMapas                           = Struct.datosIniciales.PasoMapas;
-    Energia                             = (Struct.datosIniciales.EnergiaMin:PasoMapas:Struct.datosIniciales.EnergiaMax);
+    switch mapmethod
+        case 'none' %use the raw voltages from the IV
+            % we have to make sure the values are sorted from lowest to
+            % highest
+            [NewVoltaje,indx] = sort(Struct.Voltaje);
+            energyRange = NewVoltaje < Struct.datosIniciales.EnergiaMax &...
+                NewVoltaje > Struct.datosIniciales.EnergiaMin;
+            energyValues = indx(energyRange);
+            Energia                     = Struct.Voltaje(energyValues);
+        otherwise %create an evenly spaced vector with the provided spacing
+            Energia                     = (Struct.datosIniciales.EnergiaMin:PasoMapas:Struct.datosIniciales.EnergiaMax);
+    end
  
     Filas                               = Struct.Filas;
     Columnas                            = Struct.Columnas;
@@ -205,6 +222,16 @@ toc
             case {'nearest','linear','makima'}
                 MapasConductancia = GetMapsInterpolate(Voltaje,...
                     MatrizNormalizadaCortada,Energia,Filas,Columnas,mapmethod);
+            case 'none'
+%                 MapasConductancia = GetMapsInterpolate(Voltaje,...
+%                     MatrizNormalizadaCortada,Energia,Filas,Columnas,'nearest');
+                Info = struct();
+                Info.Voltaje = Voltaje;
+                Info.DistanciaFilas = DistanciaFilas;
+                Info.DistanciaColumnas = DistanciaColumnas;
+                MapasConductancia = curves2maps(MatrizNormalizadaCortada,Info);
+                MapasConductancia = MapasConductancia(energyValues);
+                clear Info
         end
 %         Indices =cellfun(@(E) find(E- DeltaEnergia < Voltaje & ...
 %             E+ DeltaEnergia > Voltaje),num2cell(Energia)', 'UniformOutput',false);

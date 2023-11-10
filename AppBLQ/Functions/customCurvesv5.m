@@ -113,11 +113,11 @@ MethodTip = sprintf(['Select interpolation method to obtain the maps.\n ',...
     '-Nearest: Takes the closest point in the curve\n', ...
     '-Linear: Obtains the maps by linear interpolation of the curves\n', ...
     '-Makima: Obtains the maps by Modified Akima interpolation method']);
-methodsel = uidropdown(f,"Items",{'Mean Window','Nearest','Linear','Makima'},...
-    "ItemsData",{'mean','nearest','linear','makima'},...
+methodsel = uidropdown(f,"Items",{'Mean Window','Nearest','Linear','Makima','No Interpolation'},...
+    "ItemsData",{'mean','nearest','linear','makima','none'},...
     Position = [rpos-150 toprow-5*hrow 110 20],...
     Tooltip=MethodTip,...
-    ValueChangedFcn=@(methodsel,event) changeMethod(methodsel,editDeltaEnergia));
+    ValueChangedFcn=@(methodsel,event) changeMethod(methodsel,editDeltaEnergia,editPasoMapas));
 uilabel(f,Position =[40 toprow-5*hrow 120 20],...
     Text = 'Interpolation Method:');
 
@@ -175,12 +175,19 @@ writematrix([editCorteInferior.Value; editCorteSuperior.Value;...
         fprintf(FileID, 'Corte Sup Conduc      : %g uS\r\n',editCorteSuperior.Value);
         fprintf(FileID, 'Dibuja de             : %g mV\r\n',editEnergiaMin.Value);
         fprintf(FileID, ' a                    : %g mV\r\n',editEnergiaMax.Value);
-        fprintf(FileID, 'con pasos de          : %g mV\r\n',editPasoMapas.Value);
         switch mapmethod
             case 'mean'
+                fprintf(FileID, 'con pasos de          : %g mV\r\n',editPasoMapas.Value);
                 fprintf(FileID, 'Delta de Energia      : %g mV\r\n',editDeltaEnergia.Value );
+            case 'none'
+                fprintf(FileID, 'con pasos de          : %g mV\r\n',...
+                    abs(max(Struct.Voltaje) - min(Struct.Voltaje))/numel(Struct.Voltaje));
+%                 abs(max(Struct.Voltaje) - min(Struct.Voltaje))
+%                 numel(Struct.Voltaje)
+            otherwise
+                fprintf(FileID, 'con pasos de          : %g mV\r\n',editPasoMapas.Value);
         end
-        fprintf(FileID, 'Metodo de interpolado : %s mV\r\n',mapmethod);
+        fprintf(FileID, 'Metodo de interpolado : %s\r\n',mapmethod);
  fclose(FileID);
  close(f);
  clear fileIni
@@ -188,12 +195,17 @@ writematrix([editCorteInferior.Value; editCorteSuperior.Value;...
 end
 end
 
-function  changeMethod(methodsel,editDeltaEnergia)
+function  changeMethod(methodsel,editDeltaEnergia,editPasoMapas)
     method = methodsel.Value;
     switch method
         case 'mean'
             editDeltaEnergia.Enable = true;
+            editPasoMapas.Enable = true;
+        case 'none'
+            editDeltaEnergia.Enable = false;
+            editPasoMapas.Enable = false;
         otherwise
             editDeltaEnergia.Enable = false;
+            editPasoMapas.Enable = true;
     end
 end
