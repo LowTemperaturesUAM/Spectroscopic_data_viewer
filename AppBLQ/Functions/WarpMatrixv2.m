@@ -32,26 +32,37 @@ tform = affine2d([1,YShear,0;-XShear,YXratio,0;0,0,1]);
     if parityFilas == 1 % Original was even, now its odd
         %We change the scaling slightly to make sure they match
         fprintf('Rescale by a factor %g\n',(TestFilas+1)/TestFilas)
-        % tform = affine2d([1,YShear,0;-XShear,YXratio*(TestFilas+1)/TestFilas,0;0,0,1]);
         tform.T(2,2) = YXratio*(TestFilas+1)/TestFilas;
         CellWarpedAUX = cellfun(@(x) imwarp(x,tform),...
             Cell,UniformOutput = false);
-        disp('New size:')
         [TestFilas, TestColumnas] = size(CellWarpedAUX{1});
-        %Sanity check
-        assert((mod(TestFilas,2) - mod(Filas,2))==0)
+        % try the other way around if it doesn't work
+        if (mod(TestFilas,2) - mod(Filas,2))~=0
+            fprintf('Rescale by a factor %g\n',(TestFilas-1)/TestFilas)
+            tform.T(2,2) = YXratio*(TestFilas-1)/TestFilas;
+            CellWarpedAUX = cellfun(@(x) imwarp(x,tform),...
+                Cell,UniformOutput = false);
+            [TestFilas, TestColumnas] = size(CellWarpedAUX{1});
+        end
+        
 
     elseif parityFilas == -1 %Original was odd, now is even
         %We change the scaling slightly to make sure they match
         fprintf('Rescale by a factor %g\n',(TestFilas-1)/TestFilas)
-        % tform = affine2d([1,YShear,0;-XShear,YXratio*(TestFilas-1)/TestFilas,0;0,0,1]);
         tform.T(2,2) = YXratio*(TestFilas-1)/TestFilas;
         CellWarpedAUX = cellfun(@(x) imwarp(x,tform),...
             Cell,UniformOutput = false);
-        disp('New size:')
         [TestFilas, TestColumnas] = size(CellWarpedAUX{1});
-        %Sanity check
-        assert((mod(TestFilas,2) - mod(Filas,2))==0)
+        % try the other way around if it doesn't work
+        if (mod(TestFilas,2) - mod(Filas,2))~=0
+            fprintf('Rescale by a factor %g\n',(TestFilas+1)/TestFilas)
+            tform.T(2,2) = YXratio*(TestFilas+1)/TestFilas;
+            CellWarpedAUX = cellfun(@(x) imwarp(x,tform),...
+                Cell,UniformOutput = false);
+            [TestFilas, TestColumnas] = size(CellWarpedAUX{1});
+        end
+        
+
     end
 
     parityColumnas = mod(TestColumnas,2) - mod(Columnas,2);
@@ -60,28 +71,40 @@ tform = affine2d([1,YShear,0;-XShear,YXratio,0;0,0,1]);
     if parityColumnas == 1 % Original was even, now its odd
         %We change the scaling slightly to make sure they match
         fprintf('Rescale by a factor %g\n',(TestColumnas+1)/TestColumnas)
-%         tform = affine2d([1,YShear,0;-XShear,YXratio,0;0,0,1]);
         tform.T(1,1) = (TestColumnas+1)/TestColumnas;
         CellWarpedAUX = cellfun(@(x) imwarp(x,tform),...
             Cell,UniformOutput = false);
-        disp('New size:')
         [TestFilas, TestColumnas] = size(CellWarpedAUX{1});
-        %Sanity check
-        assert((mod(TestFilas,2) - mod(Filas,2))==0)
+        % try the other way around if it doesn't work
+        if (mod(TestColumnas,2) - mod(Columnas,2))~=0
+            fprintf('Rescale by a factor %g\n',(TestColumnas-1)/TestColumnas)
+            tform.T(1,1) = (TestColumnas-1)/TestColumnas;
+            CellWarpedAUX = cellfun(@(x) imwarp(x,tform),...
+                Cell,UniformOutput = false);
+            [TestFilas, TestColumnas] = size(CellWarpedAUX{1});
+        end
 
     elseif parityColumnas == -1 %Original was odd, now is even
         %We change the scaling slightly to make sure they match
         fprintf('Rescale by a factor %g\n',(TestColumnas-1)/TestColumnas)
-%         tform = affine2d([1,YShear,0;-XShear,YXratio*(TestFilas-1)/TestFilas,0;0,0,1]);
         tform.T(1,1) = (TestColumnas-1)/TestColumnas;
         CellWarpedAUX = cellfun(@(x) imwarp(x,tform),...
             Cell,UniformOutput = false);
-        disp('New size:')
         [TestFilas, TestColumnas] = size(CellWarpedAUX{1});
-        %Sanity check
-        assert((mod(TestFilas,2) - mod(Filas,2))==0)
+        % try the other way around if it doesn't work
+        if (mod(TestColumnas,2) - mod(Columnas,2))~=0
+            fprintf('Rescale by a factor %g\n',(TestColumnas+1)/TestColumnas)
+            tform.T(1,1) = (TestColumnas+1)/TestColumnas;
+            CellWarpedAUX = cellfun(@(x) imwarp(x,tform),...
+                Cell,UniformOutput = false);
+            [TestFilas, TestColumnas] = size(CellWarpedAUX{1});
+        end
     end
-    
+
+    %Sanity check
+    assert((mod(TestFilas,2) - mod(Filas,2))==0)
+    assert((mod(TestColumnas,2) - mod(Columnas,2))==0)
+
     NewFilas = TestFilas;
     NewColumnas = TestColumnas;
     CentroY = floor(NewFilas/2);
