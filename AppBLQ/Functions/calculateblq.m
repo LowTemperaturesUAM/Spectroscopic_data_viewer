@@ -31,11 +31,14 @@ IV = length(Voltaje);
 if App.NormalizedButton.Value
     NormalizationFlag = 'mirror window';
     [MatrizNormalizadaTest] = normalizacionPA(VoltajeNormalizacionSuperior,...
-                                          VoltajeNormalizacionInferior,...
-                                          VoltajeOffset,...
-                                          MatrizConductanciaTest,...
-                                          1,NumeroCurvasValue);
+        VoltajeNormalizacionInferior,VoltajeOffset,MatrizConductanciaTest,Range = "both");
     ConductanciaTunel = 1;
+% we need a new radio button to normalize on a single sided energy range
+% elseif something
+%         NormalizationFlag = 'single side';
+%     [MatrizNormalizadaTest] = normalizacionPA(VoltajeNormalizacionSuperior,...
+%         VoltajeNormalizacionInferior,VoltajeOffset,MatrizConductanciaTest,Range = "single");
+%     ConductanciaTunel = 1;
 elseif App.FeenstraNormButton.Value
     NormalizationFlag = 'Feenstra'; %for now, but it has to change for the analysis
     Ismooth = zeros(size(Struct.MatrizCorrienteTest));

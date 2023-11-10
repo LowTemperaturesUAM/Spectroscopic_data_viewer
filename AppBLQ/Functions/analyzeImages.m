@@ -90,12 +90,15 @@ Struct.datosIniciales  = datosIniciales;
 tic
 switch Struct.NormalizationFlag
     case 'mirror window'
-        [MatrizNormalizada] = normalizacionPA(VoltajeNormalizacionSuperior,...
-            VoltajeNormalizacionInferior,...
-            Voltaje,...
-            MatrizConductancia,...
-            Filas,Columnas);
+        [MatrizNormalizada] = NormalizeRange(VoltajeNormalizacionSuperior,...
+            VoltajeNormalizacionInferior,Voltaje,MatrizConductancia,Range = "both");
         ConductanciaTunel = 1;
+
+    case 'single side'
+        [MatrizNormalizada] = NormalizeRange(VoltajeNormalizacionSuperior,...
+            VoltajeNormalizacionInferior,Voltaje,MatrizConductancia,Range="single");
+        ConductanciaTunel = 1;
+
     case 'none'
 
         MatrizNormalizada = MatrizConductancia; % units: uS
