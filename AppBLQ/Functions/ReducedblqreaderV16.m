@@ -54,7 +54,6 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
     fseek(FileID,352,'cof');
 % -------------------------------------------------------------------------
     % Ahora queremos definir el vector Voltaje.
-    
     if NumeroCurva == initialPoint % Diferenciamos el caso de la primera curva para cargar su voltaje: las demás será el mismo
        bstart=ftell(FileID); %bytes antes de leer el voltaje
        [Data] = readSet(FileID,PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
@@ -86,37 +85,23 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
     % perder la información de la corriente de esa curva tenemos que
     % guardarla ahora para no pasarnos de largo en el archivo binario,
     % y en todo caso utilizarla luego.
-        if Eleccion(1)
-            for c = 2:ColumnasBLQ % En caso de que haya más cosas guardadas por ristra
-                bstart2=ftell(FileID);
-                [Data, readFlag,DataFormat,Factor] = readSet(FileID,  PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
-                bend2=ftell(FileID);
-                %el tamaño en bytes del eje y no tiene por qué ser el mismo
-                %que el de voltaje. Asumimos por ahora que todas las
-                %columnas posteriores son iguales.
-                bskip(2)=bend2-bstart2;
-%                 fprintf('Factor: %g\n',Factor)
-                if readFlag && c==LeerColumna
-                    ColIda = ColIda+1;
-                    IdaIda(:,ColIda) = Data;
-                end
-            end
-        else
-            if LeerColumna > 2
-                for c=2:LeerColumna-1
-                    fseek(FileID,bskip(2),'cof');
-                end
-            end
-%             for c = 2:ColumnasBLQ % En caso de que haya más cosas guardadas por ristra
+        for c = 2:ColumnasBLQ % En caso de que haya más cosas guardadas por ristra
             bstart2=ftell(FileID);
-            [~, readFlag,DataFormat,Factor] = readSet(FileID,  PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
-%             end
+            if c==LeerColumna
+            [Data, readFlag,DataFormat,Factor] = readSet(FileID,  PuntosIV); % Ventilamos la cabecera y leemos las IV en cada ristra del BLQ con la función readSet
+            else 
+                readSet(FileID,  PuntosIV);
+            end
             bend2=ftell(FileID);
-            bskip(2)=bend2-bstart2;
-            if LeerColumna<ColumnasBLQ
-                for c=LeerColumna+1:ColumnasBLQ
-                    fseek(FileID,bskip(2),'cof');
-                end
+            %el tamaño en bytes del eje y no tiene por qué ser el mismo
+            %que el de voltaje.
+            % Obtenemos este valor para cada columna
+            bskip(c)=bend2-bstart2;
+        end
+        if Eleccion(1)
+            if readFlag
+                ColIda = ColIda+1;
+                IdaIda(:,ColIda) = Data;
             end
         end
 % -------------------------------------------------------------------------
@@ -136,31 +121,11 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
     else
         %Como ya sabemos el numero de bytes(lo podemos calcular en la primera curva), podemos utilizar fseek para saltarlo
         fseek(FileID,bskip(1),'cof');
-%         for c = 2:ColumnasBLQ
-        % Saltamos las columnas hasta la que buscamos
-%         if LeerColumna > 2
-%             for c=2:LeerColumna-1
-%                 fseek(FileID,bskip,'cof');
-%             end
-%         end
-%         %Leemos la columnas que buscamos
-%         %-------------------------------------------------------------------------------------------
-%         [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat,Factor); % Esto lee la corriente y guardamos.
-%         NumeroCurvaG = NumeroCurva - initialPoint+1; % Este es el contador que determina si toca guardar esa ristra o no
-%         
-%         if LeerColumna<ColumnasBLQ
-%             for c=LeerColumna+1:ColumnasBLQ
-%                 fseek(FileID,bskip,'cof');
-%             end
-%         end
 
         NumeroCurvaG = NumeroCurva - initialPoint+1; % Este es el contador que determina si toca guardar esa ristra o no
-%         if LeerColumna > 2
-%             for c=2:LeerColumna-1
-%                 fseek(FileID,bskip,'cof');
-%             end
-        fseek(FileID,bskip(2)*(LeerColumna-2),'cof');
-%         end
+        for c=2:LeerColumna-1
+            fseek(FileID,bskip(c),'cof');
+        end
         if mod(floor((NumeroCurvaG +1)/(2*Columnas)),2) == 0
             if mod(NumeroCurvaG +1,2) == 0 && Eleccion(1) == 1
                 [Data, readFlag] = readSetFast(FileID, PuntosIV,DataFormat,Factor); % Esto lee la corriente y guardamos.
@@ -173,7 +138,7 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
                 %if ~readFlag IVCeros = [IVCeros ColIV]; end
                 IdaVuelta(:,ColIV) = Data;
             else
-                fseek(FileID,bskip(2),'cof');
+                fseek(FileID,bskip(LeerColumna),'cof');
             end
             
         else
@@ -188,15 +153,12 @@ for NumeroCurva = 1 : 1 : finalPoint + initialPoint-1
                 %if ~readFlag VVCeros = [VVCeros ColVV]; end
                 VueltaVuelta(:,ColVV) = Data;
             else
-                fseek(FileID,bskip(2),'cof');
+                fseek(FileID,bskip(LeerColumna),'cof');
             end
         end
-%         if LeerColumna<ColumnasBLQ
-%             for c=LeerColumna+1:ColumnasBLQ
-%                 fseek(FileID,bskip,'cof');
-%             end
-          fseek(FileID,bskip(2)*(ColumnasBLQ-LeerColumna),'cof');
-%         end
+          for c=LeerColumna+1:ColumnasBLQ
+            fseek(FileID,bskip(c),'cof');
+          end
 
     end
 end
