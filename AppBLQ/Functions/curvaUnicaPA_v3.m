@@ -1,4 +1,4 @@
-function curvaUnicaPA_v3(ax, puntero, Voltaje, Matriz, VectorTamanhoX, VectorTamanhoY, isReal, isCurrent)
+function curvaUnicaFig = curvaUnicaPA_v3(ax, puntero, Voltaje, Matriz, VectorTamanhoX, VectorTamanhoY, isReal, isCurrent)
 %Programa que pinta una unica curva seleccionada con el puntero
 
 Columnas = length(VectorTamanhoX);

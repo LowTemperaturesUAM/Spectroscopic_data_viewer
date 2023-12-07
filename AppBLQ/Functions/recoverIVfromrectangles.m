@@ -18,7 +18,7 @@ function recoverIVfromrectangles(ax,Info)
             %Apply to conductance
             isCurrent = 0;
             MeanCond = mean(Info.MatrizNormalizada(:,Coordenadas),2);
-            plotMeanCur(ax,Info.Voltaje,MeanCond,Inicio,Final,isCurrent);
+            CondFig = plotMeanCur(ax,Info.Voltaje,MeanCond,Inicio,Final,isCurrent);
             % Plot the corresponding square
             hold(ax,'on')
             area = plot(ax,[x1 x2 x2 x1 x1],[y1 y1 y2 y2 y1],LineWidth=2);
@@ -26,8 +26,9 @@ function recoverIVfromrectangles(ax,Info)
             %Apply to current
             isCurrent = 1;
             MeanCurrent = mean(Info.MatrizCorriente(:,Coordenadas),2);
-            plotMeanCur(ax,Info.Voltaje,MeanCurrent,Inicio,Final,isCurrent);
+            CurrentFig = plotMeanCur(ax,Info.Voltaje,MeanCurrent,Inicio,Final,isCurrent);
         end
+        linkaxes([CondFig.CurrentAxes,CurrentFig.CurrentAxes],'x')
     catch
         disp('The variable AvgRectAreas is not present on the workspace')
     end

@@ -1,4 +1,4 @@
-function MeanIVFunction_v3(ax, Rectangulo, MatrizCurvas, Voltaje, Columnas, Filas, DistanciaColumnas, isCurrent)
+function NewFig = MeanIVFunction_v3(ax, Rectangulo, MatrizCurvas, Voltaje, Columnas, Filas, DistanciaColumnas, isCurrent)
 % Turn Rectangulo coordinates into pixels
 Rectangulo1 = Columnas.*Rectangulo./(DistanciaColumnas(end) );
 Inicio = [round(Rectangulo1(1)), round(Rectangulo1(2))];

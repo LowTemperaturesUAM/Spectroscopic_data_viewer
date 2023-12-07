@@ -16,8 +16,9 @@ if strcmp(btn, 'alt') && Movimiento && strcmp(ax.Tag,'RealAxes')
     Filas = numel(DistanciaFilas);
     Columnas = numel(DistanciaColumnas);
     Rectangle = ax.UserData.Rectangle;
-    MeanIVFunction_v3(ax,Rectangle, MatrizNormalizada, Voltaje, Columnas, Filas, DistanciaColumnas, 0) %Conductancia vs V
-    MeanIVFunction_v3(ax,Rectangle, MatrizCorriente, Voltaje, Columnas, Filas, DistanciaColumnas, 1) %Corriente vs V
+    CondFig = MeanIVFunction_v3(ax,Rectangle, MatrizNormalizada, Voltaje, Columnas, Filas, DistanciaColumnas, 0); %Conductancia vs V
+    CurrentFig = MeanIVFunction_v3(ax,Rectangle, MatrizCorriente, Voltaje, Columnas, Filas, DistanciaColumnas, 1); %Corriente vs V
+    linkaxes([CondFig.CurrentAxes,CurrentFig.CurrentAxes],'x')
     
 elseif strcmp(btn, 'normal') && ~Movimiento
    
@@ -32,9 +33,9 @@ elseif strcmp(btn, 'normal') && ~Movimiento
             Info.Puntero = [punteroT(1,1), punteroT(1,2)];
         end
 
-        curvaUnicaPA_v3(app.Axes, Info.Puntero, Voltaje,MatrizNormalizada, DistanciaColumnas,DistanciaFilas, true, 0)  %Conductancia vs V
-        curvaUnicaPA_v3(app.Axes, Info.Puntero, Voltaje,MatrizCorriente, DistanciaColumnas,DistanciaFilas, true, 1) %Corriente vs V
-        
+        CondFig = curvaUnicaPA_v3(app.Axes, Info.Puntero, Voltaje,MatrizNormalizada, DistanciaColumnas,DistanciaFilas, true, 0);  %Conductancia vs V
+        CurrentFig = curvaUnicaPA_v3(app.Axes, Info.Puntero, Voltaje,MatrizCorriente, DistanciaColumnas,DistanciaFilas, true, 1); %Corriente vs V
+        linkaxes([CondFig.CurrentAxes,CurrentFig.CurrentAxes],'x')
     elseif strcmp(ax.Tag,'FFTAxes')
         Filas = numel(DistanciaFourierFilas);
         Columnas = numel(DistanciaFourierColumnas);
