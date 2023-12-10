@@ -28,17 +28,17 @@ IV = length(Voltaje);
 [MatrizConductanciaTest] = derivadorLeastSquaresPA(NPuntosDerivadaValue,Struct.MatrizCorrienteTest,Voltaje,1,NumeroCurvasValue);
 
 % NormalizationFlag = 0; %Might need to use a more detail variable
-if App.NormalizedButton.Value
+if App.NormalizeMirrorButton.Value
     NormalizationFlag = 'mirror window';
-    [MatrizNormalizadaTest] = normalizacionPA(VoltajeNormalizacionSuperior,...
+    [MatrizNormalizadaTest] = NormalizeRange(VoltajeNormalizacionSuperior,...
         VoltajeNormalizacionInferior,VoltajeOffset,MatrizConductanciaTest,Range = "both");
     ConductanciaTunel = 1;
-% we need a new radio button to normalize on a single sided energy range
-% elseif something
-%         NormalizationFlag = 'single side';
-%     [MatrizNormalizadaTest] = normalizacionPA(VoltajeNormalizacionSuperior,...
-%         VoltajeNormalizacionInferior,VoltajeOffset,MatrizConductanciaTest,Range = "single");
-%     ConductanciaTunel = 1;
+elseif App.NormalizeSingleButton.Value
+    NormalizationFlag = 'single side';
+    [MatrizNormalizadaTest] = NormalizeRange(VoltajeNormalizacionSuperior,...
+        VoltajeNormalizacionInferior,VoltajeOffset,MatrizConductanciaTest,Range = "single");
+    ConductanciaTunel = 1;
+
 elseif App.FeenstraNormButton.Value
     NormalizationFlag = 'Feenstra'; %for now, but it has to change for the analysis
     Ismooth = zeros(size(Struct.MatrizCorrienteTest));
@@ -113,11 +113,16 @@ App.ConductanceAxes.XGrid = 'on';
 App.ConductanceAxes.YGrid = 'on';
 App.ConductanceAxes.Box = 'on';
 
-if App.NormalizedButton.Value
+if App.NormalizeMirrorButton.Value
     xline(App.ConductanceAxes,VoltajeNormalizacionInferior,'b-',HandleVisibility='off')
     xline(App.ConductanceAxes,-VoltajeNormalizacionInferior,'b-',HandleVisibility='off')
     xline(App.ConductanceAxes,VoltajeNormalizacionSuperior,'r-',HandleVisibility='off')
     xline(App.ConductanceAxes,-VoltajeNormalizacionSuperior,'r-',HandleVisibility='off')
+    ylabel(App.ConductanceAxes,'Normalized conductance (a.u.)');
+    App.ConductanceAxes.YLim = [0,max( 1.1*max(MatrizNormalizadaTest,[],'all'), 2*ConductanciaTunel) ];
+elseif App.NormalizeSingleButton.Value
+    xline(App.ConductanceAxes,VoltajeNormalizacionInferior,'b-',HandleVisibility='off')
+    xline(App.ConductanceAxes,VoltajeNormalizacionSuperior,'r-',HandleVisibility='off')
     ylabel(App.ConductanceAxes,'Normalized conductance (a.u.)');
     App.ConductanceAxes.YLim = [0,max( 1.1*max(MatrizNormalizadaTest,[],'all'), 2*ConductanciaTunel) ];
 elseif App.FeenstraNormButton.Value
