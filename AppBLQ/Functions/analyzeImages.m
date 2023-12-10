@@ -13,9 +13,18 @@ FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'a')
         fprintf(FileID, 'Deriv points          : %g \r\n', Struct.NPuntosDerivada ); 
         fprintf(FileID, 'Offset                : %g mV\r\n', Struct.OffsetVoltaje);
         switch Struct.NormalizationFlag
-            case {'mirror window','single side'}
+            case {'single side'}
+                fprintf(FileID, 'Normalization         : single side');
                 fprintf(FileID, 'Normalize min         : %g mV\r\n', Struct.VoltajeNormalizacionInferior);
                 fprintf(FileID, 'Normalize max         : %g mV\r\n', Struct.VoltajeNormalizacionSuperior);
+            case {'mirror window'}
+                lowbound = min(Struct.VoltajeNormalizacionInferior,...
+                    Struct.VoltajeNormalizacionSuperior,ComparisonMethod="abs");
+                highbound = max(Struct.VoltajeNormalizacionInferior,...
+                    Struct.VoltajeNormalizacionSuperior,ComparisonMethod="abs");
+                fprintf(FileID, 'Normalization         : symmetrical');
+                fprintf(FileID, 'Normalize min         : ±%g mV\r\n', abs(lowbound));
+                fprintf(FileID, 'Normalize max         : ±%g mV\r\n', abs(highbound));
             case 'none'
                 fprintf(FileID, 'Normalization         : none\r\n');
 %             case 'Feenstra'
