@@ -1,4 +1,4 @@
-function angleCorrelation(Info,k)%k es un contador para mostrar por pantalla
+function angleCorrelation(Info,k)
 
 MatrizTopo = Info.MapasConductancia{k};
 
@@ -10,10 +10,23 @@ I2promX=NX;
 var1promX=NX;
 var2promX=NX;
 
- for i1=1:tam
-     disp(['k = ',num2str(k),'; i1 = ',num2str(i1)])
-     for j1=1:tam
-         for i2=1:tam
+fprintf('Calculating autocorrelation for %.2g meV\n', Info.Energia(k))
+waitw = waitbar(0,'Calculating autocorrelation',Name='Please, wait',...
+    CreateCancelBtn=@(~,~)setappdata(gcbf,'canceling',1));
+setappdata(waitw,'canceling',0);
+tic
+for i1=1:tam
+%     disp(['k = ',num2str(k),'; i1 = ',num2str(i1)])
+    if getappdata(waitw,'canceling')
+        delete(waitw)
+        disp('Operation cancelled')
+        return
+    end
+    if mod(i1,10) == 0
+        waitbar(0.5*i1/tam,waitw)
+    end
+    for j1=1:tam
+        for i2=1:tam
             for j2=1:tam
                 r=ceil(sqrt((i1-i2)^2+(j1-j2)^2));
                 if r~=0
@@ -26,30 +39,40 @@ var2promX=NX;
                         if ang<=0
                             ang=ang+180;
                         end
-                    end 
-                I1promX(r,ang)=I1promX(r,ang)+MatrizTopo(i1,j1);
-                I2promX(r,ang)=I2promX(r,ang)+MatrizTopo(i2,j2);
-                var1promX(r,ang)=var1promX(r,ang)+MatrizTopo(i1,j1)^2;
-                var2promX(r,ang)=var2promX(r,ang)+MatrizTopo(i2,j2)^2;
-                NX(r,ang)=NX(r,ang)+1;
+                    end
+                    I1promX(r,ang)=I1promX(r,ang)+MatrizTopo(i1,j1);
+                    I2promX(r,ang)=I2promX(r,ang)+MatrizTopo(i2,j2);
+                    var1promX(r,ang)=var1promX(r,ang)+MatrizTopo(i1,j1)^2;
+                    var2promX(r,ang)=var2promX(r,ang)+MatrizTopo(i2,j2)^2;
+                    NX(r,ang)=NX(r,ang)+1;
                 end
-             end
-         end
-     end
- end
+            end
+        end
+    end
+end
 
- SX=zeros(tam_diag,180);
- G1X=SX;
- G2X=SX;
- I1=SX;
- I2=SX;
- I1prom_finX=(1./NX).*I1promX;
- I2prom_finX=(1./NX).*I2promX;
- var1prom_finX=((1./NX).*var1promX)-(I1prom_finX.^2);
- var2prom_finX=((1./NX).*var2promX)-(I2prom_finX.^2);
+SX=zeros(tam_diag,180);
+G1X=SX;
+G2X=SX;
+I1=SX;
+I2=SX;
+I1prom_finX=(1./NX).*I1promX;
+I2prom_finX=(1./NX).*I2promX;
+var1prom_finX=((1./NX).*var1promX)-(I1prom_finX.^2);
+var2prom_finX=((1./NX).*var2promX)-(I2prom_finX.^2);
+
+
 
 for i1=1:tam
-    disp(['k = ',num2str(k),'; i2 = ',num2str(i1)])
+%     disp(['k = ',num2str(k),'; i2 = ',num2str(i1)])
+    if getappdata(waitw,'canceling')
+        delete(waitw)
+        disp('Operation cancelled')
+        return
+    end
+    if mod(i1,10) == 0
+        waitbar((1+i1/tam)*0.5,waitw)
+    end
     for j1=1:tam
         for i2=1:tam
             for j2=1:tam
@@ -71,28 +94,30 @@ for i1=1:tam
         end
     end
 end
+toc
+delete(waitw)
 
 mult=1;
- for n=1:tam_diag
-     for m=1:180
-         if NX(n,m)==0
+for n=1:tam_diag
+    for m=1:180
+        if NX(n,m)==0
             NX(n,m)=1;
             G1X(n,m)=mult.*(1./NX(n,m)).*SX(n,m);
-         else
+        else
             G1X(n,m)=mult.*(1./NX(n,m)).*SX(n,m);
-         end
-     end
- end
- Matriz_Existe_Angulo=zeros(tam,180);
- for p=1:180
-     for q=1:tam
-         if G1X(q,p)==0
-             Matriz_Existe_Angulo(q,p)=0;
-         else
-             Matriz_Existe_Angulo(q,p)=1;
-         end
-     end
- end
+        end
+    end
+end
+Matriz_Existe_Angulo=zeros(tam,180);
+for p=1:180
+    for q=1:tam
+        if G1X(q,p)==0
+            Matriz_Existe_Angulo(q,p)=0;
+        else
+            Matriz_Existe_Angulo(q,p)=1;
+        end
+    end
+end
 Nnorm=sum(Matriz_Existe_Angulo,2);
 G1X_prom=sum(G1X(1:tam,:),2);
 G1X_prom_norm=G1X_prom./Nnorm;
@@ -137,18 +162,18 @@ ylabel('Distance (nm)')
 % colormap inferno
 colorbar
 
-ax=gca;
-ax.YDir = 'normal';
+ax1=gca;
+ax1.YDir = 'normal';
 axis square
 
-ax.Children.XData = [0, TamanhoReal];
-ax.Children.YData = [0, TamanhoReal];
+ax1.Children.XData = [0, TamanhoReal];
+ax1.Children.YData = [0, TamanhoReal];
 
-ax.XLim = [0, TamanhoReal];
-ax.YLim = [0, TamanhoReal];
-ax.CLim = [Info.ContrastReal(1,k), Info.ContrastReal(2,k)];
+ax1.XLim = [0, TamanhoReal];
+ax1.YLim = [0, TamanhoReal];
+ax1.CLim = [Info.ContrastReal(1,k), Info.ContrastReal(2,k)];
 
-ax.Colormap = Info.Colormap;
+ax1.Colormap = Info.Colormap;
 
 figure
 imagesc(G1X_360)
@@ -157,23 +182,23 @@ ylabel('Distance (nm)')
 % colormap inferno
 colorbar
 
-ax=gca;
-ax.YDir = 'normal';
+ax2=gca;
+ax2.YDir = 'normal';
 
-ax.XTick = 0:90:360;
-ax.Children.YData = [0, TamanhoReal];
-ax.YLim = [0, TamanhoReal];
+ax2.XTick = 0:90:360;
+ax2.Children.YData = [0, TamanhoReal];
+ax2.YLim = [0, TamanhoReal];
 
-ax.Colormap = Info.Colormap;
+ax2.Colormap = Info.Colormap;
 
 figure
 plot(G1X_prom_norm,'r','linewidth',1)
 xlabel('Distance (nm)')
 ylabel('ACF (a.u.)')
 axis([0 tam min(G1X_prom_norm) max(G1X_prom_norm)])
-ax = gca;
-ax.Children.XData = TamanhoReal.*ax.Children.XData./tam;
-ax.XLim = [0, TamanhoReal];
+ax3 = gca;
+ax3.Children.XData = TamanhoReal.*ax3.Children.XData./tam;
+ax3.XLim = [0, TamanhoReal];
 
 figure
 imagesc(round_matrix)
@@ -181,22 +206,26 @@ xlabel('Distance (nm)')
 ylabel('Distance (nm)')
 % colormap inferno
 colorbar
-ax=gca;
-ax.YDir = 'normal';
+ax4=gca;
+ax4.YDir = 'normal';
 axis('square')
 
-ax.Children.XData = [-TamanhoReal, TamanhoReal];
-ax.Children.YData = [-TamanhoReal, TamanhoReal];
+ax4.Children.XData = [-TamanhoReal, TamanhoReal];
+ax4.Children.YData = [-TamanhoReal, TamanhoReal];
 
-ax.XLim = [-TamanhoReal, TamanhoReal];
-ax.YLim = [-TamanhoReal, TamanhoReal];
+ax4.XLim = [-TamanhoReal, TamanhoReal];
+ax4.YLim = [-TamanhoReal, TamanhoReal];
 
-ax.Colormap = Info.Colormap;
+ax4.Colormap = Info.Colormap;
 
-% Save Struct to worksapce
+% Save Struct to workspace
 CorrelationStruct.G1X_360 = G1X_360;
-CorrelationStruct.G1X_prom_norm = G1X_prom_norm;
-CorrelationStruct.round_matrix = round_matrix;
+CorrelationStruct.G1X_XCoord = ax2.Children.XData;
+CorrelationStruct.G1X_YCoord = ax2.Children.YData;
+CorrelationStruct.angle_avg = [ax3.Children.XData.',G1X_prom_norm];
+CorrelationStruct.corr_matrix = round_matrix;
+CorrelationStruct.matrix_XCoord = ax4.Children.XData;
+CorrelationStruct.matrix_YCoord = ax4.Children.YData;
 
 assignin('base','CorrelationStruct',CorrelationStruct);
 
