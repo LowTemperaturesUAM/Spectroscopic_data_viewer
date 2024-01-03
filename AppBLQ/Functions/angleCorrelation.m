@@ -121,7 +121,7 @@ end
 Nnorm=sum(Matriz_Existe_Angulo,2);
 G1X_prom=sum(G1X(1:tam,:),2);
 G1X_prom_norm=G1X_prom./Nnorm;
-G1X_plot=G1X(1:tam,1:180);
+G1X_plot=G1X(1:tam,180:-1:1);
 
 G1X_360=[G1X_plot,G1X_plot];
 
@@ -132,7 +132,7 @@ theta = repmat( (0:nrow-1).' ./ (nrow-1) * 2 * pi, 1, ncol);
 [x, y] = pol2cart(theta, radii);
 min_x = min(x(:));
 min_y = min(y(:));
-round_matrix = fliplr(accumarray( [round( y(:) - min_y) + 1, round( x(:) - min_x) + 1], G1X_polar(:), [], @mean ));
+round_matrix = accumarray( [round( y(:) - min_y) + 1, round( x(:) - min_x) + 1], G1X_polar(:), [], @mean );
 
 %   El programa tiene fundamentalmente tres output relevantes:
 %   - G1X_360 es la matriz de la ACF de dimensión [tam X 360], donde cada 
@@ -159,7 +159,6 @@ figure
 imagesc(MatrizTopo)
 xlabel('Distance (nm)')
 ylabel('Distance (nm)')
-% colormap inferno
 colorbar
 
 ax1=gca;
@@ -179,7 +178,6 @@ figure
 imagesc(G1X_360)
 xlabel('Angle')
 ylabel('Distance (nm)')
-% colormap inferno
 colorbar
 
 ax2=gca;

@@ -40,7 +40,9 @@ G1X = zeros(length(avg_ACF),180);
 for i=1:180
     %average over an angle of one degree around a center value i-1
     %sampled every 0.1 degrees
-    G1X(:,i) = average_ACF(ACF,(i-1.5:0.1:i-0.5)+90);
+    G1X(:,i) = average_ACF(ACF,-(i-1.5:0.1:i-0.5)+90);
+    %Putting the minus here gives the correct criteria for the angle
+    %(clockwise and starting from the first quadrant
 end
 G1X_360 = [G1X,G1X];
 
@@ -53,8 +55,8 @@ colorbar
 ax1=gca;
 ax1.YDir = 'normal';
 ax1.DataAspectRatio = [1 1 1];
-xlabel(ax1,'X (nm)')
-ylabel(ax1,'Y (nm)')
+xlabel(ax1,'Displacement (nm)')
+ylabel(ax1,'Displacement (nm)')
 title(ax1,sprintf('%.2g meV',Info.Energia(k)))
 ax1.CLim(1) = max(-UpperLim,ax1.CLim(1));
 ax1.CLim(2) = UpperLim;
