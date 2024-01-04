@@ -92,10 +92,10 @@ if nargin==0
    figure('menubar','none','numbertitle','off','Name','crameri options:')
    
    if license('test','image_toolbox')
-      imshow(imread('crameri7.0.png')); 
+      imshow(imread('crameri8.0.png'));
    else
       axes('pos',[0 0 1 1])
-      image(imread('crameri7.0.png')); 
+      image(imread('crameri8.0.png'));
       axis image off
    end
    
@@ -153,7 +153,7 @@ end
 %% Load RGB values and interpolate to NLevels: 
 
 try
-   S = load('CrameriColourMaps7.0.mat',ColormapName); 
+   S = load('CrameriColourMaps8.0.mat',ColormapName);
    cmap = S.(ColormapName); 
 catch
    error(['Unknown colormap name ''',ColormapName,'''. Try typing crameri with no inputs to check the options and try again.'])
@@ -184,19 +184,3 @@ if nargout==0
    colormap(gca,cmap) 
    clear cmap  
 end
-
-%% Code to collect Fabio's data into a single .mat file: 
-% Unzip the latest folder, navigate to that filepath, and run this.
-% Update the file list as needed. 
-%
-% clear all
-% f = {'acton','bam','bamO','bamako','batlow','batlowK','batlowW','berlin','bilbao','broc','brocO','buda','bukavu','cork',...
-%    'corkO','davos','devon','fes','grayC','hawaii','imola','lajolla','lapaz','lisbon',...
-%    'nuuk','oleron','oslo','roma','romaO','tofino','tokyo','turku','vanimo','vik','vikO'}; 
-% 
-% for k = 1:length(f)
-%    load([f{k},'/',f{k},'.mat'])
-% end
-% 
-% clear f k 
-% save('CrameriColourMaps7.0.mat')
