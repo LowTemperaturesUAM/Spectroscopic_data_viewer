@@ -1,8 +1,10 @@
-function [Info] = gapMap(Info,Range,Threshold,NumDeriv)
+function [Info] = gapMap(Info,Range,Threshold,NumDeriv,MaxDeriv)
 % Range - Max Voltage value of gap size. It will look below Range for size.
 % Threshold - Minimun ratio allowed for gap deepness
+% NumDeriv - Number of points in numeric derivative
+% MaxDeriv - Max value allowed for derivative. Use it to remove noisy curves.
 
-% I REMOVE RangeMin AND USE RANGE INSTEAD
+% I REMOVE RangeMin AND USE Range INSTEAD
 %----------------------------------------------------------------------
 Filas =  length(Info.DistanciaFilas);
 Columnas = length(Info.DistanciaColumnas);
@@ -10,11 +12,6 @@ V = Info.Voltaje;
 % [~,NCurves] = size(Info.MatrizNormalizada);
 Curves = Info.MatrizNormalizada;
 
-% Range = 0.5; %mV
-% Threshold = 1.5; %Para el ratio entre el máximo y el mínimo
-
-% Max value for derivative value. Use it to remove noise.
-Threshold_deriv = 3 / (Range/3); 
 Mask_idx = find(abs(V) <= Range); % Voltage indices between range
 Mask = abs(V) <= Range;
 % MaskMin = abs(Info.Voltaje) < Range;
@@ -34,19 +31,24 @@ Mask = abs(V) <= Range;
 
 % Derivative
 ddI = derivadorLeastSquaresPA(NumDeriv,Curves,V,Filas,Columnas);
-% Calculate peaks of derivative and take voltage position 
+
+% Calculate peaks of derivative. Use values of peaks(Val) to filter noisy curves
+% and and use index to find voltage value(Gap).
 [Val1,Gap1] = max(ddI(Mask_idx,:));
 [Val2,Gap2] = min(ddI(Mask_idx,:));
 
+% Calculate Gap values as mean between positive and negative voltages.
 VectorGap = mean([abs(V(Mask_idx(Gap1))), abs(V(Mask_idx(Gap2)))],2);
+% Calculate mean value of derivative peaks.
 VectorVal = mean([abs(Val1);abs(Val2)],1);
 
 % Use minima of curve to remove shallow gaps
 [Value3] = min(Curves(Mask,:),[],1);
 Ratio = (1-Value3)./abs(Value3);
 
-% Turn to 0 really small gaps and noise
-VectorGap(Ratio<Threshold | VectorVal>Threshold_deriv) = 0;
+% Turn to 0 really small gaps (below threshold) and noise (derivative peak 
+% above MaxDeriv)
+VectorGap(Ratio<Threshold | VectorVal>MaxDeriv) = 0;
 
 % Reshape array into matrix and transpose
 MapaGap = reshape(VectorGap,[Columnas,Filas]);
@@ -60,5 +62,6 @@ set(fig.Children,'YDir','normal','DataAspectRatio',[1 1 1]);
 % fig.Children.CLim = CScale;
 colormap viridis
 
+% Save the map in the InfoStruct
 Info.MapaGap = MapaGap;
 end
