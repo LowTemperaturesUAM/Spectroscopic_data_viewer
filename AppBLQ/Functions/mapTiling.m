@@ -1,13 +1,15 @@
-function TileImg = mapTiling(Cell,Contrast,Values,cmap,opt)
+function TileImg = mapTiling(Cell,Contrast,Energy,cmap,opt)
 arguments
     Cell (:,1) cell
     Contrast (2,:) double
-    Values double {mustBeVector}
+    Energy double {mustBeVector}
     cmap (:,3) double
     opt.BorderSize double = [20,2]
     opt.BackgroundColor = 'w'
     opt.AddLabels = 'true'
 end
+%NOTE: an option to filter the amount of maps might be interesting, as
+%well as allowing for manual control for the layout.
 CellContrast = transpose(num2cell(Contrast,1));
 Aux = cellfun(@(I,Limits) rescale(I,InputMin=Limits(1),InputMax=Limits(2)),...
     Cell,CellContrast,UniformOutput=false);
@@ -41,7 +43,7 @@ if opt.AddLabels
         i = i-1;
         j = j-1;
         TxtPos = [Hborder + floor(Himg/2)+1+i*(2*Hborder+Himg),Vborder+j*(2*Vborder+Vimg)];
-        TileAux = insertText(TileAux,TxtPos,sprintf('%.2f meV',Values(k)),...
+        TileAux = insertText(TileAux,TxtPos,sprintf('%.2f meV',Energy(k)),...
             TextColor = 'black',BoxColor = 'white',FontSize= 30,...
             BoxOpacity=0,AnchorPoint= 'Center',Font='Arial Unicode');
     end

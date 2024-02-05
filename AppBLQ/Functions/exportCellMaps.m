@@ -27,6 +27,12 @@ end
 if Format == 0 %Just the maps
     exportMapsIndexed(Cell,Energy,Contrast,Colormap,Path)
     return
+
+elseif Format == 3 %Group all maps in a single image
+    OutputImg = mapTiling(Cell,Contrast,Energy,Colormap);
+    imwrite(OutputImg,Colormap, ...
+        [Path,filesep,'CombinedMaps','.',options.FileType])
+    return
 end
 
 NCell = length(Info.Energia);
