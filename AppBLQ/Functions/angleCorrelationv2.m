@@ -2,7 +2,7 @@ function angleCorrelationv2(Info,k,opts)
 arguments
     Info struct
     k (1,1) double {mustBeInteger,mustBePositive}
-    opts.Ver string {mustBeMember( opts.Ver,["serial","opencl"] )} = "serial"
+    opts.Ver string {mustBeMember( opts.Ver,["builtin","serial","opencl"] )} = "builtin"
     opts.Device (1,1) double {mustBeInteger,mustBePositive} = 1
 end
 % New revision of angle correlation function, using ACF implementation for
@@ -14,6 +14,8 @@ fprintf('Calculating autocorrelation for %.2g meV\n', Info.Energia(k))
 
 tic
 switch opts.Ver
+    case "builtin"
+        ACF = autocorr_builtin(Info.MapasConductancia{k});
     case "serial"
         ACF = autocorr_stat(Info.MapasConductancia{k});
     case "opencl"
