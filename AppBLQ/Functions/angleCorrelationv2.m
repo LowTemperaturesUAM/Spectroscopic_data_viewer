@@ -2,7 +2,7 @@ function angleCorrelationv2(Info,k,opts)
 arguments
     Info struct
     k (1,1) double {mustBeInteger,mustBePositive}
-    opts.Ver string {mustBeMember( opts.Ver,["builtin","serial","opencl"] )} = "builtin"
+    opts.Ver string {mustBeMember( opts.Ver,["builtin","serial","opencl","cuda"] )} = "builtin"
     opts.Device (1,1) double {mustBeInteger,mustBePositive} = 1
 end
 % New revision of angle correlation function, using ACF implementation for
@@ -21,6 +21,10 @@ switch opts.Ver
     case "opencl"
         % Can be sped up using openCL, if available
         ACF = autocorr_stat_opencl(Info.MapasConductancia{k},opts.Device);
+    case "cuda"
+        GpuMap = gpuArray(Info.MapasConductancia{k});
+        gpuACF = autocorr_builtin(GpuMap);
+        ACF = gather(gpuACF);
 end
 
 [avg_ACF,Rpix]=average_ACF(ACF, 0:0.1:359.9);
