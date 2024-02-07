@@ -1,6 +1,6 @@
 function Contrast = autoContrastCell(Cell,Threshold)
-Contrast = transpose(cell2mat(cellfun(@(M) autoContrast(M,Threshold),...
-    Cell,UniformOutput=false)));
+Contrast = cell2mat(transpose(cellfun(@(M) autoContrast(M,Threshold),...
+    Cell,UniformOutput=false)))';
 
 % Contrast = zeros([2,size(Cell,1)]);
 % for i = 1:length(Cell)

@@ -1,4 +1,5 @@
 function Contrast = autoContrast(Map,Threshold)
+% WARNING: Threshold < 0.5
     [Count,edges] = histcounts(Map,Normalization = "cdf");
     [Row,Column] = size(Map);
     if any(isnan(Map),'all')
