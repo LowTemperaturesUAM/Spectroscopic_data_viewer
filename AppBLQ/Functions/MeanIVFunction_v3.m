@@ -1,12 +1,17 @@
-function NewFig = MeanIVFunction_v3(ax, Rectangulo, MatrizCurvas, Voltaje, Columnas, Filas, DistanciaColumnas, isCurrent)
+function NewFig = MeanIVFunction_v3(ax, Rectangulo, MatrizCurvas, Voltaje, DistanciaFilas, DistanciaColumnas, isCurrent)
+
+Columnas = numel(DistanciaColumnas);
+Filas = numel(DistanciaFilas);
+
 % Turn Rectangulo coordinates into pixels
-Rectangulo1 = Columnas.*Rectangulo./(DistanciaColumnas(end) );
+Rectangulo1([1 3]) = Columnas.*Rectangulo([1 3])./(DistanciaColumnas(end) );
+Rectangulo1([2 4]) = Filas.*Rectangulo([2 4])./(DistanciaFilas(end) );
 Inicio = [round(Rectangulo1(1)), round(Rectangulo1(2))];
 Final = [round(Rectangulo1(1) + Rectangulo1(3)), round(Rectangulo1(2) + Rectangulo1(4))];
 
 % Obtain indices of curves selected with rectangle
 [X,Y] = meshgrid(1:Columnas,Filas:-1:1);
-Coordenadas = reshape([1:Filas*Columnas],Columnas,Filas);
+Coordenadas = reshape((1:Filas*Columnas),Columnas,Filas);
 Coordenadas = rot90(Coordenadas); % Indices of every curve in image
 Coordenadas = Coordenadas(X>=Inicio(1) & X<=Final(1) & Y>=Inicio(2) & Y<=Final(2));
 
