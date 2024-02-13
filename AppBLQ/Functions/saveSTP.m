@@ -34,7 +34,9 @@ end
 fprintf(stpID,'\r\n[General Info]\r\n\r\n'); %µ char(181)
 fprintf(stpID,'    Image Data Type: double\r\n');
 fprintf(stpID,'    Number of rows: %i\r\n    Number of columns: %i\r\n',size(Map));
-fprintf(stpID,'    Z Amplitude: 1 %s\r\n',unitlabel);
+%We calculate the range of values for the Z axes, although this value will
+%be ignored when importing into WSxM
+fprintf(stpID,'    Z Amplitude: 1 %s\r\n',max(Map,[],"all")-min(Map,[],"all"),unitlabel);
 fprintf(stpID,'[Miscellaneous]\r\n\r\n');
 fprintf(stpID,'    Saved with version: blqApp\r\n');
 fprintf(stpID,'    Z Scale Factor: 1\r\n');

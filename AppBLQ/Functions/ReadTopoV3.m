@@ -1,4 +1,4 @@
-function [Struct,TopoLineas,Matrix] = ReadTopoV2(Name,Path,Struct)
+function [Struct,Size,Matrix] = ReadTopoV3(Name,Path,Struct)
 arguments
     Name char {mustBeNonzeroLengthText}
     Path char
@@ -27,7 +27,7 @@ end
 if isequal(Name,0)
     disp('No image was loaded');
     %No tenemos imagen y hay que introducirlo manualmente
-    TopoLineas=128; %Valor de puntos por defecto en este caso
+    Size=[128,128]; %Valor de puntos por defecto en este caso
     Matrix = [];
 else
 
@@ -49,18 +49,14 @@ else
         RealYLim = fread(FileIMG,2,'double');
         Struct.TamanhoRealColumnas = diff(RealXLim)*1e9;
         Struct.TamanhoRealFilas = diff(RealYLim)*1e9;
-        Msize = fread(FileIMG,2,'int32=>double');
-        %Should support rectangular images
-        if Msize(1)==Msize(2)
-            TopoLineas=Msize(1);
-        end
+        Size = fread(FileIMG,2,'int32=>double');
         % empty space
         fread(FileIMG,450,'char*1');
         % Comment
         fread(FileIMG,512,'char*1');
 
         if readall
-            Matrix = fread(FileIMG,Msize.','single')*1e9;
+            Matrix = fread(FileIMG,Size.','single')*1e9;
             Matrix = rot90(Matrix,-1);
             %Shift to positive values
             Matrix = Matrix - min(Matrix,[],"all");
@@ -136,13 +132,14 @@ else
                     Label=char(C{1});
                     switch Label
                         %Asumimos que es cuadrada
-                        case {'Number of columns','Number of rows'}
+                        case 'Number of rows'
                             % La resolucion solo es un valor numerico
                             Value=textscan(char(C{2}), '%u');
-                            TopoLineas=double(Value{1});
-                            %solo tomamos la resolucion esta
-                            %seccion, podemos salir del bluque
-                            %break
+                            Size(1)=double(Value{1});
+                        case 'Number of columns'
+                            % La resolucion solo es un valor numerico
+                            Value=textscan(char(C{2}), '%u');
+                            Size(2)=double(Value{1});
                         case 'Image Data Type'
                             %Las imagenes antiguas vienen etiquetadas como
                             %single, pero son int16
@@ -175,7 +172,7 @@ else
                             end
                             if isNew
                                 % simply convert to nm and ignore the value
-                                Zscale = Factor; 
+                                Zscale = Factor;
                             else
                                 Zscale = Number * Factor;
                             end
@@ -193,7 +190,7 @@ else
             if isNew
                 % For new images from MyScanner, the format is indeed double, as
                 % the header says. We just need to offset the lowest point
-                Matrix = fread(FileSTP,[TopoLineas, TopoLineas],type);
+                Matrix = fread(FileSTP,Size,type);
                 Matrix = Matrix - min(Matrix,[],"all");
                 Matrix = Matrix * Zscale;
                 Matrix = rot90(Matrix,-1);
@@ -202,7 +199,7 @@ else
                 % is int16, despite the header saying is single
                 % We map the range of the z axis from [zmin,zmax] to
                 % [0,Zscale]
-                Matrix = fread(FileSTP,[TopoLineas, TopoLineas],type);
+                Matrix = fread(FileSTP,Size,type);
                 Matrix = Matrix - min(Matrix,[],"all");
                 Matrix = Matrix * Zscale / max(Matrix,[],"all");
                 Matrix = rot90(Matrix,-1);
@@ -219,7 +216,7 @@ else
         end
     else
         disp('This image has the wrong format. No data was read');
-        TopoLineas=128;
+        Size=128;
         Matrix = [];
     end
 

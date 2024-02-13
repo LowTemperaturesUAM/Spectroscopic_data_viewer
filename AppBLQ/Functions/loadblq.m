@@ -11,13 +11,13 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
     
     [FileNameTopo, FilePathTopo] = uigetfile({'*.stp;*.img','Image Files (*.stp,*.img)';'*.stp','WSxM Images';'*.img','IMG files';'*.*','All Files'},'Load topography');
 
-    [Struct,TopoLineas,Topo] = ReadTopoV2(FileNameTopo,FilePathTopo,Struct);
-
+    [Struct,Dimensiones,Topo] = ReadTopoV3(FileNameTopo,FilePathTopo,Struct);
+    
 	[SaveFolder] = uigetdir(FilePath,'Save Files of Analysis');
         Struct.SaveFolder = SaveFolder;
 
 	[Campo, Temperatura, TamanhoRealFilas, TamanhoRealColumnas, ParametroRedFilas,...
-        ParametroRedColumnas, Filas, Columnas,eleccionMatrices,LeerColumna] = generalData3(TopoLineas, Struct);
+        ParametroRedColumnas, Filas, Columnas,eleccionMatrices,LeerColumna] = generalData4(Dimensiones, Struct);
 
         Struct.Campo                = Campo;
         Struct.Temperatura          = Temperatura;
