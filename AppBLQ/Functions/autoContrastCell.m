@@ -1,6 +1,14 @@
 function Contrast = autoContrastCell(Cell,Threshold)
-Contrast = cell2mat(transpose(cellfun(@(M) autoContrast(M,Threshold),...
-    Cell,UniformOutput=false)))';
+% Applies autoContrast function to each cell of Cell, with parameter
+% Threshold. Cell must be a 1xN or Nx1 cell array. 
+% Output Contrast will be a 2xN matrix, where first row is lower value.
+arguments
+    Cell (:,1)
+    Threshold
+end
+
+Contrast = transpose(cell2mat(cellfun(@(M) autoContrast(M,Threshold),...
+    Cell,UniformOutput=false)));
 
 % Contrast = zeros([2,size(Cell,1)]);
 % for i = 1:length(Cell)
