@@ -170,7 +170,7 @@ writematrix([editCorteInferior.Value; editCorteSuperior.Value;...
     Struct.VoltajeNormalizacionSuperior],...
     [SaveFolder,filesep,FileName(1:length(FileName)-4),'.in'],FileType='text')
 
- FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'], 'a');
+ FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'], 'A');
         fprintf(FileID, 'Corte Inf Conduc      : %g uS\r\n',editCorteInferior.Value);
         fprintf(FileID, 'Corte Sup Conduc      : %g uS\r\n',editCorteSuperior.Value);
         fprintf(FileID, 'Dibuja de             : %g mV\r\n',editEnergiaMin.Value);
@@ -190,7 +190,6 @@ writematrix([editCorteInferior.Value; editCorteSuperior.Value;...
         fprintf(FileID, 'Metodo de interpolado : %s\r\n',mapmethod);
  fclose(FileID);
  close(f);
- clear fileIni
 
 end
 end

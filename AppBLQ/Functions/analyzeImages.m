@@ -4,7 +4,7 @@ Date       = datetime;
 SaveFolder = Struct.SaveFolder;
 FileName   = Struct.FileName;
     
-FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'a');
+FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'A');
         fprintf(FileID, '\r\n');
         fprintf(FileID, '\r\n');
         fprintf(FileID, 'Fecha análisis: %s \r\n',char(Date));
@@ -203,7 +203,7 @@ toc
 % ------------------------------------------------------------------------
     
     
-    FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'a');
+    FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'A');
     fprintf(FileID, 'Map type              : %s\r\n',maptype);
     fprintf(FileID, 'Sweep direction       : %s \r\n',scandir);
     fprintf(FileID, '-------------------------------\r\n');

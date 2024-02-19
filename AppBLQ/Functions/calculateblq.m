@@ -142,7 +142,7 @@ if ~exist([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'file')
     %
 % Saving data from the experiment in a text file
 % ------------------------------------------------------------------------
-    fileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'w');
+    fileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'W');
     fprintf(fileID, 'Archivo analizado:\r\n');
     fprintf(fileID, '-------------------------------\r\n');
     fprintf(fileID, 'File Name : %s \r\n',FileName(1:length(FileName)-4));
