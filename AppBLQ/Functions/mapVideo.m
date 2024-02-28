@@ -1,14 +1,15 @@
 function [writerObj] = mapVideo(Maps,contrastLim,Energia,cmap,options)
 
 % INPUTS
-% Maps             Cell array with the maps to create video
+% Maps             Cell array with the maps to create video, Each cell is an indexed image that
+%                   makes a frame of the video
 % Energia           Array with energy value. Each one defines a frame.
-% contrastLim       Matrix with contrast limits for each energy
+% contrastLim       2xN Matrix with min and max values for contrast
 % cmap              Colormap to use in maps
 
 % "Framerate"       % Frames/maps per second
 % "Colormap"        % Colormap matrix to use
-% "Filename"        String with name of the video file
+% "Filename"        String with name of the video file MAKE SAVEFILE LATER
 
 % OUTPUT
 % writerObj         Video object
@@ -27,6 +28,7 @@ arguments
     options.Title
     options.AxesVisible logical = 1
     options.ColorbarVisible logical = 1
+    options.Axes
     options.Compression
     % options.VideoProfile string = 'Motion JPEG AVI'
 end

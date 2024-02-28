@@ -45,7 +45,7 @@ if opt.AddLabels
         TxtPos = [Hborder + floor(Himg/2)+1+i*(2*Hborder+Himg),Vborder+j*(2*Vborder+Vimg)];
         TileAux = insertText(TileAux,TxtPos,sprintf('%.2f meV',Energy(k)),...
             TextColor = 'black',BoxColor = 'white',FontSize= 30,...
-            BoxOpacity=0,AnchorPoint= 'Center',Font='Arial Unicode');
+            BoxOpacity=0,AnchorPoint= 'Center',Font='Arial');
     end
     TileImg = TileAux;
 end
