@@ -1,4 +1,9 @@
 function [Voffset] = autoOffset(App, Voltaje, MatrizCorriente)
+% Calculate the offset, add the voltage value to the offset dialog and 
+% place a temporary vertical line on the current plot (and maybe also in
+% the conductance)
+% Function used in app blqReader.
+
     VoltajeEscala = App.VoltageScaleFactor.Value;
     OffsetVoltajeValue = App.OffsetvoltageEditField.Value;
     MeanCurrent = mean(MatrizCorriente,2);

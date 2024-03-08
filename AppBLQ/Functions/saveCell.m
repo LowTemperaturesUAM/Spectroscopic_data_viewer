@@ -1,4 +1,6 @@
 function saveCell(Cell, Info)
+% Saves maps in Cell as images, allowing for axes or title to be removed.
+% Needs Infostruct as input to specify units, number of images and colormap
 
 NCell = length(Info.Energia);
 
