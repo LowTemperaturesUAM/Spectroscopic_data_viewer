@@ -28,6 +28,7 @@ arguments
     options.Title
     options.AxesVisible logical = 1
     options.ColorbarVisible logical = 1
+    options.getFrame {mustBeMember(options.getFrame,{'axes','figure'})}
     options.Axes
     options.Compression
     % options.VideoProfile string = 'Motion JPEG AVI'
@@ -109,8 +110,12 @@ try % Check if there are errors to close the file
     % end
 
     %colorbar;
-    if bar_check
+    if options.ColorbarVisible
         colorbar(gca);
+    end
+    % Axes
+    if ~options.AxesVisible
+        set(gca,'YTick',[],'XTick',[],'XLabel',[],'YLabel',[]);
     end
     hold on
     for n = 1:nummaps
@@ -120,7 +125,13 @@ try % Check if there are errors to close the file
         im.Parent.Title.String = "E = "+Energia(n)+" meV";
         drawnow;
         % save frame
-        frame = getframe;
+        if isequal(options.getFrame,'figure')
+            % frame = getframe(gcf);
+            frame=im2frame(print('-RGBImage','-r120'));
+        elseif isequal(options.getFrame,'axes')
+            frame = getframe;
+        end
+        
         writeVideo(writerObj, frame);
     end
     hold off

@@ -1,6 +1,7 @@
 function Contrast = autoContrastCell(Cell,Threshold)
-% Applies autoContrast function to each cell of Cell, with parameter
-% Threshold. Cell must be a 1xN or Nx1 cell array. 
+% Applies autoContrast function to each matrix of the cell array Cell,
+% with parameter Threshold. 
+% Cell must be a 1xN or Nx1 cell array. 
 % Output Contrast will be a 2xN matrix, where first row is lower value.
 arguments
     Cell (:,1)
