@@ -26,9 +26,9 @@ arguments
     options.Framerate (1,1) double {mustBePositive} = length(Maps)/3 % Frames per second by default
     options.Filename string = "TestVid.avi"
     options.Title
-    options.AxesVisible logical = 1
+    options.AxesVisible logical = 0
     options.ColorbarVisible logical = 1
-    options.getFrame {mustBeMember(options.getFrame,{'axes','figure'})}
+    options.getFrame {mustBeMember(options.getFrame,{'axes','figure'})} = 'figure'
     options.Axes
     options.Compression
     % options.VideoProfile string = 'Motion JPEG AVI'
@@ -100,10 +100,16 @@ writerObj = VideoWriter(options.Filename); % Create a video
 writerObj.FrameRate = options.Framerate; %Framerate
 open(writerObj); 
 
+% Prepare progress bar
+uifig = uifigure;
+dlg  = uiprogressdlg(uifig,'Title','Patience is a Virtue', ...
+    'Message','Saving Video...','Cancelable','on');
+
 try % Check if there are errors to close the file
     im = imagesc(Maps{1});
     colormap(fig,cmap);
     set(gca,{'YDir','DataAspectRatio'},{'normal', [1 1 1]});
+    title("E = "+Energia(1)+" meV",'FontSize',16);
 
     % if ~doAxes
     %     set(gca,'YTick',[],'XTick',[],'XLabel',[],'YLabel',[]);
@@ -119,6 +125,12 @@ try % Check if there are errors to close the file
     end
     hold on
     for n = 1:nummaps
+% If cancel
+if dlg.CancelRequested
+        close(writerObj)
+        delete(options.Filename);
+        break
+end
         % Change content of axes and title each frame
         im.CData = Maps{n};
         im.Parent.CLim = [contrastLim(:,n)];
@@ -133,6 +145,9 @@ try % Check if there are errors to close the file
         end
         
         writeVideo(writerObj, frame);
+
+        % Update progressBar
+        dlg.Value = n/nummaps;
     end
     hold off
 catch ME
@@ -148,5 +163,8 @@ end
 
 close(fig)
 close(writerObj);
+% Close ProgressBar and Figure that containsit
+close(dlg);
+close(uifig);
 
 end
