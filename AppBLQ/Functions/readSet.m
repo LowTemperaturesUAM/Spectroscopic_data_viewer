@@ -5,6 +5,8 @@ function [Data, readFlag,DataFormat,Factor] = readSet(FileID, NumeroFilas)
             TamanhoDatos =  fread(FileID, 2, 'uint16'); % Nos da el formato de los datos
             DataFormat =  TamanhoDatos(2);
         fread(FileID, 2, 'int32'); % Hay que leer esto que no sabemos lo que es
+        %Primer entero es el tipo de dato (Corriente, Voltaje...)
+        %El segundo es el numero de promedios
         hofss      =  fread (FileID, 4, 'float64'); % Esto contiene varios datos del experimento en cada curva
             Offset =  hofss(1);
             Factor =  hofss(2); % este valor es un float64, al multiplicarlo, todos los datos serán float... hay que sacarlo de aquí      
