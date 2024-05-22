@@ -15,7 +15,7 @@ function [Data, readFlag] = readSetFast(FileID, NumeroFilas,DataFormat,Factor)
         	case 0
             	Data = Factor*(Offset + Start + (Size/NumeroFilas)*(0:(NumeroFilas-1)));   
                 Data = Data';
-                readFlag = 0;
+                readFlag = 1;
             case 1
                 Data = Factor*(fread (FileID, NumeroFilas, 'int8')); 
                 readFlag = 1;

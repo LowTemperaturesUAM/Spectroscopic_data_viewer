@@ -40,7 +40,7 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
     % ------------------------------------------------------------------------ 
     tic
     [Voltaje,IdaIda,IdaVuelta,VueltaIda,VueltaVuelta] = ...
-        ReducedblqreaderV16([FilePath,FileName],Filas,Columnas, eleccionMatrices, initialPoint, LeerColumna);
+        ReducedblqreaderV17([FilePath,FileName],Filas,Columnas, eleccionMatrices, initialPoint,BlqColumn=LeerColumna);
     toc
     Voltaje = Voltaje*1000; % Para ponerlo en mV
 
