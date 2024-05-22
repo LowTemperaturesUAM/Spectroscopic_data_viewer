@@ -33,6 +33,11 @@ elseif Format == 3 %Group all maps in a single image
     imwrite(OutputImg,Colormap, ...
         [Path,filesep,'CombinedMaps','.',options.FileType])
     return
+
+elseif Format == 4 %Make Video with Maps as frames. Default 7 FPS
+    mapVideo(Cell,Contrast,Energy,Colormap, ...
+        'Filename',[Path,filesep,options.Prefix,'MapVideo','.','avi'], ...
+        'Framerate',7,'ColorbarVisible',false,'getFrame','figure');
 end
 
 NCell = length(Info.Energia);
@@ -87,6 +92,7 @@ if Format == 1
     SaveFigure.Children.XTickLabel = [];
     SaveFigure.Children.YTickLabel = [];
 end
+
 for i = 1:NCell
     SaveFigure.Children.Children.CData = Cell{i};
     SaveFigure.Children.CLim = Contrast(:,i);
