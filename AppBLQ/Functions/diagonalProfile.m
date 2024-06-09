@@ -1,4 +1,8 @@
-function diagonalProfile(Info)
+function diagonalProfile(Info,opt)
+arguments
+    Info struct
+    opt.FigNumber = 54535
+end
 if rem(length(Info.DistanciaFilas),2)
     LongitudPerfil = length(Info.DistanciaFilas)+1; %Poner ese +1 sólo si se ha ajustado el (0,0) previamente en QPIStudy.m
 else
@@ -12,10 +16,14 @@ for k=1:length(Info.Energia)
     Perfiles(k,i) = Info.Transformadas{k}(i,i);
     end
 end
-
-a=figure(54535);
+Posiciones = sqrt((Info.DistanciaFourierFilas*2*Info.ParametroRedFilas).^2 + ...
+    (Info.DistanciaFourierColumnas*2*Info.ParametroRedColumnas).^2)/sqrt(2) .* ...
+    sign(Info.DistanciaFourierFilas*2*Info.ParametroRedFilas + ...
+    Info.DistanciaFourierColumnas*2*Info.ParametroRedColumnas);
+a=figure(opt.FigNumber);
 a.Name='Diagonal Profile';
-imagesc(Info.DistanciaFourierFilas*2*Info.ParametroRedFilas,Info.Energia,Perfiles);
+imagesc(Info.DistanciaFourierFilas*2*Info.ParametroRedFilas,Info.Energia,Perfiles)
+% imagesc(Posiciones,Info.Energia,Perfiles)
 axis([-1 1 min(Info.Energia) max(Info.Energia)]);
 % axis([0 1 -85 85]);
 b=gca;
@@ -37,7 +45,16 @@ b.TickDir = 'out';
 % b.CLim=[minimo maximo];
 %b.CLim=[min(min(Perfiles)) max(max(Perfiles))];
 b.CLim = Info.ContrastFFT(:,(end+1)/2); %Usamos el contraste a 0 mV para empezar
-%colormap gray
+%implementar la posibilidad de ajustar los limites de la figura (x,y y color)
+%como argumentos opcionales
 
 b.XLim = [-1 1];
+
+QPI.Map = Perfiles;
+QPI.K = sqrt(Info.DistanciaFourierFilas.^2 + Info.DistanciaFourierColumnas.^2);
+QPI.q = sqrt((Info.DistanciaFourierFilas*2*Info.ParametroRedFilas).^2 + ...
+    (Info.DistanciaFourierColumnas*2*Info.ParametroRedColumnas).^2);
+QPI.Energy = Info.Energia;
+
+assignin('base','QPIDiagonal',QPI)
 end

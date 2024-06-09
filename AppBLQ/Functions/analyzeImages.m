@@ -3,7 +3,7 @@ function [Struct] = analyzeImages(Struct)
 Date       = datetime;
 SaveFolder = Struct.SaveFolder;
 FileName   = Struct.FileName;
-    
+%este tramo se guarda siempre aunque cancelemos el analisis    
 FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'A');
         fprintf(FileID, '\r\n');
         fprintf(FileID, '\r\n');
@@ -14,7 +14,7 @@ FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'A')
         fprintf(FileID, 'Offset                : %g mV\r\n', Struct.OffsetVoltaje);
         switch Struct.NormalizationFlag
             case {'single side'}
-                fprintf(FileID, 'Normalization         : single side');
+                fprintf(FileID, 'Normalization         : single side\r\n');
                 fprintf(FileID, 'Normalize min         : %g mV\r\n', Struct.VoltajeNormalizacionInferior);
                 fprintf(FileID, 'Normalize max         : %g mV\r\n', Struct.VoltajeNormalizacionSuperior);
             case {'mirror window'}
@@ -22,7 +22,7 @@ FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'A')
                     Struct.VoltajeNormalizacionSuperior,ComparisonMethod="abs");
                 highbound = max(Struct.VoltajeNormalizacionInferior,...
                     Struct.VoltajeNormalizacionSuperior,ComparisonMethod="abs");
-                fprintf(FileID, 'Normalization         : symmetrical');
+                fprintf(FileID, 'Normalization         : symmetrical\r\n');
                 fprintf(FileID, 'Normalize min         : ±%g mV\r\n', abs(lowbound));
                 fprintf(FileID, 'Normalize max         : ±%g mV\r\n', abs(highbound));
             case 'none'

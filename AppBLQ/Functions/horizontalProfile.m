@@ -1,5 +1,8 @@
-function horizontalProfile(Info)
-
+function horizontalProfile(Info,opt)
+arguments
+    Info struct
+    opt.FigNumber = 54534
+end
 LongitudPerfil = length(Info.DistanciaFourierColumnas);
 Perfiles = zeros(length(Info.Energia),LongitudPerfil);
 %Perfiles2 = zeros(length(Energia),LongitudPerfil);
@@ -18,7 +21,7 @@ end
 % PerfilesPromedio = (Perfiles + Perfiles2)/2;
 % PerfilesFlatten=Flatten(Perfiles,[1,1]);
 
-a=figure(54534);
+a=figure(opt.FigNumber);
 a.Name='Horizontal Profile';
 
 % a=figure;
@@ -26,7 +29,7 @@ a.Name='Horizontal Profile';
 
 %imagesc(Info.DistanciaFourierColumnas.*Info.ParametroRedColumnas,Info.Energia,Perfiles);
 
-imagesc(Info.DistanciaFourierColumnas*2*Info.ParametroRedFilas,Info.Energia,Perfiles);  %Para redes cuadradas
+imagesc(Info.DistanciaFourierColumnas*2*Info.ParametroRedColumnas,Info.Energia,Perfiles);  %Para redes cuadradas
 
 %imagesc(Info.DistanciaFourierColumnas.*2*Info.ParametroRedColumnas.*2./sqrt(3),Info.Energia,Perfiles);
 %%Para redes hexagonales, con los picos de Bragg en la vertical
@@ -58,9 +61,10 @@ b.CLim = Info.ContrastFFT(:,(end+1)/2); %Usamos el contraste a 0 mV para empezar
 % (Primera zona) Restringe eje X para que vaya desde -1 a 1 [-pi/a,pi/a]; 
 b.XLim = [-1 1];
 
-QPI.Horizontal.Map = Perfiles;
-QPI.Horizontal.K = Info.DistanciaFourierFilas;
-QPI.Horizontal.Energy = Info.Energia;
+QPI.Map = Perfiles;
+QPI.K = Info.DistanciaFourierColumnas;
+QPI.q = Info.DistanciaFourierColumnas*2*Info.ParametroRedColumnas;
+QPI.Energy = Info.Energia;
 
-assignin('base','QPI0',QPI)
+assignin('base','QPIHorizontal',QPI)
 end

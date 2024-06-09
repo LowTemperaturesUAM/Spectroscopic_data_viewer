@@ -1,5 +1,8 @@
-function verticalProfile(Info)
-
+function verticalProfile(Info,opt)
+arguments
+    Info struct
+    opt.FigNumber = 54533
+end
 LongitudPerfil = length(Info.DistanciaFourierFilas);
 Perfiles = zeros(length(Info.Energia),LongitudPerfil);
 %Perfiles2 = zeros(length(Energia),LongitudPerfil);
@@ -18,7 +21,7 @@ end
 % PerfilesPromedio = (Perfiles + Perfiles2)/2;
 % PerfilesFlatten=Flatten(Perfiles,[1,1]);
 
-a=figure(54533);
+a=figure(opt.FigNumber);
 a.Name='Vertical Profile';
 
 % a=figure;
@@ -53,9 +56,10 @@ b.CLim = Info.ContrastFFT(:,(end+1)/2);  %Usamos el contraste a 0 mV para empeza
 % (Primera zona) Restringe eje X para que vaya desde -1 a 1 [-pi/a,pi/a]; 
 b.XLim = [-1 1];
 
-QPI.Vertical.Map = Perfiles;
-QPI.Vertical.K = Info.DistanciaFourierFilas;
-QPI.Vertical.Energy = Info.Energia;
+QPI.Map = Perfiles;
+QPI.K = Info.DistanciaFourierFilas;
+QPI.q = Info.DistanciaFourierFilas*2*Info.ParametroRedFilas;
+QPI.Energy = Info.Energia;
 
-assignin('base','QPI0',QPI)
+assignin('base','QPIVertical',QPI)
 end
