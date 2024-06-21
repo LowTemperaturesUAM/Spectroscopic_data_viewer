@@ -57,7 +57,7 @@ MapaGap = MapaGap';
 % Plot the map
 fig = figure;
 imagesc(Info.DistanciaColumnas,Info.DistanciaFilas,MapaGap,[0 Range]);
-xlabell('X'); ylabel('Y');
+xlabel('X'); ylabel('Y');
 set(fig.Children,'YDir','normal','DataAspectRatio',[1 1 1]);
 % fig.Children.CLim = CScale;
 colormap viridis
