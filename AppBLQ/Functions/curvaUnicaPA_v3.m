@@ -28,6 +28,9 @@ else
     display(['RS Pixel = [',num2str(PixelX),',',num2str(PixelY),...
         '] \\ Indice = ',num2str((PixelY-1)*Columnas+PixelX)]);
 end
+% Aseguro que figura entra en pantalla
+movegui(curvaUnicaFig);
+
 CurvaUnica = Matriz(:,(PixelY-1)*Columnas+PixelX);
 
 hold on

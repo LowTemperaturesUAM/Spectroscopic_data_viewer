@@ -20,6 +20,8 @@ if length(Coordenadas)>1
 AvgCur = mean(MatrizCurvas(:,Coordenadas),2);
 
 NewFig = plotMeanCur(ax,Voltaje,AvgCur,Inicio,Final,isCurrent);
+% Place figure inside screen if otherwise
+movegui(NewFig);
 
 x1=Rectangulo(1);
 y1=Rectangulo(2);

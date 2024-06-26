@@ -18,6 +18,7 @@ f.Name = 'Map analysis settings';
 rpos = f.Position(3);
 hrow = 50;
 toprow = f.Position(4)-hrow;
+movegui(f);
 %Si ya existe, abro el archivo de iniciacion y segun si existe o no, creo
 %una variable existeIni que sera true si existe y false si no. Si existe
 %guardará los valores introducidos por el usuario en orden de esta forma:
@@ -25,8 +26,13 @@ toprow = f.Position(4)-hrow;
 % 2.- Corte Superior
 % 3.- Energía inicial
 % 4.- Energía final
-% 5.- Paso energía
-% 6.- Delta energía
+% 5.- Delta energía
+% 6.- Paso energía
+% 7.- Curvas a mostrar
+% 8.- Puntos de derivada
+% 9.- Offset
+%10.- Min Rango Normalización
+%11.- Max Rango Normalización
 
 if exist([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.in'], 'file') == 2
     [[SaveFolder,filesep],FileName(1:length(FileName)-4),'.in'];
@@ -130,6 +136,10 @@ xyswich.Position(1) = floor(rpos-85 - xyswich.Position(3)/2);
 xylbl = uilabel(f,"Text",'Sweep direction:');
 xylbl.Position(1:2) = [40 xyswich.Position(2)];
 xylbl.Position(3:4) = [120, 20]; 
+%Si existe coge el valor del archivo
+if existeIni && length(remember)>=12
+    xyswich.Value = ( remember(12));
+end    
 
 maptypesel = uidropdown(f,"Items",{'Conductance','Current'},Position=[rpos-150 toprow-8*hrow 110 20]);
 typelbl = uilabel(f,"Text",'Map type:',Position=[40, toprow-8*hrow 120, 20]);
@@ -167,7 +177,7 @@ writematrix([editCorteInferior.Value; editCorteSuperior.Value;...
     editDeltaEnergia.Value; editPasoMapas.Value;...
     Struct.NumeroCurvas; Struct.NPuntosDerivada;...
     Struct.OffsetVoltaje; Struct.VoltajeNormalizacionInferior;...
-    Struct.VoltajeNormalizacionSuperior],...
+    Struct.VoltajeNormalizacionSuperior; xyswich.Value],...
     [SaveFolder,filesep,FileName(1:length(FileName)-4),'.in'],FileType='text')
 
  FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'], 'A');
