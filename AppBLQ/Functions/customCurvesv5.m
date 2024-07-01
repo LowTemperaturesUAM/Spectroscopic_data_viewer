@@ -135,11 +135,7 @@ xyswich.Position(2) = toprow-7*hrow;
 xyswich.Position(1) = floor(rpos-85 - xyswich.Position(3)/2); 
 xylbl = uilabel(f,"Text",'Sweep direction:');
 xylbl.Position(1:2) = [40 xyswich.Position(2)];
-xylbl.Position(3:4) = [120, 20]; 
-%Si existe coge el valor del archivo
-if existeIni && length(remember)>=12
-    xyswich.Value = ( remember(12));
-end    
+xylbl.Position(3:4) = [120, 20];  
 
 maptypesel = uidropdown(f,"Items",{'Conductance','Current'},Position=[rpos-150 toprow-8*hrow 110 20]);
 typelbl = uilabel(f,"Text",'Map type:',Position=[40, toprow-8*hrow 120, 20]);
@@ -177,7 +173,7 @@ writematrix([editCorteInferior.Value; editCorteSuperior.Value;...
     editDeltaEnergia.Value; editPasoMapas.Value;...
     Struct.NumeroCurvas; Struct.NPuntosDerivada;...
     Struct.OffsetVoltaje; Struct.VoltajeNormalizacionInferior;...
-    Struct.VoltajeNormalizacionSuperior; xyswich.Value],...
+    Struct.VoltajeNormalizacionSuperior],...
     [SaveFolder,filesep,FileName(1:length(FileName)-4),'.in'],FileType='text')
 
  FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'], 'A');

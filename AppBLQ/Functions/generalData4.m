@@ -4,6 +4,7 @@ f = uifigure;
 f.Name = 'Image parameters and import settings';
 % f.Position = [172,466,631,345];
 f.Position(3:4) = [630,400];
+movegui(f,'onscreen');
 
 FileName = Struct.FileName;
 SaveFolder = Struct.SaveFolder;
