@@ -111,7 +111,10 @@ else
                                     Struct.TamanhoRealColumnas =Number*1e6;
                                     %fprintf('%.2f nm',TamanhoRealFilas)
                                 otherwise
-                                    fprintf('This unit cannot be read!!')
+                                    % fprintf('This unit cannot be read!!')
+                                    fprintf('Empty Units\n')
+                                    Struct.TamanhoRealFilas =Number;
+                                    Struct.TamanhoRealColumnas =Number;
                             end
                             %como solo tomamos el tamaño de esta
                             %seccion, podemos salir del bucle
@@ -167,7 +170,8 @@ else
                                 case 'pm'
                                     Factor = 1e-3;
                                 otherwise
-                                    fprintf('This unit cannot be read!!')
+                                    % fprintf('This unit cannot be read!!')
+                                    fprintf('Empty Units\n')
                                     Factor = 1;
                             end
                             if isNew
