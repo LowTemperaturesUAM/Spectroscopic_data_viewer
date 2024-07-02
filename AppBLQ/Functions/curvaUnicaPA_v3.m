@@ -1,6 +1,11 @@
 function curvaUnicaFig = curvaUnicaPA_v3(ax, puntero, Voltaje, Matriz, VectorTamanhoX, VectorTamanhoY, isReal, isCurrent)
 %Programa que pinta una unica curva seleccionada con el puntero
 
+% Asegurarse que Voltaje es columna
+if isrow(Voltaje)
+    Voltaje = Voltaje';
+end
+
 Columnas = length(VectorTamanhoX);
 
 CoorX = puntero(1,1);
