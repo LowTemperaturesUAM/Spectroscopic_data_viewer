@@ -39,6 +39,10 @@ else
     FigPerfil.Color = [1 1 1];
     EjePerfil = axes('Parent',FigPerfil,'FontSize',14,'FontName','Arial','FontWeight','bold');
     hold(EjePerfil,'on');
+    Perfil = struct();
+    Perfil.X = DistanciaPerfil;
+    Perfil.Y = PerfilActual;
+    assignin('base',"Perfil",Perfil)
     plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
     scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
         'Parent',EjePerfil);
