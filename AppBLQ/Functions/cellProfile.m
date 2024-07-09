@@ -5,8 +5,8 @@ arguments
     start2 (:,2) {mustBeFinite}
     final1 (:,2) {mustBeFinite}
     opt.Method {mustBeMember(opt.Method,{'nearest','bilinear','bicubic'})} = 'bilinear'
-    opt.XLim (:,2) {mustBeFinite} = [0, size(Map,2)] 
-    opt.YLim (:,2) {mustBeFinite} = [0, size(Map,1)]
+    opt.XLim (:,2) {mustBeFinite} = [0, size(Cell{1},2)] 
+    opt.YLim (:,2) {mustBeFinite} = [0, size(Cell{1},1)]
 end
 %Assume all cells have equal size and dimensions
 ProfileCell = cell(size(Cell));
