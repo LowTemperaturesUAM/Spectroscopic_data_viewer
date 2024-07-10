@@ -1,5 +1,5 @@
 function [CellRotated] = RotateMatrixFFT(Cell, Angle)
-[Filas,Columnas] = size(Cell);
+[Filas,Columnas] = size(Cell{1});
 %if the matrix has even number of elements, we add an extra element at the
 %end to keep the position of the center unchanged during the rotation
 if mod(Filas,2)==0 && mod(Columnas,2) == 0

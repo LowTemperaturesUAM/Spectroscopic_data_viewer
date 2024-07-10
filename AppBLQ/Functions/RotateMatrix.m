@@ -1,5 +1,5 @@
 function [CellRotated] = RotateMatrix(Cell, Angle)
-[Filas,Columnas] = size(Cell);
+[Filas,Columnas] = size(Cell{1});
 
 
 CellRotated = Cell;
