@@ -213,8 +213,8 @@ toc
     %de obtener los mapas correspondientes
     if strcmp(scandir,'Y')
         ordeny=zeros(1,Filas*Columnas);
-        for i=1:Columnas
-            ordeny((i-1)*Filas+1:(i-1)*Filas+Columnas) = i:Filas:(Filas-1)*Columnas+i; 
+        for i=1:Filas
+            ordeny(1+(i-1)*Columnas:i*Columnas) = i:Filas:Filas*Columnas; 
         end
         MatrizNormalizada = MatrizNormalizada(:,ordeny);
         MatrizCorriente = MatrizCorriente(:,ordeny);

@@ -22,7 +22,9 @@ else
 end
 %%-----------------------------------------------------------------------
 out = customCurvesWindow(InfoStruct);
-
+if isequal(out,0)
+    return
+else
 %
 % INPUT
 % From uifig
@@ -50,17 +52,24 @@ MatrizConductancia = derivadorLeastSquaresPA(ptsDeriv,IVcurves,V, ...
 
 
 % opciones de normalizar------------------------------
+normOpts = customNormalizeWindow;
+switch normOpts.Range
+    case "none"
+        MatrizNormalizada = MatrizConductancia;
+    otherwise
+        MatrizNormalizada = NormalizeRange(normOpts.VNormSuperior, ...
+            normOpts.VNormInferior,V,MatrizConductancia,...
+            'Range',normOpts.Range);
+end
 
-MatrizNormalizada = MatrizConductancia;
 % clear MatrizConductancia
 
 
 % Reorder curves if blq was taken in Y direction. -------------------------
-%  Maybe check algorithm with rectangular maps
 if strcmp(InfoStruct.Direction,'Y')
     ordenY = zeros(1,Filas*Columnas);
-    for i = 1:Columnas
-        ordenY((i-1)*Filas+1:(i-1)*Filas+Columnas) = i:Filas:(Filas-1)*Columnas+i;
+    for i = 1:Filas
+        ordenY(1+(i-1)*Columnas:i*Columnas) = i:Filas:Filas*Columnas;
     end
     MatrizNormalizada = MatrizNormalizada(:,ordenY);
     IVcurves = IVcurves(:,ordenY);
@@ -106,5 +115,5 @@ InfoData.MapasConductancia] = deal(MapasConductancia);
 InfoStruct.Energia = Energia;
 InfoStruct.PuntosDerivada = ptsDeriv;
 
-
+end
 end

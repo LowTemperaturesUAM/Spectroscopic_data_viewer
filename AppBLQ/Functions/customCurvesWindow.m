@@ -89,6 +89,7 @@ end
 % make figure wait until pushing Confirm
 uiwait(fig);
 
+if ishghandle(fig) % In case preemptively closed figure
 % Assign values to structure output-----------------------------------
 out.NDeriv = editNDeriv.Value;
 out.LowCut = editCorteInferior.Value;
@@ -99,9 +100,11 @@ out.Method = methodsel.Value;
 out.PasoMapa = editPasoMapas.Value;
 out.deltaE = editDeltaEnergia.Value;
 
-
 close(fig);
-
+else
+    out = 0;
+    return
+end
 % Enable/Disables fields depending on interpolation selected
 function  changeMethod(methodsel,editDeltaEnergia,editPasoMapas)
     method = methodsel.Value;
