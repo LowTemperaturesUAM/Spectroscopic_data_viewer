@@ -65,15 +65,15 @@ end
 % clear MatrizConductancia
 
 
-% Reorder curves if blq was taken in Y direction. -------------------------
-if strcmp(InfoStruct.Direction,'Y')
-    ordenY = zeros(1,Filas*Columnas);
-    for i = 1:Filas
-        ordenY(1+(i-1)*Columnas:i*Columnas) = i:Filas:Filas*Columnas;
-    end
-    MatrizNormalizada = MatrizNormalizada(:,ordenY);
-    IVcurves = IVcurves(:,ordenY);
-end
+% Reorder curves if blq was taken in Y direction. NOT NECESSARY----------
+% if strcmp(InfoStruct.Direction,'Y')
+%     ordenY = zeros(1,Filas*Columnas);
+%     for i = 1:Filas
+%         ordenY(1+(i-1)*Columnas:i*Columnas) = i:Filas:Filas*Columnas;
+%     end
+%     MatrizNormalizada = MatrizNormalizada(:,ordenY);
+%     IVcurves = IVcurves(:,ordenY);
+% end
 
 % Limit Conductance Values----------------------------------------
 MatrizNcut = MatrizNormalizada;
@@ -95,9 +95,9 @@ switch mapmethod
     case 'none'
         % use the raw voltages from the IV we have to make sure
         % the values are sorted from lowest to highest
-        [Energia] = sort(Struct.Voltaje);
+        [Energia] = sort(V);
         Info = struct();
-        Info.Voltage = V;
+        Info.Voltaje = V;
         Info.DistanciaFilas = 1:Filas;
         Info.DistanciaColumnas = 1:Columnas;
 
