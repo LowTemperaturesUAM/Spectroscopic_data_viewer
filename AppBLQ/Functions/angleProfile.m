@@ -41,12 +41,16 @@ end
 
 
 QPI.Map = Perfiles;
-QPI.K = (sqrt(xp.^2+yp.^2).*sign(xp)).';
+if all(sign(xp)==0)
+    QPI.K = (sqrt(xp.^2+yp.^2).*sign(yp)).';
+else
+    QPI.K = (sqrt(xp.^2+yp.^2).*sign(xp)).';
+end
 switch opt.Lattice
     case 'square'
         QPI.q = QPI.K*2*Info.ParametroRedColumnas;
     case 'hexagonal'
-        QPI.q = QPI.K*2*Info.ParametroRedColumnas*2/sqrt(3);
+        QPI.q = QPI.K*2*Info.ParametroRedColumnas*sqrt(3)/2; %está al reves??
 end
 QPI.Energy = Info.Energia;
 QPI.Angle = wrapAngle;
@@ -64,7 +68,7 @@ switch opt.Lattice
     case 'square'
         b.XLabel.String = '\fontsize{18} q_{\theta} (\pi/b)';
     case 'hexagonal'
-        b.XLabel.String = '\fontsize{18} q_{\theta} (\sqrt(3)/2\pi/b)';
+        b.XLabel.String = '\fontsize{18} q_{\theta} (\surd{3}/2 \pi/b)';
 end
 b.LineWidth = 2;
 b.FontWeight = 'bold';
