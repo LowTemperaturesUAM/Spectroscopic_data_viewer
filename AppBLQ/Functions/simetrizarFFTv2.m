@@ -16,7 +16,9 @@
 % Type: tipo de simetrización que se quiere llevar a cabo.
 %       Type = 'Hor+Ver' -> Simetría Hermann (dos espejos)
 %       Type = 'Vertical' -> Simetría espejando (vertical)
-%       Type = 3 -> Simertías C4 bien
+%       Type = 'C4' -> Simertías C4
+%       Type = 'C6' -> Simertías C6
+%       Type = 'C3' -> Simertías C3
 % ------------------------------
 %
 %
@@ -39,7 +41,12 @@ function [Symmetric] = simetrizarFFTv2(Cell,Type)
 % extra para que el origen siempre quede en el centro
 if mod(Filas,2)==0 && mod(Columnas,2) == 0
     Cell = cellfun(@(x) x([1:end 1],[1:end 1]),Cell,UniformOutput=false);
+elseif mod(Filas,2)==0
+    Cell = cellfun(@(x) x([1:end 1],:),Cell,UniformOutput=false);
+elseif mod(Columnas,2)==0
+    Cell = cellfun(@(x) x(:,[1:end 1]),Cell,UniformOutput=false);
 end
+
 switch Type
     case 'Vertical'
         Symmetric = cellfun(@(x) 0.5*(x+flipud(x)),Cell,UniformOutput=false);
@@ -78,4 +85,10 @@ end
 % dimensiones originales
 if mod(Filas,2)==0 && mod(Columnas,2) == 0
     Symmetric = cellfun(@(x) x(1:end-1,1:end-1),Symmetric,UniformOutput=false);
+elseif mod(Filas,2)==0
+    Symmetric = cellfun(@(x) x(1:end-1,:),Symmetric,UniformOutput=false);
+elseif mod(Columnas,2)==0
+    Symmetric = cellfun(@(x) x(:,1:end-1),Symmetric,UniformOutput=false);
+end
+
 end
