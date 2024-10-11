@@ -1,4 +1,4 @@
-function horizontalProfile(Info,opt)
+function Result = horizontalProfile(Info,opt)
 arguments
     Info struct
     opt.FigNumber = 54534
@@ -66,5 +66,9 @@ QPI.K = Info.DistanciaFourierColumnas;
 QPI.q = Info.DistanciaFourierColumnas*2*Info.ParametroRedColumnas;
 QPI.Energy = Info.Energia;
 
-assignin('base','QPIHorizontal',QPI)
+if nargout == 0 
+    assignin('base','QPIHorizontal',QPI)
+else
+    Result = QPI;
+end
 end

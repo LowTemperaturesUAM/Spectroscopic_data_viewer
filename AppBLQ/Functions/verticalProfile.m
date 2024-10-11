@@ -1,4 +1,4 @@
-function verticalProfile(Info,opt)
+function Result = verticalProfile(Info,opt)
 arguments
     Info struct
     opt.FigNumber = 54533
@@ -61,5 +61,9 @@ QPI.K = Info.DistanciaFourierFilas;
 QPI.q = Info.DistanciaFourierFilas*2*Info.ParametroRedFilas;
 QPI.Energy = Info.Energia;
 
-assignin('base','QPIVertical',QPI)
+if nargout == 0
+    assignin('base','QPIVertical',QPI)
+else
+    Result = QPI;
+end
 end

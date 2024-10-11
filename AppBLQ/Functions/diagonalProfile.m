@@ -1,4 +1,4 @@
-function diagonalProfile(Info,opt)
+function Result = diagonalProfile(Info,opt)
 arguments
     Info struct
     opt.FigNumber = 54535
@@ -56,5 +56,9 @@ QPI.q = sqrt((Info.DistanciaFourierFilas*2*Info.ParametroRedFilas).^2 + ...
     (Info.DistanciaFourierColumnas*2*Info.ParametroRedColumnas).^2);
 QPI.Energy = Info.Energia;
 
-assignin('base','QPIDiagonal',QPI)
+if nargout == 0
+    assignin('base','QPIDiagonal',QPI)
+else
+    Result = QPI;
+end
 end
