@@ -8,8 +8,9 @@ function [writerObj] = mapVideo(Maps,contrastLim,Energia,cmap,options)
 % cmap              Colormap to use in maps
 
 % "Framerate"       % Frames/maps per second
-% "Colormap"        % Colormap matrix to use
+% "ColorbarVisible"- Logic value to show or hide colorbar
 % "Filename"        String with name of the video file MAKE SAVEFILE LATER
+% "getFrame"={'axes','figure'} - Object from which frame is made
 
 % OUTPUT
 % writerObj         Video object

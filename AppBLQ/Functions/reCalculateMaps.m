@@ -107,13 +107,13 @@ end
 
 %------------------------------------------------------------------
 % Assign results to InfoStruct
-[InfoStructAnalisis.MapasConductancia,...
-InfoStruct.MapasConductancia,...
-InfoData.MapasConductancia] = deal(MapasConductancia);
+InfoStruct.MapasConductancia = deal(MapasConductancia);
 
 [InfoStruct.MatrizNormalizada] = MatrizNcut;
 InfoStruct.Energia = Energia;
 InfoStruct.PuntosDerivada = ptsDeriv;
+InfoStruct.ContrastReal = [lowerCut upperCut]'*ones(1,numel(Energia));
+InfoStruct.ContrastFFT = [0 100]'*ones(1,numel(Energia));
 
 end
 end
