@@ -33,12 +33,14 @@ mapmethod = out.Method;
 deltaE = out.deltaE;
 upperCut = out.UpCut;
 lowerCut = out.LowCut;
-Energia = out.Emin:out.PasoMapa:out.Emax;
+
+
 
 % Load curves from InfoStruct
 IVcurves = InfoStruct.MatrizCorriente;
-
 V = InfoStruct.Voltaje;
+
+
 Filas = length(InfoStruct.DistanciaFilas);
 Columnas = length(InfoStruct.DistanciaColumnas);
 
@@ -84,18 +86,22 @@ MatrizNcut(MatrizNcut>upperCut) = upperCut;
 % Turn matrix into maps-------------------------------------------
 % Consider interpolation method (mean,nearest,linear...)???-----
 % Determines Energia array
-
 switch mapmethod
     case 'mean'
+        Energia = out.Emin:out.PasoMapa:out.Emax;
         MapasConductancia = GetMapsMeanWindow(V,MatrizNcut,Energia, ...
             deltaE,Filas,Columnas);
     case {'nearest','linear','makima'}
+        Energia = out.Emin:out.PasoMapa:out.Emax;
         MapasConductancia = GetMapsInterpolate(V,MatrizNcut,Energia, ...
             Filas,Columnas,mapmethod);
     case 'none'
         % use the raw voltages from the IV we have to make sure
         % the values are sorted from lowest to highest
-        [Energia] = sort(V);
+        [NewVolt,indx] = sort(V,'ascend');
+        energyRange = NewVolt < out.Emax & NewVolt > out.Emin;
+        energyValues = indx(energyRange);
+        Energia = V(energyValues);
         Info = struct();
         Info.Voltaje = V;
         Info.DistanciaFilas = 1:Filas;

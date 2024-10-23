@@ -16,8 +16,5 @@ function [Cell] = curves2maps(Matriz,Info)
     Cell = mat2cell(MatrizNueva,Row,Col,ones(1,pts));
     Cell = squeeze(Cell).';
 
-    % Reorder maps in Cell in increasing order of Voltage
-    [~,idx] = sort(Info.Voltaje,'ascend');
-    Cell = Cell(idx);
     clear MatrizNueva pts Row Col
 end
