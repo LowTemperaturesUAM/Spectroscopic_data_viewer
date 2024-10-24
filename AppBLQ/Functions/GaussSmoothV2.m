@@ -33,10 +33,8 @@ switch opts.Padding
 end
 if iscell(Maps)
     %assume all maps in the cell have equal size
-    % disp(size(Maps{1}))
-    % Size = floor(size(Maps{1})/2)+1 %Half the image size
     Size = floor(size(Maps{1})/2); %Take half the image size
-    Size = Size + mod(Size+1,2) %Make sure its odd in size
+    Size = Size + mod(Size+1,2); %Make sure its odd in size
     if meanFlag
         FilterMaps = cellfun(@(M) imgaussfilt(M,sigmapix,Padding=mean(M,"all"),...
             FilterSize=Size),Maps,UniformOutput=false);
