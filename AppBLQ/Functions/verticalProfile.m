@@ -20,42 +20,42 @@ end
 % end
 % PerfilesPromedio = (Perfiles + Perfiles2)/2;
 % PerfilesFlatten=Flatten(Perfiles,[1,1]);
+if opt.FigNumber>0
+    a=figure(opt.FigNumber);
+    a.Name='Vertical Profile';
 
-a=figure(opt.FigNumber);
-a.Name='Vertical Profile';
+    % a=figure;
+    %surf((ParametroRed/TamanhoReal)*(1:LongitudPerfil-1),Energia,Perfiles(:,1:LongitudPerfil-1))
+    imagesc(Info.DistanciaFourierFilas*2*Info.ParametroRedFilas,Info.Energia,Perfiles);
+    %imagesc(Info.DistanciaFourierFilas.*Info.ParametroRedFilas,Info.Energia,Perfiles);
 
-% a=figure;
-%surf((ParametroRed/TamanhoReal)*(1:LongitudPerfil-1),Energia,Perfiles(:,1:LongitudPerfil-1))
-imagesc(Info.DistanciaFourierFilas*2*Info.ParametroRedFilas,Info.Energia,Perfiles);
-%imagesc(Info.DistanciaFourierFilas.*Info.ParametroRedFilas,Info.Energia,Perfiles);
+    % axis([0 1 min(Info.Energia) max(Info.Energia)]);
+    axis([-1/(2*Info.ParametroRedFilas) 1/(2*Info.ParametroRedFilas) min(Info.Energia) max(Info.Energia)]);
+    %axis([0 1 -85 85]);
+    b=gca;
+    b.Colormap = Info.Colormap;
+    b.YDir='normal';
+    b.XColor = [0 0 0];
+    b.YColor = [0 0 0];
+    b.YLabel.String = '\fontsize{18} Energy (meV)';
+    % b.XLabel.String = '\fontsize{15} k_{x} (\pi/a)';
+    % b.XLabel.String = '\fontsize{18} q_{x} (nm^-^1)';
+    b.XLabel.String = '\fontsize{18} q_{x} (\pi/a)';
+    b.LineWidth = 2;
+    b.FontSize = 14;
+    b.FontName = 'Arial';
+    b.FontWeight = 'bold';
+    b.TickDir = 'out';
+    % title('Vertical profile')
+    % b.Position = b.OuterPosition;
+    %b.CLim=[0 0.15];
+    %b.CLim=[min(min(Perfiles)) max(max(Perfiles))];
+    b.CLim = Info.ContrastFFT(:,(end+1)/2);  %Usamos el contraste a 0 mV para empezar
+    %colormap gray
 
-% axis([0 1 min(Info.Energia) max(Info.Energia)]);
-axis([-1/(2*Info.ParametroRedFilas) 1/(2*Info.ParametroRedFilas) min(Info.Energia) max(Info.Energia)]);
-%axis([0 1 -85 85]);
-b=gca;
-b.Colormap = Info.Colormap;
-b.YDir='normal';
-b.XColor = [0 0 0];
-b.YColor = [0 0 0];
-b.YLabel.String = '\fontsize{18} Energy (meV)';
-% b.XLabel.String = '\fontsize{15} k_{x} (\pi/a)';
-% b.XLabel.String = '\fontsize{18} q_{x} (nm^-^1)';
-b.XLabel.String = '\fontsize{18} q_{x} (\pi/a)';
-b.LineWidth = 2;
-b.FontSize = 14;
-b.FontName = 'Arial';
-b.FontWeight = 'bold';
-b.TickDir = 'out';
-% title('Vertical profile')
-% b.Position = b.OuterPosition;
-%b.CLim=[0 0.15];
-%b.CLim=[min(min(Perfiles)) max(max(Perfiles))];
-b.CLim = Info.ContrastFFT(:,(end+1)/2);  %Usamos el contraste a 0 mV para empezar
-%colormap gray
-
-% (Primera zona) Restringe eje X para que vaya desde -1 a 1 [-pi/a,pi/a]; 
-b.XLim = [-1 1];
-
+    % (Primera zona) Restringe eje X para que vaya desde -1 a 1 [-pi/a,pi/a];
+    b.XLim = [-1 1];
+end
 QPI.Map = Perfiles;
 QPI.K = Info.DistanciaFourierFilas;
 QPI.q = Info.DistanciaFourierFilas*2*Info.ParametroRedFilas;
