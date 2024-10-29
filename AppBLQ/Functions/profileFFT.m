@@ -29,8 +29,8 @@ else
         Energia,TranformadasfAUX,DistanciaFourierColumnas,DistanciaFourierFilas,...
         XinicioFinal,YinicioFinal,ax.Colormap);
     % Corregimos los ejes de las figuras generadas
-    f1.Children.YLabel.String = 'Distance (nm^{-1})';
-    f2.Children.YLabel.String = 'Distance (nm^{-1})';
+    f1.Children.YLabel.String = 'Distance (2\pi/nm)';
+    f2.Children.YLabel.String = 'Distance (2\pi/nm)';
 
     %   REPRESENTACION PERFIL
     % ----------------------------
@@ -47,7 +47,7 @@ else
     scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
         'Parent',EjePerfil);
     ylabel(EjePerfil,'Intensity','FontSize',16);
-    xlabel(EjePerfil,'Distance (nm^{-1})','FontSize',16);
+    xlabel(EjePerfil,'Distance (2\pi/nm)','FontSize',16);
     box on;
     a=gca;
     a.Colormap = ax.Colormap;
