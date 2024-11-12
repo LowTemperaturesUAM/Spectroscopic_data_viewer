@@ -4,7 +4,7 @@ arguments
     X double {mustBeVector,mustBeFinite}
     Y double {mustBeVector,mustBeFinite}
     opt.center {mustBeVector,mustBeFinite} = [0,0]
-    opt.radii {mustBeVector,mustBeFinite} = 0:1:max(abs(X),abs(Y),'all')
+    opt.radii {mustBeVector,mustBeFinite} = 0:1:max([abs(X),abs(Y)],[],'all')
     opt.angles {mustBeVector,mustBeFinite} = 0:0.1:359.9 
 end
 if size(M,2) ~= numel(X) || size(M,1) ~= numel(Y)

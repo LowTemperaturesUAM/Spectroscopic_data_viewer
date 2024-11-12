@@ -20,7 +20,7 @@ function [writerObj] = mapVideo(Maps,contrastLim,Energia,cmap,options)
 arguments
     Maps cell
     % Optional arguments
-    contrastLim (2,:) double = [0 eps]'
+    contrastLim (2,:) double = autoContrastCell(Maps,.5/100);
     Energia (1,:) double = 1:length(Maps)   
     cmap (:, 3) double = viridis
     % Name-Value arguments
@@ -50,12 +50,9 @@ fig = figure('Visible','off');
 if length(Maps) ~= length(Energia)
     error("Length of Energy does not match number of Maps");
 end
-% Take contrast limits as extreme values of each map when not given an
-% input
-if nvar < 2 || isequal(contrastLim,[0 eps]')
-    cMax = cellfun(@(x) max(x,[],'all'),Maps,'UniformOutput',true);
-    cMin = cellfun(@(x) min(x,[],'all'),Maps,'UniformOutput',true);
-    contrastLim = [cMin;cMax];
+% Take contrast limits with autoContrast at 0.5% when not given an input
+if nvar < 2 || isempty(contrastLim)
+    contrastLim = autoContrastCell(Maps,.5/100);
 end
 if ~isempty(contrastLim) && (numel(contrastLim) == 2)
     % contrastLim = reshape(contrastLim, [2 1]); % Check column vector
@@ -127,10 +124,10 @@ try % Check if there are errors to close the file
     hold on
     for n = 1:nummaps
 % If cancel
-if dlg.CancelRequested
+if dlg.CancelRequested % Close and delete object
         close(writerObj)
         delete(options.Filename);
-        break
+        break % exit function
 end
         % Change content of axes and title each frame
         im.CData = Maps{n};
@@ -145,7 +142,7 @@ end
             frame = getframe;
         end
         
-        writeVideo(writerObj, frame);
+        writeVideo(writerObj, frame); % add frame to video
 
         % Update progressBar
         dlg.Value = n/nummaps;

@@ -94,11 +94,14 @@ if ~isfield(curvaUnicaFig.UserData, 'curves')
 else
     curvaUnicaFig.UserData.curves = [curvaUnicaFig.UserData.curves Data];
 end
-%Add new field to save the point locations
+%Add new field to save the point locations. Add also axis coordinates
 if ~isfield(curvaUnicaFig.UserData, 'points')
     curvaUnicaFig.UserData.points = [PixelX, PixelY];
+    curvaUnicaFig.UserData.coords = [CoorX, CoorY];
+
 else
     curvaUnicaFig.UserData.points = [curvaUnicaFig.UserData.points;[PixelX, PixelY]];
+    curvaUnicaFig.UserData.coords = [curvaUnicaFig.UserData.coords;[CoorX, CoorY]];
 end
 
 if isempty(findobj(curvaUnicaFig,'Type','UIControl'))
