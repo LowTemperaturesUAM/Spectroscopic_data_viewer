@@ -54,6 +54,7 @@ if ~isempty(objects)
                 %Also remove the curves and the location from the UserData
                 CondFig.UserData.curves = CondFig.UserData.curves(:,1:end-2);
                 CondFig.UserData.points = CondFig.UserData.points(1:end-1,:);
+                CondFig.UserData.coords = CondFig.UserData.coords(1:end-1,:);
             end
             CurrentFig = findobj('Type','Figure','Name','singleIVFig','Number',122);
             if ~isempty(CurrentFig)
@@ -62,6 +63,7 @@ if ~isempty(objects)
                 %Also remove the curves and the location from the UserData
                 CurrentFig.UserData.curves = CurrentFig.UserData.curves(:,1:end-2);
                 CurrentFig.UserData.points = CurrentFig.UserData.points(1:end-1,:);
+                CurrentFig.UserData.coords = CurrentFig.UserData.coords(1:end-1,:);
             end
         case 'FFTPointFig'
             ax.UserData.Rectangle = [];
@@ -82,6 +84,7 @@ if ~isempty(objects)
                 %Also remove the curves and the rectangle from the UserData
                 FFTFig.UserData.curves = FFTFig.UserData.curves(:,1:end-2);
                 FFTFig.UserData.points = FFTFig.UserData.points(1:end-1,:);
+                FFTFig.UserData.coords = FFTFig.UserData.coords(1:end-1,:);
             end
     end
     %Remove the object now that the data has been cleared
