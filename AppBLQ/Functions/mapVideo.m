@@ -21,7 +21,7 @@ arguments
     Maps cell
     % Optional arguments
     contrastLim (2,:) double = autoContrastCell(Maps,.5/100);
-    Energia (1,:) double = 1:length(Maps)   
+    Energia (1,:) double = 1:length(Maps)
     cmap (:, 3) double = viridis
     % Name-Value arguments
     options.Framerate (1,1) double {mustBePositive} = length(Maps)/3 % Frames per second by default
@@ -70,20 +70,20 @@ end
 % names = varargin(1:2:end);
 % values = varargin(2:2:end);
 % propNames = ["Framerate","Filename", "Title", "Axes", "Colorbar"];
-% 
-% for k = 1:numel(names)   
-%     switch validatestring(names{k},propNames)        
+%
+% for k = 1:numel(names)
+%     switch validatestring(names{k},propNames)
 %         case "Colorbar"
 %             if values{k}=="on"
 %                 %colorbar(gca);
 %                 bar_check = 1;
-%             end       
+%             end
 %         case "Framerate"
 %             fRate = values{k};
-% 
+%
 %         case "Filename"
 %             filename = values{k};
-% 
+%
 %         case "Axes"
 %             doAxes = values{k};
 %     end
@@ -96,7 +96,7 @@ nummaps = length(Maps);
 % Initialize video object
 writerObj = VideoWriter(options.Filename); % Create a video
 writerObj.FrameRate = options.Framerate; %Framerate
-open(writerObj); 
+open(writerObj);
 
 % Prepare progress bar
 uifig = uifigure;
@@ -123,12 +123,12 @@ try % Check if there are errors to close the file
     end
     hold on
     for n = 1:nummaps
-% If cancel
-if dlg.CancelRequested % Close and delete object
-        close(writerObj)
-        delete(options.Filename);
-        break % exit function
-end
+        % If cancel
+        if dlg.CancelRequested % Close and delete object
+            close(writerObj)
+            delete(options.Filename);
+            break % exit function
+        end
         % Change content of axes and title each frame
         im.CData = Maps{n};
         im.Parent.CLim = [contrastLim(:,n)];
@@ -137,11 +137,11 @@ end
         % save frame
         if isequal(options.getFrame,'figure')
             % frame = getframe(gcf);
-            frame=im2frame(print('-RGBImage','-r120'));
+            frame=im2frame(print(fig,'-RGBImage','-r120'));
         elseif isequal(options.getFrame,'axes')
             frame = getframe;
         end
-        
+
         writeVideo(writerObj, frame); % add frame to video
 
         % Update progressBar
