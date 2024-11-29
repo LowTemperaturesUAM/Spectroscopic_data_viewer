@@ -108,6 +108,7 @@ switch mapmethod
         Info.DistanciaColumnas = 1:Columnas;
 
         MapasConductancia = curves2maps(MatrizNcut,Info);
+        MapasConductancia = MapasConductancia(energyValues);
         clearvars Info
 end
 

@@ -14,7 +14,7 @@ function [Cell] = curves2maps(Matriz,Info)
     MatrizNueva = pagetranspose(MatrizNueva);
 
     Cell = mat2cell(MatrizNueva,Row,Col,ones(1,pts));
-    Cell = squeeze(Cell).';
+    Cell = squeeze(Cell);
 
     clear MatrizNueva pts Row Col
 end
