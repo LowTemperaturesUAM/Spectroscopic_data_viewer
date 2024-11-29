@@ -13,7 +13,7 @@ end
 
 hold on
 a=meanIVFig.CurrentAxes;
-
+a.ColorOrder = ax.ColorOrder;
 if isCurrent
     switch ax.ColorOrderIndex
         case 1

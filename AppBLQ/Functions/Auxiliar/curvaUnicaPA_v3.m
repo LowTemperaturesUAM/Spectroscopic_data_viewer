@@ -42,7 +42,7 @@ hold on
 a = curvaUnicaFig.CurrentAxes;
 
 % for i=1:length(PixelX)
-
+a.ColorOrder = ax.ColorOrder;
 if isCurrent
     switch ax.ColorOrderIndex
         case 1
