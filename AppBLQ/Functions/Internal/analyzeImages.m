@@ -132,17 +132,21 @@ switch Struct.NormalizationFlag
 
     case 'Feenstra'
         Ismooth = zeros(size(MatrizCorriente));
-        switch Struct.Fmethod
-            case 'rloess' %it takes siginificantly longer
-                parfor i=1:size(MatrizCorriente,2)
-                    Ismooth(:,i) = smooth(Struct.MatrizCorriente(:,i),Struct.Fspan,Struct.Fmethod);
-                end
-            otherwise
-                for i=1:size(MatrizCorriente,2)
-                    Ismooth(:,i) = smooth(Struct.MatrizCorriente(:,i),Struct.Fspan,Struct.Fmethod);
-                end
-        end
-        Imin = interp1(Voltaje,Ismooth,0);
+        % switch Struct.Fmethod
+        %     case 'rloess' %it takes siginificantly longer
+        %         % parfor i=1:size(MatrizCorriente,2)
+        %         %     Ismooth(:,i) = smooth(Struct.MatrizCorriente(:,i),Struct.Fspan,Struct.Fmethod);
+        %         % end
+        %     otherwise
+        %         for i=1:size(MatrizCorriente,2)
+        %             Ismooth(:,i) = smooth(Struct.MatrizCorriente(:,i),Struct.Fspan,Struct.Fmethod);
+        %         end
+        % 
+        % end
+        tic
+        Ismooth = smoothdata(Struct.MatrizCorriente,1,Struct.Fmethod,Struct.Fspan*numel(Voltaje));
+        toc
+        Imin = interp1(Voltaje,Ismooth,0,"makima");
 
         G = (Ismooth-Imin)./Voltaje;
         if any( Voltaje == 0 )

@@ -29,7 +29,8 @@ fig.Position(3:4) = [650,420];
 grid_main = uigridlayout(fig,[1,2]);
 grid_main.ColumnWidth = {200,'1x'};
 
-p1 = uipanel(grid_main,'Title','Smoothing',BorderType='none');%,'BackgroundColor','white');
+p1 = uipanel(grid_main,'Title','Smoothing');%,BorderType='none');%,'BackgroundColor','white');
+p1.Scrollable = 'on';
 % grid2 = uigridlayout(p1,[5,2],RowHeight={22,22,22,22,22}); %could increase row separation
 grid_left = uigridlayout(p1,[3,1],RowHeight={'fit',22,'fit'});
 grid_l1 = uigridlayout(grid_left,[2,2],RowHeight={22,22});
@@ -47,7 +48,7 @@ MethodLbl.Text = 'Method';
 MethodLbl.HorizontalAlignment = 'right';
 
 MethodDropDown = uidropdown(grid_l1);
-MethodDropDown.Items = {'moving','sgolay','rloess'};
+MethodDropDown.Items = {'movmean','sgolay','rloess'};
 
 SmoothPlus = uicheckbox(grid_left,'Text','Extra Smoothing');
 
@@ -67,20 +68,21 @@ MethodLbl2.Text = 'Method';
 MethodLbl2.HorizontalAlignment = 'right';
 
 MethodDropDown2 = uidropdown(grid_l2);
-MethodDropDown2.Items = {'moving','sgolay','rloess'};
+MethodDropDown2.Items = {'movmean','sgolay','rloess'};
 
 
 
 
 
 
-NewCurveBtn = uibutton(p1,Text='New Curve');
-NewCurveBtn.Position(1:2) = [50,130];
+BtnPanel = uigridlayout(grid_left,[2,5],RowHeight={22,40});
+NewCurveBtn = uibutton(BtnPanel,Text='New Curve');
+NewCurveBtn.Layout.Row = 1;
+NewCurveBtn.Layout.Column = [2 4];
 
-
-FinishBtn = uibutton(p1,Text='Continue',BackgroundColor=[0.78,0.96,0.55]);
-FinishBtn.Position(1:2) = [50,40];
-FinishBtn.Position(4) = 40;
+FinishBtn = uibutton(BtnPanel,Text='Continue',BackgroundColor=[0.78,0.96,0.55]);
+FinishBtn.Layout.Row = 2;
+FinishBtn.Layout.Column = [2 4];
 
 
 
@@ -98,18 +100,18 @@ grid(ax2,"on")
 
 fig.UserData = randi(Filas*Columnas);
 
-if isfield(Struct,'Fspan')
-    SpanBox.Value = Struct.Fspan;
-    MethodDropDown.Value = Struct.Fmethod;
-    SmoothPlus.Value = Struct.F2check ;
-    SpanBox2.Value = Struct.Fspan2;
-    MethodDropDown2.Value = Struct.Fmethod2;
-    SecondFilt(SmoothPlus.Value,ax2,fig.UserData,MatrizCorriente,VoltajeOffset,...
-    SpanBox,MethodDropDown,SpanLbl2,SpanBox2,MethodLbl2,MethodDropDown2)
-else
+% if isfield(Struct,'Fspan')
+%     SpanBox.Value = Struct.Fspan;
+%     MethodDropDown.Value = Struct.Fmethod;
+%     SmoothPlus.Value = Struct.F2check ;
+%     SpanBox2.Value = Struct.Fspan2;
+%     MethodDropDown2.Value = Struct.Fmethod2;
+%     SecondFilt(SmoothPlus.Value,ax2,fig.UserData,MatrizCorriente,VoltajeOffset,...
+%     SpanBox,MethodDropDown,SpanLbl2,SpanBox2,MethodLbl2,MethodDropDown2)
+% else
     [SpanLbl2.Enable,SpanBox2.Enable,MethodLbl2.Enable,...
         MethodDropDown2.Enable] = deal(false);
-end
+% end
 
 
 SmoothCond(ax2,fig.UserData,MatrizCorriente,VoltajeOffset,SpanBox.Value,MethodDropDown.Value,...
@@ -160,28 +162,29 @@ close(fig)
 
     function SecondFilt(Value,ax,~,MatrizCorriente,VoltajeOffset,SpanBox,...
             MethodDropDown,SpanLbl2,SpanBox2,MethodLbl2,MethodDropDown2)
-    if Value
-        [SpanLbl2.Enable,...
-            SpanBox2.Enable,...
-            MethodLbl2.Enable,...
-            MethodDropDown2.Enable] = deal(true);
-    else
-        [SpanLbl2.Enable,...
-            SpanBox2.Enable,...
-            MethodLbl2.Enable,...
-            MethodDropDown2.Enable] = deal(false);
-    end
-    fig2 = ancestor(SpanBox,"figure","toplevel");
-    SmoothCond(ax,fig2.UserData,MatrizCorriente,VoltajeOffset,...
-    SpanBox.Value,MethodDropDown.Value,...
-    SpanBox2.Value,MethodDropDown2.Value,Value);
+        if Value
+            [SpanLbl2.Enable,...
+                SpanBox2.Enable,...
+                MethodLbl2.Enable,...
+                MethodDropDown2.Enable] = deal(true);
+        else
+            [SpanLbl2.Enable,...
+                SpanBox2.Enable,...
+                MethodLbl2.Enable,...
+                MethodDropDown2.Enable] = deal(false);
+        end
+        fig2 = ancestor(SpanBox,"figure","toplevel");
+        SmoothCond(ax,fig2.UserData,MatrizCorriente,VoltajeOffset,...
+            SpanBox.Value,MethodDropDown.Value,...
+            SpanBox2.Value,MethodDropDown2.Value,Value);
     end
 
     function SmoothCond(ax,n,MatrizCorriente,VoltajeOffset,...
             Span,Method,Span2,Method2,DoubleSmooth)
         Current = MatrizCorriente(:,n);
         % Smooth the current
-        Current_Smooth = smooth(Current,Span,Method);
+        % Current_Smooth = smooth(Current,Span,Method);
+        Current_Smooth = smoothdata(Current,Method,Span*numel(VoltajeOffset));
         % Obtain the zero bias current of the curve
         Imin = interp1( VoltajeOffset,Current_Smooth,0);
 
@@ -198,7 +201,8 @@ close(fig)
         if DoubleSmooth
             [~,center] = min(VoltajeOffset,[],1,ComparisonMethod="abs");
             midspan = floor(0.1*length(VoltajeOffset));
-            Test_G(center-midspan:center+midspan) = smooth(Test_G(center-midspan:center+midspan),Span2,Method2);
+            % Test_G(center-midspan:center+midspan) = smooth(Test_G(center-midspan:center+midspan),Span2,Method2);
+            Test_G(center-midspan:center+midspan) = smoothdata(Test_G(center-midspan:center+midspan),Method2,Span2*numel(midspan));
         end
         % Now we can just go ahead and plot the curve
 
