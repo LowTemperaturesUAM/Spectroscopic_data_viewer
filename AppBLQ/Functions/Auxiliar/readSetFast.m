@@ -13,8 +13,8 @@ function [Data, readFlag] = readSetFast(FileID, NumeroFilas,DataFormat,Factor)
         % fseek(FileID,100,'cof');
         switch DataFormat % Abrimos la IV propiamente dicha y extraemos sus datos en la matriz 'Data'
         	case 0
-            	Data = Factor*(Offset + Start + (Size/NumeroFilas)*(0:(NumeroFilas-1)));   
-                Data = Data';
+            	Data = Factor*(Offset + Start + (Size/NumeroFilas)*(0:(NumeroFilas-1))');   
+                % Data = Data';
                 readFlag = 1;
             case 1
                 Data = Factor*(fread (FileID, NumeroFilas, 'int8')); 

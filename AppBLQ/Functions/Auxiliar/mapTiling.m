@@ -43,6 +43,8 @@ if opt.AddLabels
         i = i-1;
         j = j-1;
         TxtPos = [Hborder + floor(Himg/2)+1+i*(2*Hborder+Himg),Vborder+j*(2*Vborder+Vimg)];
+        % NOTE: this function requires the Computer Vision Toolbox
+        % We might want to think of an alternative at some point
         TileAux = insertText(TileAux,TxtPos,sprintf('%.2f meV',Energy(k)),...
             TextColor = 'black',BoxColor = 'white',FontSize= 30,...
             BoxOpacity=0,AnchorPoint= 'Center',Font='Arial');

@@ -124,17 +124,10 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
             App.fromEditField.Value = 0.7*max(Voltaje);
         end
     end
-    
-    % Para pintar                
-    i = 1+round(rand(App.CurvestoshowEditField.Value,1)*(Columnas-1)); % Random index for curve selection
-    j = 1+round(rand(App.CurvestoshowEditField.Value,1)*(Filas-1));    % Random index for curve selection
+    ncurves = App.CurvestoshowEditField.Value;
+    %Paint some curves at random
+    MatrizCorrienteTest = MatrizCorriente(:,randi(Filas*Columnas,1,ncurves));
 
-    MatrizCorrienteTest = zeros(length(Voltaje),App.CurvestoshowEditField.Value);
-
-    for count = 1:App.CurvestoshowEditField.Value
-        MatrizCorrienteTest(:,count) = MatrizCorriente(:,(Filas*(j(count)-1)+ i(count)));
-    end
-    clear i j;
     Struct.MatrizCorrienteTest = MatrizCorrienteTest;
 
     msgbox('blq succesfully loaded.','Congratulations','help')

@@ -31,7 +31,7 @@ if Format == 0 %Just the maps
 elseif Format == 3 %Group all maps in a single image
     OutputImg = mapTiling(Cell,Contrast,Energy,Colormap);
     imwrite(OutputImg,Colormap, ...
-        [Path,filesep,'CombinedMaps','.',options.FileType])
+        [Path,filesep,options.Prefix,'CombinedMaps','.',options.FileType])
     return
 
 elseif Format == 4 %Make Video with Maps as frames. Default 7 FPS

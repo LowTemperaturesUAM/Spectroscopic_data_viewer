@@ -68,6 +68,7 @@ else
 
     elseif strcmp(Ext,'stp') %Sacamos numero de puntos y tamaño
         disp('STP file loaded')
+        IsCurrent = false;
         Struct.FileNameTopo = Name;
         Struct.FilePathTopo = Path;
         FileSTP=fopen([Path Name],'r');
@@ -169,6 +170,9 @@ else
                                     Factor = 1e-1;
                                 case 'pm'
                                     Factor = 1e-3;
+                                case 'nA' %current map
+                                    Factor = 1;
+                                    IsCurrent = true;
                                 otherwise
                                     % fprintf('This unit cannot be read!!')
                                     fprintf('Empty Units\n')
@@ -195,7 +199,9 @@ else
                 % For new images from MyScanner, the format is indeed double, as
                 % the header says. We just need to offset the lowest point
                 Matrix = fread(FileSTP,Size,type);
-                Matrix = Matrix - min(Matrix,[],"all");
+                if ~IsCurrent
+                    Matrix = Matrix - min(Matrix,[],"all");
+                end
                 Matrix = Matrix * Zscale;
                 Matrix = rot90(Matrix,-1);
             else
@@ -203,6 +209,7 @@ else
                 % is int16, despite the header saying is single
                 % We map the range of the z axis from [zmin,zmax] to
                 % [0,Zscale]
+                %We are not handling Current maps right now
                 Matrix = fread(FileSTP,Size,type);
                 Matrix = Matrix - min(Matrix,[],"all");
                 Matrix = Matrix * Zscale / max(Matrix,[],"all");
