@@ -75,7 +75,8 @@ b.FontWeight = 'bold';
 b.FontName = 'Arial';
 b.FontSize = 14;
 b.TickDir = 'out';
-b.CLim = Info.ContrastFFT(:,(end+1)/2); %Usamos el contraste a 0 mV para empezar
+% Info.ContrastFFT(:,(end+1)/2)
+b.CLim = Info.ContrastFFT(:,ceil((end+1)/2)); %Usamos el contraste a 0 mV para empezar
 switch opt.Mode
     case 'double' %negative and positive K
         b.XLim = [-2,2]; %up to the bragg peaks

@@ -45,7 +45,7 @@ if opt.FigNumber>0
     % b.Position = b.OuterPosition;
     % b.CLim=[minimo maximo];
     %b.CLim=[min(min(Perfiles)) max(max(Perfiles))];
-    b.CLim = Info.ContrastFFT(:,(end+1)/2); %Usamos el contraste a 0 mV para empezar
+    b.CLim = Info.ContrastFFT(:,ceil((end+1)/2)); %Usamos el contraste a 0 mV para empezar
     %implementar la posibilidad de ajustar los limites de la figura (x,y y color)
     %como argumentos opcionales
 

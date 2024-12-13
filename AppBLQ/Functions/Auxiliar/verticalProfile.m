@@ -50,7 +50,7 @@ if opt.FigNumber>0
     % b.Position = b.OuterPosition;
     %b.CLim=[0 0.15];
     %b.CLim=[min(min(Perfiles)) max(max(Perfiles))];
-    b.CLim = Info.ContrastFFT(:,(end+1)/2);  %Usamos el contraste a 0 mV para empezar
+    b.CLim = Info.ContrastFFT(:,ceil((end+1)/2));  %Usamos el contraste a 0 mV para empezar
     %colormap gray
 
     % (Primera zona) Restringe eje X para que vaya desde -1 a 1 [-pi/a,pi/a];
