@@ -9,7 +9,6 @@ end
 % FFT maps. The maps are expected to be fftshifted beforehand
 
 %Convert Sigma to pixels 
-
 drow = abs(row(2)-row(1));
 dcol = abs(col(2)-col(1));
 srow = sigma(1)/drow;
@@ -21,12 +20,11 @@ else
     sigmapix = [srow,scol];
 end
 
-
 x0 = find(row == 0);
 y0 = find(col == 0);
-x = (1:1:numel(row));
-y = (1:1:numel(col))';
-MatrizFiltroFFT = -expm1(-((x-x0)/(sqrt(2)*sigmapix)).^2-((y-y0)/(sqrt(2)*sigmapix)).^2);
+x = (1:1:numel(row))';
+y = (1:1:numel(col));
+MatrizFiltroFFT = -expm1(-((x-x0)/(sqrt(2)*sigmapix(1))).^2-((y-y0)/(sqrt(2)*sigmapix(end))).^2);
 
 if iscell(Maps)
     FilterMaps = cellfun(@(x) x.*MatrizFiltroFFT,Maps,UniformOutput=false);
