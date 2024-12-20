@@ -36,7 +36,7 @@
 function [Symmetric] = simetrizarFFTv2(Cell,Type)
 arguments
     Cell cell
-    Type {mustBeMember(Type,{'Vertical','Horizontal','C3','C4','C6'})}
+    Type {mustBeMember(Type,{'Vertical','Hor+Ver','C3','C4','C6'})}
 end
 
 [Filas, Columnas] = size(Cell{1});
