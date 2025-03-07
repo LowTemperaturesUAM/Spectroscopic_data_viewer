@@ -42,7 +42,7 @@ if iscell(Maps)
         FilterMaps = cellfun(@(M) imgaussfilt(M,sigmapix,Padding=Method,FilterSize=Size),...
             Maps,UniformOutput=false);
     end
-elseif ismatrix
+elseif ismatrix(Maps)
     Size = floor(size(Maps)/2)+1;
     if meanFlag 
         Method = mean(M,"all");

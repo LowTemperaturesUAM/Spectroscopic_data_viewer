@@ -1,4 +1,4 @@
-function [MatrizNormalizada] = NormalizeRange(VoltajeSuperior,VoltajeInferior,Voltaje,MatrizConductancia,opts)
+function [MatrizNormalizada,Norma] = NormalizeRange(VoltajeSuperior,VoltajeInferior,Voltaje,MatrizConductancia,opts)
 arguments
     VoltajeSuperior (1,1) double
     VoltajeInferior (1,1) double
