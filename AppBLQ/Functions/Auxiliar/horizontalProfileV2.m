@@ -1,31 +1,28 @@
-function Result = angleProfile(Info,angle,opt)
+function Result = horizontalProfileV2(Info,opt)
 arguments
     Info struct
-    angle double {mustBeReal,mustBeScalarOrEmpty}
-    opt.FigNumber {mustBePositive,mustBeInteger}= 54536
+    opt.FigNumber {mustBePositive,mustBeInteger} = 54534
     opt.Method {mustBeMember(opt.Method,{'nearest','bilinear','bicubic'})} = 'bilinear'
     opt.Mode {mustBeMember(opt.Mode,{'single','double'})} = 'double'
     opt.Lattice {mustBeMember(opt.Lattice,{'square','hexagonal'})} = 'square'
-    opt.kLim {mustBeMember(opt.kLim,{'auto','bragg','brillouin'})} = 'bragg'
+    opt.kLim {mustBeMember(opt.kLim,{'auto','bragg','brillouin'})} = 'brillouin'
 end
 
-kmax = min(max(Info.DistanciaFourierColumnas), ...
-    max(Info.DistanciaFourierFilas)); %Get the FFT limit for the smaller axis
+kmax = max(Info.DistanciaFourierColumnas); %Get the FFT limit
 switch opt.Mode
     case 'double' %negative and positive K
-        wrapAngle = wrapTo180(angle*2)/2; %allow only for half turn
         kmin = -kmax;
+        % There should be one more point on the negative side corresponding to the
+        % Nyquist frequency, but its better to ignore it by default or we will go out of
+        % bounds on the positive side
     case 'single' %only to one side of the origin
-        wrapAngle = wrapTo180(angle); %allow for the whole circunference
         kmin = 0;
 end
 
+xi = [kmin,kmax];
+yi = [0,0];
 
-
-xi = [kmin,kmax]*cosd(wrapAngle);
-yi = [kmin,kmax]*sind(wrapAngle);
-
-[xp,yp,profile] = improfile(Info.DistanciaFourierColumnas([1 end]),...
+[xp,~,profile] = improfile(Info.DistanciaFourierColumnas([1 end]),...
     Info.DistanciaFourierFilas([1 end]),Info.Transformadas{1},xi,yi,opt.Method);
 
 ProfileLength = length(profile);
@@ -35,14 +32,9 @@ for k=1:numel(Info.Energia)
     Info.DistanciaFourierFilas([1 end]),Info.Transformadas{k},xi,yi,opt.Method);
 end
 
-
 %Save to a struct
 QPI.Map = Profiles;
-if all(sign(xp)==0)
-    QPI.K = (sqrt(xp.^2+yp.^2).*sign(yp)).';
-else
-    QPI.K = (sqrt(xp.^2+yp.^2).*sign(xp)).';
-end
+QPI.K =xp.';
 %we always refer to the lattice parameter for the x axis
 % that we commonly refer to as b
 switch opt.Lattice
@@ -52,10 +44,10 @@ switch opt.Lattice
         QPI.q = QPI.K*2*Info.ParametroRedColumnas*sqrt(3)/2; %está al reves??
 end
 QPI.Energy = Info.Energia;
-QPI.Angle = wrapAngle;
+
 
 a = figure(opt.FigNumber);
-a.Name = 'Angle Profile';
+a.Name = 'Horizontal Profile';
 imagesc(QPI.q([1 end]),QPI.Energy([1 end]),Profiles)
 b=a.CurrentAxes;
 b.Colormap = Info.Colormap;
@@ -74,9 +66,9 @@ b.YLabel.String = 'Energy (meV)';
 b.YLabel.FontSize = 18;
 switch opt.Lattice
     case 'square'
-        b.XLabel.String = 'q_{\theta} (\pi/b)';
+        b.XLabel.String = 'q_{x} (\pi/b)';
     case 'hexagonal'
-        b.XLabel.String = 'q_{\theta} (\surd{3}/2 \pi/b)';
+        b.XLabel.String = 'q_{x} (\surd{3}/2 \pi/b)';
 end
 b.XLabel.FontSize = 18;
 
@@ -87,20 +79,20 @@ switch opt.kLim
             case 'double' %negative and positive K
                 b.XLim = [-2,2]; %up to the bragg peaks
             case 'single' %only to one side of the origin
-                b.XLim = [-1,1]-sign(QPI.q(end)); %up to the bragg peaks on a single side
+                b.XLim = [0,2]; %up to the bragg peaks on a single side
         end
     case 'brillouin'
         switch opt.Mode
             case 'double' %negative and positive K
-                b.XLim = [-1,1]; %up to the edge of the 1st brillouin zone
+                b.XLim = [-1,1]; %up to the bragg peaks
             case 'single' %only to one side of the origin
-                b.XLim = 0.5*([-1,1]-sign(QPI.q(end))); %up to the edge of the 1st BZ on a single side
+                b.XLim = [0,1]; %up to the bragg peaks on a single side
         end
 end
 
 %Return the struct, or send it to the workspace if no output exist
 if nargout == 0
-    assignin('base','QPIAngle',QPI)
+    assignin('base','QPIHorizontal',QPI)
 else
     Result = QPI;
 end
