@@ -128,7 +128,7 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
     MatrizCorrienteTest = MatrizCorriente(:,randi(Filas*Columnas,1,ncurves));
 
     Struct.MatrizCorrienteTest = MatrizCorrienteTest;
-
+    Struct.CurveSelection = eleccionMatrices;
     msgbox('blq succesfully loaded.','Congratulations','help')
     end
 end

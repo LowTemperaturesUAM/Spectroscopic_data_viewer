@@ -30,7 +30,8 @@ Mask = abs(V) <= Range;
 % end
 
 % Derivative
-ddI = derivadorLeastSquaresPA(NumDeriv,Curves,V,Filas,Columnas);
+% ddI = derivadorLeastSquaresPA(NumDeriv,Curves,V,Filas,Columnas);
+ddI = derivadorLeastSquaresArray(NumDeriv,Curves,V);
 
 % Calculate peaks of derivative. Use values of peaks(Val) to filter noisy curves
 % and and use index to find voltage value(Gap).

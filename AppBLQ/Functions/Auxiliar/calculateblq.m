@@ -25,7 +25,8 @@ VoltajeOffset = Voltaje*VoltajeEscala + OffsetVoltajeValue;
 % clear i j;
 
 IV = length(Voltaje);
-[MatrizConductanciaTest] = derivadorLeastSquaresPA(NPuntosDerivadaValue,Struct.MatrizCorrienteTest,Voltaje,1,NumeroCurvasValue);
+% [MatrizConductanciaTest] = derivadorLeastSquaresPA(NPuntosDerivadaValue,Struct.MatrizCorrienteTest,Voltaje,1,NumeroCurvasValue);
+[MatrizConductanciaTest] = derivadorLeastSquaresArray(NPuntosDerivadaValue,Struct.MatrizCorrienteTest,Voltaje);
 
 % NormalizationFlag = 0; %Might need to use a more detail variable
 if App.NormalizeMirrorButton.Value
@@ -147,7 +148,7 @@ if ~exist([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'file')
     fprintf(fileID, '-------------------------------\r\n');
     fprintf(fileID, 'File Name : %s \r\n',FileName(1:length(FileName)-4));
     %fprintf(fileID, 'SaveFolder : %s \r\n',FilePath);
-    fprintf(fileID, 'Date : %s \r\n',char(date));
+    fprintf(fileID, 'Date : %s \r\n',char(datetime('today')));
     fprintf(fileID, '-------------------------------\r\n');
     fprintf(fileID, '\r\n');
     fprintf(fileID, 'Datos del Experimento\r\n');
@@ -175,27 +176,27 @@ end
 
 % Saving into Structure to pass to analysis
 % ------------------------------------------------------------------------
-    Struct.fileID                       = fileID;
-    
-    % Fix data (raw data)
-    % ---------------------------------------------
-        Struct.Voltaje                      = VoltajeOffset;
-        Struct.IV                           = IV;
-        Struct.MatrizNormalizadaTest        = MatrizNormalizadaTest;
-%         Struct.MatrizCorrienteTest          = MatrizCorrienteTest;
-        Struct.MatrizCorriente              = MatrizCorriente;
-        Struct.NPuntosImagen                = Filas*Columnas;
-        Struct.Filas                        = Filas;
-        Struct.Columnas                     = Columnas; 
-    
-    % Variable data (curve analysis)
-    % ---------------------------------------------
-        Struct.NumeroCurvas                 = NumeroCurvasValue;
-        Struct.NPuntosDerivada              = NPuntosDerivadaValue;
-        Struct.VoltajeNormalizacionInferior	= VoltajeNormalizacionInferior;
-        Struct.VoltajeNormalizacionSuperior	= VoltajeNormalizacionSuperior;
-        Struct.OffsetVoltaje                = OffsetVoltajeValue;
-        Struct.NormalizationFlag            = NormalizationFlag;
+Struct.fileID                       = fileID;
+
+% Fix data (raw data)
+% ---------------------------------------------
+Struct.Voltaje                      = VoltajeOffset;
+Struct.IV                           = IV;
+Struct.MatrizNormalizadaTest        = MatrizNormalizadaTest;
+%Struct.MatrizCorrienteTest          = MatrizCorrienteTest;
+Struct.MatrizCorriente              = MatrizCorriente;
+Struct.NPuntosImagen                = Filas*Columnas;
+Struct.Filas                        = Filas;
+Struct.Columnas                     = Columnas;
+
+% Variable data (curve analysis)
+% ---------------------------------------------
+Struct.NumeroCurvas                 = NumeroCurvasValue;
+Struct.NPuntosDerivada              = NPuntosDerivadaValue;
+Struct.VoltajeNormalizacionInferior	= VoltajeNormalizacionInferior;
+Struct.VoltajeNormalizacionSuperior	= VoltajeNormalizacionSuperior;
+Struct.OffsetVoltaje                = OffsetVoltajeValue;
+Struct.NormalizationFlag            = NormalizationFlag;
 
 
 

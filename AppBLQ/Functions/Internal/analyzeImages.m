@@ -9,7 +9,7 @@ FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'A')
         fprintf(FileID, '\r\n');
         fprintf(FileID, 'Fecha análisis: %s \r\n',char(Date));
         fprintf(FileID, '-------------------------------\r\n');
-        fprintf(FileID, 'Number of curves      : %g \r\n', Struct.NumeroCurvas );
+        fprintf(FileID,'Curves selected       : [%d %d %d %d]\r\n',Struct.CurveSelection);
         fprintf(FileID, 'Deriv points          : %g \r\n', Struct.NPuntosDerivada ); 
         fprintf(FileID, 'Offset                : %g mV\r\n', Struct.OffsetVoltaje);
         switch Struct.NormalizationFlag
@@ -30,17 +30,14 @@ FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'A')
 %             case 'Feenstra'
         end
         fclose(FileID);
-
+% We should consolidate this to use the same function than in recalculate maps
+% Than one currently uses customCurvesWindow
 [datosIniciales, scandir, maptype, mapmethod] = customCurvesv5(Struct.SaveFolder, Struct.FileName, Struct);
 if isequal(datosIniciales,0)
     Struct = 0;
     return
 else
 Struct.datosIniciales  = datosIniciales;
-%------------------------------------------------------------------------
-% CONSTANTS:
-% -----------------------------------------------------------------------
-    Pi = 3.141592653589793;
 % -----------------------------------------------------------------------
 	FileName                            = Struct.FileName;
 	FilePath                            = Struct.FilePath;
@@ -106,10 +103,12 @@ Struct.datosIniciales  = datosIniciales;
 % ------------------------------------------------------------------------    
 % Derivating the tunneling matrix
 % ------------------------------------------------------------------------
-    [MatrizConductancia] = derivadorLeastSquaresPA(PuntosDerivada,...
-                                                   MatrizCorriente,...
-                                                   Voltaje,...
-                                                   Filas,Columnas);
+    % [MatrizConductancia] = derivadorLeastSquaresPA(PuntosDerivada,...
+    %                                                MatrizCorriente,...
+    %                                                Voltaje,...
+    %                                                Filas,Columnas);
+    [MatrizConductancia] = derivadorLeastSquaresArray(PuntosDerivada,...
+        MatrizCorriente,Voltaje);
 % ------------------------------------------------------------------------
 % Normalizing (or not) the data
 % ------------------------------------------------------------------------
@@ -304,8 +303,9 @@ clear k Indices DeltaEnergia MapasConductanciaAUX;
     Struct.PuntosDerivada               = PuntosDerivada;
     Struct.kInicial                     = k;
     Struct.Fase                         = Fase;
-    Struct.Type = maptype;
-    Struct.Direction = scandir;
+    Struct.Type                         = maptype;
+    Struct.Direction                    = scandir;
+
 % ------------------------------------------------------------------------
 end
 end

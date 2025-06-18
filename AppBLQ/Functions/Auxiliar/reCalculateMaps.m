@@ -49,9 +49,9 @@ Columnas = length(InfoStruct.DistanciaColumnas);
 if ptsDeriv >= numel(V)
     error("Number of derivative points exceeds array length");
 end
-MatrizConductancia = derivadorLeastSquaresPA(ptsDeriv,IVcurves,V, ...
-    Filas,Columnas);
-
+% MatrizConductancia = derivadorLeastSquaresPA(ptsDeriv,IVcurves,V, ...
+%     Filas,Columnas);
+MatrizConductancia = derivadorLeastSquaresArray(ptsDeriv,IVcurves,V);
 
 % opciones de normalizar------------------------------
 normOpts = customNormalizeWindow;
