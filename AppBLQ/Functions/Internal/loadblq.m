@@ -108,7 +108,7 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
         remember = readmatrix([SaveFolder,filesep,FileName(1:length(FileName)-4),'.in'], FileType = 'text');
     end  
         
-    if length(remember) ==11
+    if length(remember) >=11
         App.CurvestoshowEditField.Value     = remember(7);
         App.DerivativepointsSpinner.Value = remember(8);
         App.OffsetvoltageEditField.Value    = remember(9);
