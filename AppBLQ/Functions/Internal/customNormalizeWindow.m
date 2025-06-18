@@ -46,11 +46,12 @@ out = struct();
 % make figure wait until pushing Confirm
 uiwait(fig);
 
-id = [b1 b2 b3];
-id = [id.Value];
+
 opts = ["both", "single","none"];
 
 if ishghandle(fig) % In case preemptively closed figure
+    id = [b1 b2 b3];
+    id = [id.Value];
     out.VNormInferior = min([editVInferior.Value editVSuperior.Value]);
     out.VNormSuperior = max([editVInferior.Value editVSuperior.Value]);
     out.Range = opts(id);
