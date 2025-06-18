@@ -3,41 +3,67 @@ function [Struct] = analyzeImages(Struct)
 Date       = datetime;
 SaveFolder = Struct.SaveFolder;
 FileName   = Struct.FileName;
-%este tramo se guarda siempre aunque cancelemos el analisis    
-FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'A');
-        fprintf(FileID, '\r\n');
-        fprintf(FileID, '\r\n');
-        fprintf(FileID, 'Fecha análisis: %s \r\n',char(Date));
-        fprintf(FileID, '-------------------------------\r\n');
-        fprintf(FileID,'Curves selected       : [%d %d %d %d]\r\n',Struct.CurveSelection);
-        fprintf(FileID, 'Deriv points          : %g \r\n', Struct.NPuntosDerivada ); 
-        fprintf(FileID, 'Offset                : %g mV\r\n', Struct.OffsetVoltaje);
-        switch Struct.NormalizationFlag
-            case {'single side'}
-                fprintf(FileID, 'Normalization         : single side\r\n');
-                fprintf(FileID, 'Normalize min         : %g mV\r\n', Struct.VoltajeNormalizacionInferior);
-                fprintf(FileID, 'Normalize max         : %g mV\r\n', Struct.VoltajeNormalizacionSuperior);
-            case {'mirror window'}
-                lowbound = min(Struct.VoltajeNormalizacionInferior,...
-                    Struct.VoltajeNormalizacionSuperior,ComparisonMethod="abs");
-                highbound = max(Struct.VoltajeNormalizacionInferior,...
-                    Struct.VoltajeNormalizacionSuperior,ComparisonMethod="abs");
-                fprintf(FileID, 'Normalization         : symmetrical\r\n');
-                fprintf(FileID, 'Normalize min         : ±%g mV\r\n', abs(lowbound));
-                fprintf(FileID, 'Normalize max         : ±%g mV\r\n', abs(highbound));
-            case 'none'
-                fprintf(FileID, 'Normalization         : none\r\n');
-%             case 'Feenstra'
-        end
-        fclose(FileID);
 % We should consolidate this to use the same function than in recalculate maps
 % Than one currently uses customCurvesWindow
-[datosIniciales, scandir, maptype, mapmethod] = customCurvesv5(Struct.SaveFolder, Struct.FileName, Struct);
+[datosIniciales, scandir, maptype, mapmethod] = customCurvesv6(Struct.SaveFolder, Struct.FileName, Struct);
+
+
 if isequal(datosIniciales,0)
     Struct = 0;
     return
 else
-Struct.datosIniciales  = datosIniciales;
+    writematrix([datosIniciales.corteInferior; datosIniciales.corteSuperior;...
+    datosIniciales.EnergiaMin; datosIniciales.EnergiaMax;...
+    datosIniciales.DeltaEnergia; datosIniciales.PasoMapas;...
+    Struct.NumeroCurvas; Struct.NPuntosDerivada;...
+    Struct.OffsetVoltaje; Struct.VoltajeNormalizacionInferior;...
+    Struct.VoltajeNormalizacionSuperior],...
+    [SaveFolder,filesep,FileName(1:length(FileName)-4),'.in'],...
+    FileType='text',WriteMode='overwrite')
+
+    FileID = fopen([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.txt'],'A');
+    fprintf(FileID, '\r\n');
+    fprintf(FileID, '\r\n');
+    fprintf(FileID, 'Fecha análisis: %s \r\n',char(Date));
+    fprintf(FileID, '-------------------------------\r\n');
+    fprintf(FileID,'Curves selected       : [%d %d %d %d]\r\n',Struct.CurveSelection);
+    fprintf(FileID, 'Deriv points          : %g \r\n', Struct.NPuntosDerivada );
+    fprintf(FileID, 'Offset                : %g mV\r\n', Struct.OffsetVoltaje);
+    switch Struct.NormalizationFlag
+        case {'single side'}
+            fprintf(FileID, 'Normalization         : single side\r\n');
+            fprintf(FileID, 'Normalize min         : %g mV\r\n', Struct.VoltajeNormalizacionInferior);
+            fprintf(FileID, 'Normalize max         : %g mV\r\n', Struct.VoltajeNormalizacionSuperior);
+        case {'mirror window'}
+            lowbound = min(Struct.VoltajeNormalizacionInferior,...
+                Struct.VoltajeNormalizacionSuperior,ComparisonMethod="abs");
+            highbound = max(Struct.VoltajeNormalizacionInferior,...
+                Struct.VoltajeNormalizacionSuperior,ComparisonMethod="abs");
+            fprintf(FileID, 'Normalization         : symmetrical\r\n');
+            fprintf(FileID, 'Normalize min         : ±%g mV\r\n', abs(lowbound));
+            fprintf(FileID, 'Normalize max         : ±%g mV\r\n', abs(highbound));
+        case 'none'
+            fprintf(FileID, 'Normalization         : none\r\n');
+            %             case 'Feenstra'
+    end
+    fprintf(FileID, 'Corte Inf Conduc      : %g uS\r\n',datosIniciales.corteInferior);
+    fprintf(FileID, 'Corte Sup Conduc      : %g uS\r\n',datosIniciales.corteSuperior);
+    fprintf(FileID, 'Dibuja de             : %g mV\r\n',datosIniciales.EnergiaMin);
+    fprintf(FileID, ' a                    : %g mV\r\n',datosIniciales.EnergiaMax);
+    switch mapmethod
+        case 'mean'
+            fprintf(FileID, 'con pasos de          : %g mV\r\n',datosIniciales.PasoMapas);
+            fprintf(FileID, 'Delta de Energia      : %g mV\r\n',datosIniciales.DeltaEnergia);
+        case 'none'
+            fprintf(FileID, 'con pasos de          : %g mV\r\n',...
+                abs(max(Struct.Voltaje) - min(Struct.Voltaje))/numel(Struct.Voltaje));
+        otherwise
+            fprintf(FileID, 'con pasos de          : %g mV\r\n',datosIniciales.PasoMapas);
+    end
+    fprintf(FileID, 'Metodo de interpolado : %s\r\n',mapmethod);
+    fclose(FileID);
+
+    Struct.datosIniciales  = datosIniciales;
 % -----------------------------------------------------------------------
 	FileName                            = Struct.FileName;
 	FilePath                            = Struct.FilePath;
