@@ -17,7 +17,7 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
         Struct.SaveFolder = SaveFolder;
 
 	[Campo, Temperatura, TamanhoRealFilas, TamanhoRealColumnas, ParametroRedFilas,...
-        ParametroRedColumnas, Filas, Columnas,eleccionMatrices,LeerColumna] = generalData4(Dimensiones, Struct);
+        ParametroRedColumnas, Filas, Columnas,eleccionMatrices,LeerColumna,formatoCurvas] = generalData5(Dimensiones, Struct);
 
         Struct.Campo                = Campo;
         Struct.Temperatura          = Temperatura;
@@ -40,17 +40,16 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
     % ------------------------------------------------------------------------ 
     tic
     [Voltaje,IdaIda,IdaVuelta,VueltaIda,VueltaVuelta] = ...
-        ReducedblqreaderV17([FilePath,FileName],Filas,Columnas, eleccionMatrices, initialPoint,BlqColumn=LeerColumna);
+        ReducedblqreaderV17([FilePath,FileName],Filas,Columnas, eleccionMatrices, initialPoint,BlqColumn=LeerColumna,Format=formatoCurvas);
     toc
     Voltaje = Voltaje*1000; % Para ponerlo en mV
 
     
     
     % Checking which current matricex exists and putting them in nA for simplcity
-% ------------------------------------------------------------------------
+    % ------------------------------------------------------------------------
         if exist('IdaIda',  'var')
             IdaIda       = IdaIda*1e9;
-%             display('Exists IdaIda');
         end
         if exist('IdaVuelta',  'var')
             IdaVuelta    = IdaVuelta*1e9;
@@ -95,16 +94,16 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
     % different selected matrices and the Voltage array adding the offset
     % (VoltajeOffset)
     % ------------------------------------------------------------------------
-        MatrizCorriente = ( eleccionMatrices(1)*IdaIda +...
-                            eleccionMatrices(2)*IdaVuelta +...
-                            eleccionMatrices(3)*VueltaIda +... 
-                            eleccionMatrices(4)*VueltaVuelta)...
-                            /length(find (eleccionMatrices ~=0));
-        
-        %-------------------------------------                
-        % Reading data from ini file, if any.
-        %-------------------------------------
-        remember = 0;
+    MatrizCorriente = ( eleccionMatrices(1)*IdaIda +...
+        eleccionMatrices(2)*IdaVuelta +...
+        eleccionMatrices(3)*VueltaIda +...
+        eleccionMatrices(4)*VueltaVuelta)...
+        /sum(eleccionMatrices);
+
+    %-------------------------------------
+    % Reading data from in file, if any.
+    %-------------------------------------
+    remember = 0;
     if exist([[SaveFolder,filesep],FileName(1:length(FileName)-4),'.in'],'file')
         remember = readmatrix([SaveFolder,filesep,FileName(1:length(FileName)-4),'.in'], FileType = 'text');
     end  
