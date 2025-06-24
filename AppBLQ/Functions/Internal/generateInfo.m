@@ -29,6 +29,9 @@ app.CallingApp.InfoStruct.Direction                    = Struct.Direction;
 if isfield(Struct,'Topo')
     app.CallingApp.InfoStruct.Topo                     = Struct.Topo;
 end
+if isfield(Struct,'MatrizSecondDeriv')
+    app.CallingApp.InfoStruct.MatrizSecondDeriv        = Struct.MatrizSecondDeriv;
+end
 
 ContrastReal = zeros(2, length(Struct.Energia));
 ContrastFFT = zeros(2, length(Struct.Energia));
