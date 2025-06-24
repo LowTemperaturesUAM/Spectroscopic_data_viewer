@@ -34,6 +34,8 @@ else
             fprintf(FileID, 'Normalization         : single side\r\n');
             fprintf(FileID, 'Normalize min         : %g mV\r\n', Struct.VoltajeNormalizacionInferior);
             fprintf(FileID, 'Normalize max         : %g mV\r\n', Struct.VoltajeNormalizacionSuperior);
+            fprintf(FileID, 'Corte Inf Conduc      : %g\r\n',datosIniciales.corteInferior);
+            fprintf(FileID, 'Corte Sup Conduc      : %g\r\n',datosIniciales.corteSuperior);
         case {'mirror window'}
             lowbound = min(Struct.VoltajeNormalizacionInferior,...
                 Struct.VoltajeNormalizacionSuperior,ComparisonMethod="abs");
@@ -42,12 +44,14 @@ else
             fprintf(FileID, 'Normalization         : symmetrical\r\n');
             fprintf(FileID, 'Normalize min         : ±%g mV\r\n', abs(lowbound));
             fprintf(FileID, 'Normalize max         : ±%g mV\r\n', abs(highbound));
+            fprintf(FileID, 'Corte Inf Conduc      : %g\r\n',datosIniciales.corteInferior);
+            fprintf(FileID, 'Corte Sup Conduc      : %g\r\n',datosIniciales.corteSuperior);
         case 'none'
             fprintf(FileID, 'Normalization         : none\r\n');
-            %             case 'Feenstra'
+            fprintf(FileID, 'Corte Inf Conduc      : %g uS\r\n',datosIniciales.corteInferior);
+            fprintf(FileID, 'Corte Sup Conduc      : %g uS\r\n',datosIniciales.corteSuperior);
+        %case 'Feenstra'
     end
-    fprintf(FileID, 'Corte Inf Conduc      : %g uS\r\n',datosIniciales.corteInferior);
-    fprintf(FileID, 'Corte Sup Conduc      : %g uS\r\n',datosIniciales.corteSuperior);
     fprintf(FileID, 'Dibuja de             : %g mV\r\n',datosIniciales.EnergiaMin);
     fprintf(FileID, ' a                    : %g mV\r\n',datosIniciales.EnergiaMax);
     switch mapmethod
