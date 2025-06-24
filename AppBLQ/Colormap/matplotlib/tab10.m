@@ -56,7 +56,7 @@ function map = tab10(N)
 
 if nargin<1 || isnumeric(N)&&isequal(N,[])
 % 	N = size(get(gcf,'colormap'),1);
-    N=256;
+    N=10;
 else
 	assert(isscalar(N)&&isfinite(N)&&isreal(N),...
 		'SC:tab10:N:NotRealFiniteScalarNumeric',...
