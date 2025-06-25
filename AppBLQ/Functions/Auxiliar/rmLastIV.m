@@ -21,7 +21,9 @@ if ~isempty(objects)
             CondFig = findobj('Type','Figure','Name','meandI/dVFig','Number',37290);
             if ~isempty(CondFig)
                 Curves = findobj(CondFig.Children,'Type','Line');
+                if ~isempty(Curves)
                 delete(Curves(1))
+                end
                 %Also remove the curves and the rectangle from the UserData
                 CondFig.UserData.curves = CondFig.UserData.curves(:,1:end-2);
                 CondFig.UserData.areas = CondFig.UserData.areas(1:end-1,:);
@@ -29,10 +31,22 @@ if ~isempty(objects)
             CurrentFig = findobj('Type','Figure','Name','meanIVFig','Number',37289);
             if ~isempty(CurrentFig)
                 Curves = findobj(CurrentFig.Children,'Type','Line');
+                if ~isempty(Curves)
                 delete(Curves(1))
+                end
                 %Also remove the curves and the rectangle from the UserData
                 CurrentFig.UserData.curves = CurrentFig.UserData.curves(:,1:end-2);
                 CurrentFig.UserData.areas = CurrentFig.UserData.areas(1:end-1,:);
+            end
+            SecondFig = findobj('Type','Figure','Name','meand2I/dV2Fig','Number',37291);
+            if ~isempty(SecondFig)
+                Curves = findobj(SecondFig.Children,'Type','Line');
+                if ~isempty(Curves)
+                delete(Curves(1))
+                end
+                %Also remove the curves and the rectangle from the UserData
+                SecondFig.UserData.curves = SecondFig.UserData.curves(:,1:end-2);
+                SecondFig.UserData.areas = SecondFig.UserData.areas(1:end-1,:);
             end
         case 'singledI/dVFig'
             %Remove the rectangle from userdata
@@ -50,7 +64,9 @@ if ~isempty(objects)
             CondFig = findobj('Type','Figure','Name','singledI/dVFig','Number',120);
             if ~isempty(CondFig)
                 Curves = findobj(CondFig.Children,'Type','Line');
+                if ~isempty(Curves)
                 delete(Curves(1))
+                end
                 %Also remove the curves and the location from the UserData
                 CondFig.UserData.curves = CondFig.UserData.curves(:,1:end-2);
                 CondFig.UserData.points = CondFig.UserData.points(1:end-1,:);
@@ -59,12 +75,26 @@ if ~isempty(objects)
             CurrentFig = findobj('Type','Figure','Name','singleIVFig','Number',122);
             if ~isempty(CurrentFig)
                 Curves = findobj(CurrentFig.Children,'Type','Line');
+                if ~isempty(Curves)
                 delete(Curves(1))
+                end
                 %Also remove the curves and the location from the UserData
                 CurrentFig.UserData.curves = CurrentFig.UserData.curves(:,1:end-2);
                 CurrentFig.UserData.points = CurrentFig.UserData.points(1:end-1,:);
                 CurrentFig.UserData.coords = CurrentFig.UserData.coords(1:end-1,:);
             end
+            SecondFig = findobj('Type','Figure','Name','singled2I/dV2Fig','Number',123);
+            if ~isempty(SecondFig)
+                Curves = findobj(SecondFig.Children,'Type','Line');
+                if ~isempty(Curves)
+                delete(Curves(1))
+                end
+                %Also remove the curves and the location from the UserData
+                SecondFig.UserData.curves = SecondFig.UserData.curves(:,1:end-2);
+                SecondFig.UserData.points = SecondFig.UserData.points(1:end-1,:);
+                SecondFig.UserData.coords = SecondFig.UserData.coords(1:end-1,:);
+            end
+
         case 'FFTPointFig'
             ax.UserData.Rectangle = [];
             %Revert the colororderindex to the last value, checking if we wrapped
