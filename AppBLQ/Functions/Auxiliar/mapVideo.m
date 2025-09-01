@@ -25,7 +25,7 @@ arguments
     cmap (:, 3) double = viridis
     % Name-Value arguments
     options.Framerate (1,1) double {mustBePositive} = length(Maps)/3 % Frames per second by default
-    options.Filename string = "TestVid.avi"
+    options.Filename string = "TestVid"
     options.Title
     options.AxesVisible logical = 0
     options.ColorbarVisible logical = 1
@@ -92,9 +92,8 @@ end
 %--------------------------------------------------------------------------
 nummaps = length(Maps);
 % [Lx,Ly] = size(Maps{1});
-
 % Initialize video object
-writerObj = VideoWriter(options.Filename); % Create a video
+writerObj = VideoWriter(options.Filename,'MPEG-4'); % Create a video
 writerObj.FrameRate = options.Framerate; %Framerate
 open(writerObj);
 

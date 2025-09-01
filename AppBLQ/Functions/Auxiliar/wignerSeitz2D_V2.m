@@ -1,6 +1,7 @@
-function [P] = wignerSeitz2D_V2(Bragg)
+function [P] = wignerSeitz2D_V2(Bragg,opts)
 arguments
     Bragg (:,2) double
+    opts.Method {mustBeMember(opts.Method,{'voronoi','Intersection'})} = 'Intersection'
 end
 % Given a set of Bragg peaks, wignerSeitz2D(Bragg) calculates the vertices of a WignerSeitz
 % (Brillouin in reciprocal space) cell around the origin, i.e. the area 

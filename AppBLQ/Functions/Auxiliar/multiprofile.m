@@ -8,7 +8,7 @@ arguments
     opt.XLim (:,2) {mustBeFinite} = [0, size(Map,2)] 
     opt.YLim (:,2) {mustBeFinite} = [0, size(Map,1)]
 end
-
+% [profile,xp,yp,w] = multiprofile(Map,start1,start2,final1,opt)
 % final2 = final1+start2-start1;
 % theta = atan2d(final1(2)-start1(2),final1(1)-start1(1));
 %obtain the start coordinates for each of the line profiles
