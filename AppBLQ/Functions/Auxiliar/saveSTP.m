@@ -17,9 +17,14 @@ elseif ~isempty(ext) && ~strcmp(ext,'.stp')
 end
 
 if isempty(ext)
-    stpID=fopen([Path '.stp'],'w');
+    [stpID,msg]=fopen([Path '.stp'],'w');
 else
-    stpID=fopen(Path,'w');
+    [stpID,msg]=fopen(Path,'w');
+end
+%Check the file has been properly opened, or raise an error
+if stpID == -1 %check for error ID
+    error(msg)
+    return
 end
 fprintf(stpID,'WSxM file copyright UAM\r\n');
 fprintf(stpID,'SxM Image file\r\n');
