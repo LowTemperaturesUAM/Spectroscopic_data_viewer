@@ -30,8 +30,11 @@ if isequal(Name,0)
     Size=[128,128]; %Valor de puntos por defecto en este caso
     Matrix = [];
 else
-
-    Ext = Name(end-2:end); %extension del archivo de imagen
+    [~,~,Ext] = fileparts(Name);
+    if isempty(Ext)
+        error('Unknown file type. Please provide a file extension')
+    end
+    Ext = Ext(2:end);% remove the beginning dot
     if strcmp(Ext,'img') %Solo sacamos el numero de puntos
         disp('Img file loaded')
         Struct.FileNameTopo = Name;

@@ -7,6 +7,7 @@ arguments
     unitlabel {mustBeNonzeroLengthText} = 'a.u.'
     opt.Real logical = true;
 end
+
 [filepath,name,ext]=fileparts(Path);
 if ~isempty(filepath) && ~isfolder(filepath)
     error('Invalid path, folder %s cannot be found',filepath)
@@ -36,7 +37,7 @@ fprintf(stpID,'    Image Data Type: double\r\n');
 fprintf(stpID,'    Number of rows: %i\r\n    Number of columns: %i\r\n',size(Map));
 %We calculate the range of values for the Z axes, although this value will
 %be ignored when importing into WSxM
-fprintf(stpID,'    Z Amplitude: 1 %s\r\n',max(Map,[],"all")-min(Map,[],"all"),unitlabel);
+fprintf(stpID,'    Z Amplitude: %g %s\r\n',max(Map,[],"all")-min(Map,[],"all"),unitlabel);
 fprintf(stpID,'[Miscellaneous]\r\n\r\n');
 fprintf(stpID,'    Saved with version: blqApp\r\n');
 fprintf(stpID,'    Z Scale Factor: 1\r\n');
