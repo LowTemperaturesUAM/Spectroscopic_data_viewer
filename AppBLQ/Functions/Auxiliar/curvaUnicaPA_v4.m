@@ -54,7 +54,7 @@ CurvaUnica = Matrix(:,(PixelY-1)*Columnas+PixelX);
 curvaUnicaFig.KeyPressFcn = @KeyPressSpectraFcn;
 hold on
 a = curvaUnicaFig.CurrentAxes;
-
+a.Interactions = [zoomInteraction regionZoomInteraction rulerPanInteraction];
 % for i=1:length(PixelX)
 a.ColorOrder = ax.ColorOrder;
 switch Type
@@ -144,7 +144,7 @@ if isempty(findobj(curvaUnicaFig,'Type','UIControl'))
         end
     else
         uicontrol(curvaUnicaFig,'Style', 'pushbutton', 'String', '<html>Curves to<br>Workspace',...
-            'Position', [1 1 60 50], 'Callback', @(src,eventdata)curves2Workspace('FFTptnvsE'));
+            'Position', [1 1 60 50], 'Callback', @(src,eventdata)curves2Workspace('sigleFFTptn'));
     end
 end
 

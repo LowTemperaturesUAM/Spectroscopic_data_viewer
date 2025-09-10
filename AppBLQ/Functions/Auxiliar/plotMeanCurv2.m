@@ -15,7 +15,7 @@ meanIVFig.KeyPressFcn = @KeyPressSpectraFcn;
 hold on
 a=meanIVFig.CurrentAxes;
 a.ColorOrder = ax.ColorOrder;
-
+a.Interactions = [zoomInteraction regionZoomInteraction rulerPanInteraction];
 switch Type
     case 'Conductance'
         a.ColorOrderIndex = ax.ColorOrderIndex;
