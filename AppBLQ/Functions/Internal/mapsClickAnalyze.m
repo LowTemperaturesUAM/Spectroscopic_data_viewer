@@ -74,7 +74,7 @@ elseif strcmp(btn, 'normal') && ~Movimiento
         TransformadasEqualizadosfAUX = permute(TransformadasEqualizadosf,[3 2 1]);
         TransformadasEqualizadosfAUX = reshape(TransformadasEqualizadosfAUX,[length(Energia),Filas*Columnas]);
    
-        curvaUnicaPA_v3(app.Axes,Info.PunteroFFT, Energia', TransformadasEqualizadosfAUX, DistanciaFourierColumnas,DistanciaFourierFilas, false,0); %Intensidad FFT vs E
+        curvaUnicaPA_v4(app.Axes,Info.PunteroFFT, Energia', TransformadasEqualizadosfAUX, DistanciaFourierColumnas,DistanciaFourierFilas, false,'Conductance'); %Intensidad FFT vs E
     end
 
 elseif strcmp(btn, 'extend') && ~Movimiento

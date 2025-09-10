@@ -51,7 +51,7 @@ end
 movegui(curvaUnicaFig);
 
 CurvaUnica = Matrix(:,(PixelY-1)*Columnas+PixelX);
-
+curvaUnicaFig.KeyPressFcn = @KeyPressSpectraFcn;
 hold on
 a = curvaUnicaFig.CurrentAxes;
 

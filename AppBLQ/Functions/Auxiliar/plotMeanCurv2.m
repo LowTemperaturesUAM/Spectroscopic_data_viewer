@@ -11,7 +11,7 @@ switch Type
         meanIVFig = figure(37291);
         meanIVFig.Name = 'meand2I/dV2Fig';
 end
-
+meanIVFig.KeyPressFcn = @KeyPressSpectraFcn;
 hold on
 a=meanIVFig.CurrentAxes;
 a.ColorOrder = ax.ColorOrder;
@@ -54,6 +54,8 @@ switch Type
     case 'Second'
         a.YLabel.String = 'd^2I/dV^2';
 end
+a.XLabel.String = 'Voltage (mV)';
+a.XLabel.FontSize = 18;
 
 Data = [Voltaje Curve];
 
