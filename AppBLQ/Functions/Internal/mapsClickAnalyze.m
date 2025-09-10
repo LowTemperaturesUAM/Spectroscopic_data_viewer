@@ -81,3 +81,6 @@ elseif strcmp(btn, 'extend') && ~Movimiento
     app.EnergySpinner.Value = min(abs(Energia));  % Vuelve al mapa a 0 bias
 
 end
+
+figure(app.UIFigure)
+end
