@@ -54,7 +54,7 @@ uilabel(f,'Position',[40 toprow 120 20],...
     'Text', 'Lower limit cut:');
 %Si existe coge el valor del archivo
 if existeIni
-    editCorteInferior.Value = ( remember(1));
+    editCorteInferior.Value = remember(1);
 end
 %%%%%%%%% Corte Superior %%%%%%%%%%%%%    
 
@@ -64,7 +64,7 @@ uilabel(f,'Position',[40 toprow-hrow 120 20],...
     'Text', 'Upper limit cut:');
 %Si existe coge el valor del archivo
 if existeIni
-    editCorteSuperior.Value = ( remember(2));
+    editCorteSuperior.Value = remember(2);
 end
     
 %%%%%%%%% Energía mínima %%%%%%%%%%%%
@@ -74,7 +74,7 @@ editEnergiaMin = uieditfield(f,'numeric','Position',[rpos-130 toprow-2*hrow 90 2
 uilabel(f,'Position',[40 toprow-2*hrow 120 20],'Text', 'Maps from:');
 %Si existe coge el valor del archivo
 if existeIni
-    editEnergiaMin.Value = ( remember(3));
+    editEnergiaMin.Value = remember(3);
 end
        
 %%%%%%%% Energía máxima %%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ uilabel(f,'Position',[40 toprow-3*hrow 120 20],...
     'Text', 'to:');
 %Si existe coge el valor del archivo
 if existeIni
-    editEnergiaMax.Value = ( remember(4));
+    editEnergiaMax.Value = remember(4);
 end
           
 %%%%%%%% Paso mapas %%%%%%%%%%%%    
@@ -94,7 +94,7 @@ uilabel(f,'Position',[40 toprow-4*hrow 120 20],...
     'Text', 'Map spacing:');
 %Si existe coge el valor del archivo
 if existeIni
-    editPasoMapas.Value = (remember(6));
+    editPasoMapas.Value = remember(6);
 else
     editPasoMapas.Value = round(0.5*abs(max(Struct.Voltaje) - min(Struct.Voltaje))...
         /numel(Struct.Voltaje),3);
@@ -110,7 +110,7 @@ uilabel(f,'Position',[40 toprow-6*hrow 120 20],...
 % Si existe coge el valor del archivo, si no, utiliza la mitad del espaciado
 % entre puntos
 if existeIni
-    editDeltaEnergia.Value = (remember(5));
+    editDeltaEnergia.Value = remember(5);
 else
     editDeltaEnergia.Value = round(0.5*abs(max(Struct.Voltaje) - min(Struct.Voltaje))...
         /numel(Struct.Voltaje),3);
