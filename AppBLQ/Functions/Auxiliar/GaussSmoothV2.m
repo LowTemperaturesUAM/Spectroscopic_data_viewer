@@ -43,7 +43,8 @@ if iscell(Maps)
             Maps,UniformOutput=false);
     end
 elseif ismatrix(Maps)
-    Size = floor(size(Maps)/2)+1;
+    Size = floor(size(Maps)/2); %Take half the image size
+    Size = Size + mod(Size+1,2); %Make sure its odd in size
     if meanFlag 
         Method = mean(M,"all");
     end
