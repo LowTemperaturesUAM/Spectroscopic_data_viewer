@@ -1,0 +1,85 @@
+function [P,Area] = wignerSeitz2D_V3(Bragg,center,opts)
+arguments
+    Bragg (:,2) double
+    center (:,2) double = [0 0] % center point
+    opts.Method {mustBeMember(opts.Method,{'voronoi','Intersection'})} = 'Intersection'
+    opts.Output {mustBeMember(opts.Output,{'struct','verticesAndFaces'})} = 'verticesAndFaces'
+end
+% Given a set of Bragg peaks, wignerSeitz2D(Bragg) calculates the vertices of a WignerSeitz
+% (Brillouin in reciprocal space) cell around the origin, i.e. the area 
+% enclosed by these Bragg peaks whose points lie closer to the origin than
+% to any of the peaks.
+
+% INPUT
+% Bragg is a 2 column matrix with coordinates of the peaks
+
+%Example: BrillouinPeaks = wignerSeitz_V2([0 1;1 0]).
+
+% Zero = mean(Bragg,1); %Center of polygon as center of mass
+% Bragg = Bragg - Zero;
+
+for nCenter = 1:size(center,1)
+    ctr = center(nCenter,:);
+switch opts.Method
+    case 'Intersection'
+        Bragg = Bragg - ctr; % move points around zero
+% Sort peaks by angle
+a = atan2d(Bragg(:,2),Bragg(:,1));
+ [~,idx] = sort(a);
+ Bragg = Bragg(idx,:);
+
+
+normBragg = 0.5*vecnorm(Bragg,2,2).^2;
+% Number of peaks
+numPeaks = numel(normBragg);
+
+% Solve linear system for every adjacent pair of peaks
+Pn = zeros(size(Bragg));
+for i = 1:numPeaks
+    j = mod(i,numPeaks)+1;
+
+    b = [normBragg(i); normBragg(j)];
+    A = [Bragg(i,1), Bragg(i,2);
+     Bragg(j,1), Bragg(j,2)];
+
+    Pn(i,:) = (A\b).';
+end
+P{nCenter} = Pn + ctr; % return polygon to original position
+
+    case 'voronoi'
+        % Triangulate input points
+            dt = delaunayTriangulation(Bragg);
+            [verts,region] = voronoiDiagram(dt);
+            % Obtain lattice point nearest to input center, in case it doeasn't match
+            tid = nearestNeighbor(dt,ctr(1),ctr(2));
+
+            % Calculate vertices of Voronoi cell around center
+            P{nCenter} = uniquetol(verts(region{tid},:),1e-10,'ByRows',true);
+            % Sort vertices by angle in 2D
+            a = atan2d(P{nCenter}(:,2),P{nCenter}(:,1));
+            [~,idx] = sort(a);
+            P{nCenter} = P{nCenter}(idx,:);
+end
+% Compute cell area defined by P
+    [~,Area(nCenter)] = convexHull(delaunayTriangulation(P{nCenter}));
+end
+
+if contains(opts.Output,'struct')
+    C = tab10(nCenter);
+    for n = 1:nCenter
+        outStruct(n).vertices = P{n};
+        outStruct(n).faces = 1:size(P{n},1); % face connectivity after sorting
+        outStruct(n).faceColor = 'none'; % assign different colors
+
+        outStruct(n).UserData.Area = Area(n);% save the cell area
+    end
+    % Replace first output by struct
+    P = outStruct;
+
+% simplify result if only 1 center
+elseif nCenter == 1
+    P = P{1};
+
+end
+
+end
