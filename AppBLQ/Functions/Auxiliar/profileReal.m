@@ -79,7 +79,7 @@ else
         plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
         scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
             'Parent',EjePerfil);
-        ylabel(EjePerfil,'Normalized conductance ',num2str(Energia),' mV)','FontSize',16);
+        ylabel(EjePerfil,['Normalized conductance (',num2str(Energia),' mV)'],'FontSize',16);
         xlabel(EjePerfil,'Distance (nm)','FontSize',16);
         box on;
         a=gca;
@@ -90,7 +90,8 @@ else
         a.YColor = 'k';
         hold(EjePerfil,'off');
     end
-
+% uicontrol(meanIVFig,'Style', 'pushbutton', 'String', '<html>Curves to<br>Workspace',...
+%                 'Position', [1 1 60 50], 'Callback', @(src,eventdata)curves2Workspace('meanIVRegion'));
 
 %     FigSurfPerfil = figure('Color',[1 1 1]);
 %         FigSurfPerfil.Position = [367   286   727   590];
