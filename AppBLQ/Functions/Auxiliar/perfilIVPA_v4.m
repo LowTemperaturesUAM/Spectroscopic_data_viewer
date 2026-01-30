@@ -8,26 +8,18 @@ arguments
     YCoords {mustBeVector,mustBeFinite}
     Xstartfinal (2,1) {mustBeFinite}
     Ystartfinal (2,1) {mustBeFinite}
-    opts.Colorscale (:,3) {mustBeInRange(opts.Colorscale,0,1)}
+    opts.ColorScale (:,3) {mustBeInRange(opts.ColorScale,0,1)}
 end
 % INPUT: 
 % Map:              Target image for the profile
 % Voltage:          Voltage values for CurveMatrix
 % CurveMatrix:      Matrix containing the linearly indexed curves associated to
 %                   each point in Map
-% 
-% ENTRADAS:
-% --------------------------------------------------
-% Map:              Target image for the profile
-%
-% MatrizVoltaje:    La matriz Lineas x Columnas x IV que contiene los
-%                   voltajes para cada una de las curvas
-%
-% MatrizNormalizadaCortada: Matriz Lineas x Columnas x IV con los valores
-%                           de conductancia en cada punto
-%
-% TamanhoX: Tamaño en nm de la imagen en x
-% TamanhoY: Tamaño en nm de la imagen en y
+% XCoords, YCoords: x and y coordinates of each point of the image Map
+% Xstartfinal, Ystartfinal: x and y coordinates of the start and final point of
+% the profile
+% OPTIONS:
+% Colorscale:       Nx3 matrix containing the colormap to be used in the figures 
 % ---------------------------------------------------
 
 
@@ -64,7 +56,7 @@ MatrizSurf = cell2mat( cellfun(@(M) improfile(Xrange,Yrange,M,Xstartfinal,...
 fig = figure;
  
 imagesc(Voltage,Distancia,MatrizSurf');
-colormap(opts.Colorscale)
+colormap(opts.ColorScale)
 
 xlabel ('\fontsize{18} Voltage (mV)')
 ylabel ('\fontsize{18} Distance (nm)')
@@ -96,7 +88,7 @@ movegui(FigSurfPerfil)
 % Create surf
 surf(Voltage,Distancia,MatrizSurf','Parent',EjeSurfPerfil,'MeshStyle','row',...
     'FaceColor','interp');
-colormap(opts.Colorscale)
+colormap(opts.ColorScale)
 hold(EjeSurfPerfil,'off');
 % Create xlabel
 xlabel(EjeSurfPerfil,'Bias voltage (mV)','FontSize',18,'FontName','Arial');
