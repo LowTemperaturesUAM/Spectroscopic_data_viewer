@@ -23,9 +23,15 @@ else
     Position = LineObj(1).Position; %Take the last drawn profile
     XinicioFinal = Position(:,1);
     YinicioFinal = Position(:,2);
-    [DistanciaPerfil,PerfilActual, ~] = perfilIVPA_v3(MapasConductancia{k},...
+    % [DistanciaPerfil,PerfilActual, Matriz,FigMap,FigSurf] = perfilIVPA_v3(MapasConductancia{k},...
+    %     Voltaje,MatrizNormalizada, DistanciaColumnas, DistanciaFilas,...
+    %     XinicioFinal,YinicioFinal,ax.Colormap);
+    [DistanciaPerfil,PerfilActual, Matriz,FigMap,FigSurf] = perfilIVPA_v4(MapasConductancia{k},...
         Voltaje,MatrizNormalizada, DistanciaColumnas, DistanciaFilas,...
-        XinicioFinal,YinicioFinal,ax.Colormap);
+        XinicioFinal,YinicioFinal,ColorScale = ax.Colormap);
+    % [~] = perfilIVPA_v4(MapasConductancia{k},...
+    %     Voltaje,MatrizNormalizada, DistanciaColumnas, DistanciaFilas,...
+    %     XinicioFinal,YinicioFinal,ax.Colormap);%,numel(DistanciaPerfil));
     
     %   REPRESENTACION PERFIL A LA ENERGIA SELECCIONADA
     % ----------------------------
@@ -40,6 +46,7 @@ else
                 plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
                 scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
                     'Parent',EjePerfil);
+                EjePerfil.CLim = ax.CLim;
                 ylabel(EjePerfil,['Normalized conductance (',num2str(Energia),' mV)'],'FontSize',16);
                 xlabel(EjePerfil,'Distance (nm)','FontSize',16);
                 box on;
@@ -59,6 +66,7 @@ else
                 plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
                 scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
                     'Parent',EjePerfil);
+                EjePerfil.CLim = ax.CLim;
                 ylabel(EjePerfil,['Current (',num2str(Energia),' mV)'],'FontSize',16);
                 xlabel(EjePerfil,'Distance (nm)','FontSize',16);
                 box on;
@@ -79,6 +87,7 @@ else
         plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
         scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
             'Parent',EjePerfil);
+        EjePerfil.CLim = ax.CLim;
         ylabel(EjePerfil,['Normalized conductance (',num2str(Energia),' mV)'],'FontSize',16);
         xlabel(EjePerfil,'Distance (nm)','FontSize',16);
         box on;
@@ -90,9 +99,14 @@ else
         a.YColor = 'k';
         hold(EjePerfil,'off');
     end
-% uicontrol(meanIVFig,'Style', 'pushbutton', 'String', '<html>Curves to<br>Workspace',...
-%                 'Position', [1 1 60 50], 'Callback', @(src,eventdata)curves2Workspace('meanIVRegion'));
-
+    Data = struct();
+    Data.Distance = DistanciaPerfil';
+    Data.Data = Matriz;
+    Data.XCoordinates = XinicioFinal;
+    Data.XYCoordinates = YinicioFinal;
+    uicontrol(FigMap,'Style', 'pushbutton', 'String', '<html>Profile to<br>Workspace',...
+                'Position', [1 1 60 50], 'Callback',...
+                {@profile2Workspace,'lineProfile',Data});
 %     FigSurfPerfil = figure('Color',[1 1 1]);
 %         FigSurfPerfil.Position = [367   286   727   590];
 %         EjeSurfPerfil = axes('Parent',FigSurfPerfil,'FontSize',16,'FontName','Arial',...
@@ -109,4 +123,8 @@ else
 %         EjeSurfPerfil.ZTick = [];
 %         hold(EjeSurfPerfil,'off');
 end
+end
+
+function profile2Workspace(~,~,name,data)
+    assignin('base',name,data)
 end
