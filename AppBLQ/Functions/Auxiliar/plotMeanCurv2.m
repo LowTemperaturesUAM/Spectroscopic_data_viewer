@@ -1,21 +1,48 @@
 function [meanIVFig] = plotMeanCurv2(ax,Voltaje,Curve,Inicio,Final,Type)
+%Check if the figure already exists or we are creating it know
 switch Type
     case 'Current'
+        isNewFig = ~ishandle(37289);
         meanIVFig = figure(37289);
         meanIVFig.Name = 'meanIVFig';
+        %first time we open it, we would like to place them side by side
+        condExist = ishandle(37290);
+        if condExist && isNewFig
+            % condFig = figure(37290);
+            condFig =findobj('Type','Figure','Number',37290);
+            meanIVFig.Position(1) = condFig.Position(1)+condFig.Position(3);
+            %move it into the display in case it was placed out of borders
+            movegui(meanIVFig)
+            % figure()
+        end
     case 'Conductance'
+        isNewFig = ~ishandle(37290);
         meanIVFig = figure(37290);
         meanIVFig.Name = 'meandI/dVFig';
         meanIVFig.CloseRequestFcn = 'kill_v2';
     case 'Second'
+        isNewFig = ~ishandle(37291);
         meanIVFig = figure(37291);
         meanIVFig.Name = 'meand2I/dV2Fig';
+        %first time we open it, we would like to place them side by side
+        condExist = ~ishandle(37290);
+        if condExist && isNewFig
+            % condFig = figure(37290);
+            condFig =findobj('Type','Figure','Number',37290);
+            meanIVFig.Position(1) = condFig.Position(1)-condFig.Position(3);
+            %move it into the display in case it was placed out of borders
+            movegui(meanIVFig)
+        end
 end
-meanIVFig.KeyPressFcn = @KeyPressSpectraFcn;
+
 hold on
 a=meanIVFig.CurrentAxes;
 a.ColorOrder = ax.ColorOrder;
-a.Interactions = [zoomInteraction regionZoomInteraction rulerPanInteraction];
+if isNewFig %if it was just created then set the callback and interactions
+    meanIVFig.KeyPressFcn = @KeyPressSpectraFcn;
+    a.Interactions = [zoomInteraction regionZoomInteraction rulerPanInteraction];
+end
+
 switch Type
     case 'Conductance'
         a.ColorOrderIndex = ax.ColorOrderIndex;
