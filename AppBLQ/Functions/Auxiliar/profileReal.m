@@ -32,16 +32,18 @@ else
     FigSurf = plotSpectraProfile3D(ProfileStruct,Colormap= ax.Colormap);
 
     if isfield(Struct,'Type')
-        plotMapProfile(ProfileStruct,profileMagnitude=Struct.Type,...
-            Colormap=ax.Colormap,CLim=ax.CLim)
+        FigLine = plotMapProfile(ProfileStruct,profileMagnitude=Struct.Type,...
+            Colormap=ax.Colormap,CLim=ax.CLim);
     else
-        plotMapProfile(ProfileStruct,Colormap=ax.Colormap,CLim=ax.CLim)
+        FigLine = plotMapProfile(ProfileStruct,Colormap=ax.Colormap,CLim=ax.CLim);
     end
     %relocate the figures for easier visualization
     FigSurf.Position(1) = FigMap.Position(1);
     FigSurf.Position(2) = FigMap.Position(2) - FigMap.Position(4)-85;
     %Shift back into the display, just in case the position doesn't fit
     movegui(FigSurf)
+    %Add the energy corresponding to the provided map
+    FigLine.Name = sprintf('Profile at %.2f mV',Energia);
 
     Data = struct();
     Data.Distance = ProfileStruct.Distance';
@@ -51,12 +53,13 @@ else
 
     Data.XCoordinates = XinicioFinal;
     Data.XYCoordinates = YinicioFinal;
-
+    %We can take the X and XY coordinates, and get back the line position, in
+    %order to place it in the exact same place again to repeat the profile
     %Add button to the colorplot, that allows to export the data into the
     %workspace
     uicontrol(FigMap,'Style', 'pushbutton', 'String', '<html>Profile to<br>Workspace',...
                 'Position', [1 1 60 50], 'Callback',...
-                {@profile2Workspace,'lineProfile',Data});
+                {@profile2Workspace,'lineProfileReal',Data});
 end
 end
 

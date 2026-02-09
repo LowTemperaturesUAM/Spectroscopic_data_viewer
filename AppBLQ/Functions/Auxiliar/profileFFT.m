@@ -4,8 +4,12 @@ Energia = Struct.Energia;
 Transformadas = Struct.Transformadas;
 DistanciaFourierFilas = Struct.DistanciaFourierFilas;
 DistanciaFourierColumnas = Struct.DistanciaFourierColumnas;
-Filas = length(DistanciaFourierFilas);
-Columnas = length(DistanciaFourierColumnas);
+% Rows = length(DistanciaFourierFilas);
+% Cols = length(DistanciaFourierColumnas);
+[Rows,Cols] = size(Transformadas{1});
+%Convert FFT maps to curves
+Curves = toCurves(Transformadas,numel(Energia),Rows,Cols);
+
 
 LineObj = findobj(ax,'Tag','lineProfile');
 if isempty(LineObj)
@@ -14,62 +18,55 @@ else
     Position = LineObj(1).Position;
     XinicioFinal = Position(:,1);
     YinicioFinal = Position(:,2);
+    ProfileStruct = spectraProfile(Transformadas{k},Energia,Curves,...
+        XinicioFinal,YinicioFinal,XCoords = DistanciaFourierColumnas, YCoords = DistanciaFourierFilas);
 
-    Tranformadasf = zeros(Filas,Columnas,length(Energia));
-    for i = 1:length(Energia)
-        Tranformadasf(:,:,i) = Transformadas{i};
-    end
-    % Con esta vuelta de tuerca podemos usar las mismas funciones. Pasamos
-    % los mapas de las FFT como ristras [length(Energia)xFilasxColumnas]
-    TranformadasfAUX = permute(Tranformadasf,[3 2 1]);
-    TranformadasfAUX = reshape(TranformadasfAUX,[length(Energia),Filas*Columnas]);
+    FigMap = plotSpectraProfile2D(ProfileStruct,Colormap= ax.Colormap);
+    FigSurf = plotSpectraProfile3D(ProfileStruct,Colormap= ax.Colormap);
 
-    % [DistanciaPerfil,PerfilActual, CurvasPerfil] = perfilIVPA_v2(Transformadas{k}, Energia,TranformadasfAUX, DistanciaFourierColumnas, DistanciaFourierFilas,XinicioFinal,YinicioFinal);
-    [DistanciaPerfil,PerfilActual, ~,f1,f2] = perfilIVPA_v3(Transformadas{k},...
-        Energia,TranformadasfAUX,DistanciaFourierColumnas,DistanciaFourierFilas,...
-        XinicioFinal,YinicioFinal,ax.Colormap);
-    % Corregimos los ejes de las figuras generadas
-    f1.Children.YLabel.String = 'Distance (2\pi/nm)';
-    f2.Children.YLabel.String = 'Distance (2\pi/nm)';
 
-    %   REPRESENTACION PERFIL
-    % ----------------------------
-    FigPerfil = figure(233);
-    clf(FigPerfil)
-    FigPerfil.Color = [1 1 1];
-    EjePerfil = axes('Parent',FigPerfil,'FontSize',14,'FontName','Arial','FontWeight','bold');
-    hold(EjePerfil,'on');
-    Perfil = struct();
-    Perfil.X = DistanciaPerfil;
-    Perfil.Y = PerfilActual;
-    assignin('base',"Perfil",Perfil)
-    plot(DistanciaPerfil,PerfilActual,'k--','Parent',EjePerfil);
-    scatter(DistanciaPerfil,PerfilActual,100,'Filled','CData',PerfilActual,...
-        'Parent',EjePerfil);
-    ylabel(EjePerfil,'Intensity','FontSize',16);
-    xlabel(EjePerfil,'Distance (2\pi/nm)','FontSize',16);
-    box on;
-    a=gca;
-    a.Colormap = ax.Colormap;
-    a.LineWidth = 2;
-    a.TickLength(1) = 0.015;
-    a.XColor = 'k';
-    a.YColor = 'k';
-    hold(EjePerfil,'off');
+    FigLine = plotMapProfile(ProfileStruct,Colormap=ax.Colormap,...
+        CLim=ax.CLim,FigNumber=234);
+    
 
-%     FigSurfPerfil = figure('Color',[1 1 1]);
-%     FigSurfPerfil.Position = [367   286   727   590];
-%     EjeSurfPerfil = axes('Parent',FigSurfPerfil,'FontSize',16,'FontName','Arial',...
-%         'Position',[0.158351084541563 0.1952 0.651099711483654 0.769800000000001],...
-%         'CameraPosition',[0 0 5],...
-%         'YTick',[]);
-%     hold(EjeSurfPerfil,'on');
-%     surf(Energia,DistanciaPerfil,CurvasPerfil','Parent',EjeSurfPerfil,'MeshStyle','row',...
-%         'FaceColor','interp');
-%     xlabel(EjeSurfPerfil,'Bias voltage (mV)','FontSize',18,'FontName','Arial');
-%     EjeSurfPerfil.XLim = [min(Energia) max(Energia)];
-%     ylabel(EjeSurfPerfil,'Distance (nm)','FontSize',18,'FontName','Arial','Rotation',90);
-%     EjeSurfPerfil.YLim = [min(DistanciaPerfil), max(DistanciaPerfil)];
-%     EjeSurfPerfil.ZTick = [];
-%     hold(EjeSurfPerfil,'off');
+    %Swap the axis to the reciprocal units
+    FigMap.CurrentAxes.YLabel.String = 'Distance (2\pi/nm)';
+    FigSurf.CurrentAxes.YLabel.String = 'Distance (2\pi/nm)';
+    FigLine.CurrentAxes.XLabel.String = 'Distance (2\pi/nm)';
+    FigLine.CurrentAxes.YLabel.String = 'Intensity';
+
+    %relocate the figures for easier visualization
+    FigSurf.Position(1) = FigMap.Position(1);
+    FigSurf.Position(2) = FigMap.Position(2) - FigMap.Position(4)-85;
+    %Shift back into the display, just in case the position doesn't fit
+    movegui(FigSurf)
+    %Add the energy corresponding to the provided map
+    FigLine.Name = sprintf('Profile at %.2f mV',Energia(k));
+    Data = struct();
+    Data.Distance = ProfileStruct.Distance';
+    Data.DistanceX = ProfileStruct.DistanceX';
+    Data.DistanceY = ProfileStruct.DistanceY';
+    Data.Data = ProfileStruct.generalProfile;
+
+    Data.XCoordinates = XinicioFinal;
+    Data.XYCoordinates = YinicioFinal;
+
+    uicontrol(FigMap,'Style', 'pushbutton', 'String', '<html>Profile to<br>Workspace',...
+        'Position', [1 1 60 50], 'Callback',...
+        {@profile2Workspace,'lineProfileFFT',Data});
+
+end
+end
+function Curves = toCurves(Maps,pts,Rows,Cols)
+    Maps = reshape(Maps,[1 1 numel(Maps)]);
+    Temp = cell2mat(Maps);
+    Temp = pagetranspose(Temp);
+    Temp = permute(Temp,[3,1,2]);
+    Curves = reshape(Temp,[pts,Cols*Rows]);
+
+    clear Temp
+end
+
+function profile2Workspace(~,~,name,data)
+    assignin('base',name,data)
 end
