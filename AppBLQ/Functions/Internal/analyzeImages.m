@@ -145,71 +145,25 @@ else
 tic
 switch Struct.NormalizationFlag
     case 'mirror window'
-        [MatrizNormalizada] = NormalizeRange(VoltajeNormalizacionSuperior,...
-            VoltajeNormalizacionInferior,Voltaje,MatrizConductancia,Range = "both");
-        ConductanciaTunel = 1;
-
+        MatrizNormalizada = getDerivative(MatrizCorriente,...
+            Voltaje,PuntosDerivada,LowerValue=VoltajeNormalizacionInferior,...
+            UpperValue=VoltajeNormalizacionSuperior,Method="mirrorNorm");
     case 'single side'
-        [MatrizNormalizada] = NormalizeRange(VoltajeNormalizacionSuperior,...
-            VoltajeNormalizacionInferior,Voltaje,MatrizConductancia,Range="single");
-        ConductanciaTunel = 1;
-
+        MatrizNormalizada = getDerivative(MatrizCorriente,...
+            Voltaje,PuntosDerivada,LowerValue=VoltajeNormalizacionInferior,...
+            UpperValue=VoltajeNormalizacionSuperior,Method="singleNorm");
     case 'none'
-
-        MatrizNormalizada = MatrizConductancia; % units: uS
-        ConductanciaTunel = mean(max(MatrizCorriente))/max(Voltaje);
-
+        MatrizNormalizada = getDerivative(MatrizCorriente,...
+            Voltaje,PuntosDerivada,Method="none");
+    case 'log'
+        MatrizNormalizada = getDerivative(MatrizCorriente,...
+            Voltaje,PuntosDerivada,Method="Log");
     case 'Feenstra'
-        Ismooth = zeros(size(MatrizCorriente));
-        % switch Struct.Fmethod
-        %     case 'rloess' %it takes siginificantly longer
-        %         % parfor i=1:size(MatrizCorriente,2)
-        %         %     Ismooth(:,i) = smooth(Struct.MatrizCorriente(:,i),Struct.Fspan,Struct.Fmethod);
-        %         % end
-        %     otherwise
-        %         for i=1:size(MatrizCorriente,2)
-        %             Ismooth(:,i) = smooth(Struct.MatrizCorriente(:,i),Struct.Fspan,Struct.Fmethod);
-        %         end
-        % 
-        % end
-        tic
-        Ismooth = smoothdata(Struct.MatrizCorriente,1,Struct.Fmethod,Struct.Fspan*numel(Voltaje));
-        toc
-        Imin = interp1(Voltaje,Ismooth,0,"makima");
-
-        G = (Ismooth-Imin)./Voltaje;
-        if any( Voltaje == 0 )
-            center = find(Voltaje == 0 );
-            G(center,:) = 0.5*(G(center+1,:)+ G(center-1,:));
-        end
-        if Struct.F2check
-            [~,center] = min(Voltaje,[],1,ComparisonMethod="abs");
-            midspan = floor(0.1*length(Voltaje));
-            for i=1:length(Imin)
-                G(center-midspan:center+midspan,i) =...
-                    smooth(G(center-midspan:center+midspan,i),Struct.Fspan2,Struct.Fmethod2);
-            end
-        end
-        MatrizNormalizada = MatrizConductancia./G;
+        MatrizNormalizada = getDerivative(MatrizCorriente,...
+            Voltaje,PuntosDerivada,Method="FeenstraNorm");
 end
 toc
-% ------------------------------------------------------------------------
-% Removing bad data points with the first cut
-% ------------------------------------------------------------------------
-%     MatrizNormalizadaCortada = MatrizNormalizada;
-%     MatrizNormalizadaCortada(MatrizNormalizadaCortada < CorteInferiorInicialConductancia) = CorteInferiorInicialConductancia;
-%     MatrizNormalizadaCortada(MatrizNormalizadaCortada > CorteSuperiorInicialConductancia) = CorteSuperiorInicialConductancia;
-% ------------------------------------------------------------------------   
-% Considering conductance curves at each point creates conductance maps
-% averaging points around a certain DeltaEnergia and its 2D-FFT map
-% ------------------------------------------------------------------------
-% fileID = Struct.fileID;
-% % creo que estamos sobreescribiendo lo anterior!!!
-% fprintf(fileID, 'Valores de Energia: de %g mV a %g mV en pasos de %g mV\r\n',...
-%                 Energia(1), Energia(length(Energia)),PasoMapas);
-% fprintf(fileID, 'Delta de Energia  : %g mv\r\n', DeltaEnergia);
-% fprintf(fileID, '-------------------------------\r\n');
-% fprintf(fileID, '\r\n\r\n');
+
 % ------------------------------------------------------------------------
 % Warning for empty matrices
 % ------------------------------------------------------------------------
@@ -252,61 +206,7 @@ if strcmp(scandir,'Y')
     MatrizNormalizada = MatrizNormalizada(:,ordeny);
     MatrizCorriente = MatrizCorriente(:,ordeny);
 end
-% if strcmp(maptype,'Conductance')
-%     MatrizCorrienteCortada = MatrizCorriente;
-%     MatrizNormalizadaCortada = MatrizNormalizada;
-%     MatrizNormalizadaCortada(MatrizNormalizadaCortada < CorteInferiorInicial) = CorteInferiorInicial;
-%     MatrizNormalizadaCortada(MatrizNormalizadaCortada > CorteSuperiorInicial) = CorteSuperiorInicial;
-%     switch mapmethod
-%         case 'mean'
-%             MapasConductancia = GetMapsMeanWindow(Voltaje,...
-%                 MatrizNormalizadaCortada,Energia,DeltaEnergia,Filas,Columnas);
-%         case {'nearest','linear','makima'}
-%             MapasConductancia = GetMapsInterpolate(Voltaje,...
-%                 MatrizNormalizadaCortada,Energia,Filas,Columnas,mapmethod);
-%         case 'none'
-%             Info = struct();
-%             Info.Voltaje = Voltaje;
-%             Info.DistanciaFilas = DistanciaFilas;
-%             Info.DistanciaColumnas = DistanciaColumnas;
-%             MapasConductancia = curves2maps(MatrizNormalizadaCortada,Info);
-%             MapasConductancia = MapasConductancia(energyValues);
-%             clear Info
-%     end
-% %         Indices =cellfun(@(E) find(E- DeltaEnergia < Voltaje & ...
-% %             E+ DeltaEnergia > Voltaje),num2cell(Energia)', 'UniformOutput',false);
-% %         MapasConductanciaAUX =cellfun(@(x) mean(MatrizNormalizadaCortada(x,:),1), Indices,'UniformOutput',false);
-% %         MapasConductancia =cellfun(@(x) reshape(x,[Columnas,Filas]).',MapasConductanciaAUX, 'UniformOutput',false);
-%         [Transformadas,Fase] = cellfun(@fft2d, MapasConductancia, 'UniformOutput',false);
-% %         Fase = cellfun(@fft2dphase, MapasConductancia, 'UniformOutput',false);
-% 
-% else
-%     MatrizCorrienteCortada = MatrizCorriente;
-%     % MatrizCorrienteCortada(MatrizCorrienteCortada < CorteInferiorInicial) = CorteInferiorInicial;
-%     % MatrizCorrienteCortada(MatrizCorrienteCortada > CorteSuperiorInicial) = CorteSuperiorInicial;
-%     MatrizNormalizadaCortada = MatrizNormalizada;
-% 
-%     MapasConductancia = GetMapsMeanWindow(Voltaje,...
-%         MatrizCorrienteCortada,Energia,DeltaEnergia,Filas,Columnas);
-%     switch mapmethod
-%         case 'mean'
-%             MapasConductancia = GetMapsMeanWindow(Voltaje,...
-%                 MatrizCorrienteCortada,Energia,DeltaEnergia,Filas,Columnas);
-%         case {'nearest','linear','makima'}
-%             MapasConductancia = GetMapsInterpolate(Voltaje,...
-%                 MatrizCorrienteCortada,Energia,Filas,Columnas,mapmethod);
-%         case 'none'
-%             Info = struct();
-%             Info.Voltaje = Voltaje;
-%             Info.DistanciaFilas = DistanciaFilas;
-%             Info.DistanciaColumnas = DistanciaColumnas;
-%             MapasConductancia = curves2maps(MatrizCorrienteCortada,Info);
-%             MapasConductancia = MapasConductancia(energyValues);
-%             clear Info
-%     end
-%     [Transformadas,Fase] = cellfun(@fft2d, MapasConductancia, 'UniformOutput',false);
-% 
-% end
+
 
 switch maptype
     case 'Conductance'

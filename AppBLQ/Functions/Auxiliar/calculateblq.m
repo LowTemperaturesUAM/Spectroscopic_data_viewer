@@ -8,27 +8,18 @@ NumeroCurvasValue = App.CurvestoshowEditField.Value;
 NPuntosDerivadaValue = App.DerivativepointsSpinner.Value;
 VoltajeNormalizacionSuperior = App.toEditField.Value;
 VoltajeNormalizacionInferior = App.fromEditField.Value;
+AutoAxis = App.AutoAxisBtn.Value;
 
 SaveFolder = Struct.SaveFolder;
 FileName = Struct.FileName;
 
 VoltajeOffset = Voltaje*VoltajeEscala + OffsetVoltajeValue;
 
-% i = 1+round(rand(NumeroCurvasValue,1)*(Columnas-1)); % Random index for curve selection
-% j = 1+round(rand(NumeroCurvasValue,1)*(Filas-1));    % Random index for curve selection
-% 
-% MatrizCorrienteTest = zeros(length(Voltaje),NumeroCurvasValue);
-%         
-% for count = 1:NumeroCurvasValue
-%     MatrizCorrienteTest(:,count) = MatrizCorriente(:,(Filas*(j(count)-1)+ i(count)));
-% end
-% clear i j;
-
+Struct.MatrizCorriente;
 IV = length(Voltaje);
-% [MatrizConductanciaTest] = derivadorLeastSquaresPA(NPuntosDerivadaValue,Struct.MatrizCorrienteTest,Voltaje,1,NumeroCurvasValue);
 [MatrizConductanciaTest] = derivadorLeastSquaresArray(NPuntosDerivadaValue,Struct.MatrizCorrienteTest,Voltaje);
 
-% NormalizationFlag = 0; %Might need to use a more detail variable
+% Get the conductance curve accordingly, depending of the method selected
 if App.NormalizeMirrorButton.Value
     NormalizationFlag = 'mirror window';
     [MatrizNormalizadaTest] = NormalizeRange(VoltajeNormalizacionSuperior,...
@@ -65,6 +56,11 @@ elseif App.FeenstraNormButton.Value
 
     MatrizNormalizadaTest = MatrizConductanciaTest./GTest;
     ConductanciaTunel = 1;
+elseif App.LogButton.Value
+    NormalizationFlag = 'log';
+    [MatrizNormalizadaTest] = NormalizeRange(VoltajeNormalizacionSuperior,...
+        VoltajeNormalizacionInferior,VoltajeOffset,MatrizConductanciaTest,Range = "single");
+    ConductanciaTunel = 1;
 else
     MatrizNormalizadaTest = MatrizConductanciaTest; % units: uS
     % This is not technically correct if the set point is negative
@@ -87,12 +83,16 @@ plot(VoltajeOffset,Struct.MatrizCorrienteTest,'-','Parent',App.CurrentAxes);
 App.CurrentAxes.MinorGridLineStyle = ':';
 
 App.CurrentAxes.XLim = [min(VoltajeOffset), max(VoltajeOffset)];
-if ~all(Struct.MatrizCorrienteTest==0)
-    App.CurrentAxes.YLim = [mean(min(Struct.MatrizCorrienteTest)) mean(max(Struct.MatrizCorrienteTest))];
+if ~all(Struct.MatrizCorrienteTest==0,'all') && AutoAxis %Check for empty curves
+    Imin = min(Struct.MatrizCorrienteTest,[],'all');
+    Imax = max(Struct.MatrizCorrienteTest,[],'all');
+    App.CurrentAxes.YLim = [-1,1]*abs(max(Imin,Imax,ComparisonMethod = 'abs'));
+    % App.CurrentAxes.YLim = [min(Struct.MatrizCorrienteTest,[],'all') max(Struct.MatrizCorrienteTest,[],'all')];
 end
 App.CurrentAxes.XGrid = 'on';
 App.CurrentAxes.YGrid = 'on';
 App.CurrentAxes.Box = 'on';
+App.CurrentAxes.Interactions = [zoomInteraction regionZoomInteraction rulerPanInteraction];
 
 %Plot conductance
 cla(App.ConductanceAxes)
@@ -120,19 +120,26 @@ if App.NormalizeMirrorButton.Value
     xline(App.ConductanceAxes,VoltajeNormalizacionSuperior,'r-',HandleVisibility='off')
     xline(App.ConductanceAxes,-VoltajeNormalizacionSuperior,'r-',HandleVisibility='off')
     ylabel(App.ConductanceAxes,'Normalized conductance (a.u.)');
-    App.ConductanceAxes.YLim = [0,max( 1.1*max(MatrizNormalizadaTest,[],'all'), 2*ConductanciaTunel) ];
+    % App.ConductanceAxes.YLim = [0,max( 1.1*max(MatrizNormalizadaTest,[],'all'), 2*ConductanciaTunel) ];
 elseif App.NormalizeSingleButton.Value
     xline(App.ConductanceAxes,VoltajeNormalizacionInferior,'b-',HandleVisibility='off')
     xline(App.ConductanceAxes,VoltajeNormalizacionSuperior,'r-',HandleVisibility='off')
     ylabel(App.ConductanceAxes,'Normalized conductance (a.u.)');
-    App.ConductanceAxes.YLim = [0,max( 1.1*max(MatrizNormalizadaTest,[],'all'), 2*ConductanciaTunel) ];
+    % App.ConductanceAxes.YLim = [0,max( 1.1*max(MatrizNormalizadaTest,[],'all'), 2*ConductanciaTunel) ];
 elseif App.FeenstraNormButton.Value
     ylabel(App.ConductanceAxes,'Normalized conductance (a.u.)');
-    App.ConductanceAxes.YLim = [0,max( 1.1*max(MatrizNormalizadaTest,[],'all'), 2*ConductanciaTunel) ];
+    % App.ConductanceAxes.YLim = [0,max( 1.1*max(MatrizNormalizadaTest,[],'all'), 2*ConductanciaTunel) ];
 else
     ylabel(App.ConductanceAxes,'Conductance (\muS)');
 %         App.ConductanceAxes.YLim = [0, 2*ConductanciaTunel];
-    App.ConductanceAxes.YLim = [0,1.1*max(MatrizNormalizadaTest,[],'all') ];
+    % App.ConductanceAxes.YLim = [0,1.1*max(MatrizNormalizadaTest,[],'all') ];
+    % App.ConductanceAxes.YLimMode= 'auto';
+end
+
+if AutoAxis
+    App.ConductanceAxes.YLimMode = 'auto';
+else
+    % App.ConductanceAxes.YLim = [0,max( 1.1*max(MatrizNormalizadaTest,[],'all'), 2*ConductanciaTunel) ];
 end
 
 % hold(App.ConductanceAxes,'off');

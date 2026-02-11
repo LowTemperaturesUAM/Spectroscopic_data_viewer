@@ -17,7 +17,7 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
         Struct.SaveFolder = SaveFolder;
 
 	[Campo, Temperatura, TamanhoRealFilas, TamanhoRealColumnas, ParametroRedFilas,...
-        ParametroRedColumnas, Filas, Columnas,eleccionMatrices,LeerColumna,formatoCurvas] = generalData5(Dimensiones, Struct);
+        ParametroRedColumnas, Filas, Columnas,CurveSelection,LeerColumna,formatoCurvas] = generalData5(Dimensiones, Struct);
 
         Struct.Campo                = Campo;
         Struct.Temperatura          = Temperatura;
@@ -39,8 +39,9 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
     % Loading data from BLQ file into matlab matrices
     % ------------------------------------------------------------------------ 
     tic
-    [Voltaje,IdaIda,IdaVuelta,VueltaIda,VueltaVuelta] = ...
-        ReducedblqreaderV17([FilePath,FileName],Filas,Columnas, eleccionMatrices, initialPoint,BlqColumn=LeerColumna,Format=formatoCurvas);
+    [Voltaje,IdaIda,IdaVuelta,VueltaIda,VueltaVuelta,curveCounts] = ...
+        ReducedblqreaderV18([FilePath,FileName],Filas,Columnas,...
+        CurveSelection, initialPoint,BlqColumn=LeerColumna,Format=formatoCurvas);
     toc
     Voltaje = Voltaje*1000; % Para ponerlo en mV
 
@@ -48,45 +49,38 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
     
     % Checking which current matricex exists and putting them in nA for simplcity
     % ------------------------------------------------------------------------
+    % Checking if data matricex exist and initializing them otherwise for
+    % program purposes
         if exist('IdaIda',  'var')
             IdaIda       = IdaIda*1e9;
+        else
+            CurveSelection(1) = 0;
+            IdaIda = 0;
         end
         if exist('IdaVuelta',  'var')
             IdaVuelta    = IdaVuelta*1e9;
+        else
+            CurveSelection(2) = 0;
+            IdaVuelta = 0;
         end
         if exist('VueltaIda',  'var')
             VueltaIda    = VueltaIda*1e9;
+        else
+            CurveSelection(3) = 0;
+            VueltaIda = 0;
         end
         if exist('VueltaVuelta',  'var')
             VueltaVuelta = VueltaVuelta*1e9;
+        else
+            CurveSelection(4) = 0;
+            VueltaVuelta = 0;
         end
 
         disp('Matrices: IdaIda IdaVuelta VueltaIda VueltaVuelta');
-        disp(['Cargadas:    ', num2str(eleccionMatrices(1)),...
-                       '       ', num2str(eleccionMatrices(2)),...
-                     '         ', num2str(eleccionMatrices(3)),...
-                    '          ', num2str(eleccionMatrices(4))]);
-    % ------------------------------------------------------------------------
-    %
-    % Checking if data matricex exist and initializing them otherwise for
-    % program purposes
-    % ------------------------------------------------------------------------
-        if ~exist('IdaIda',  'var') 
-            eleccionMatrices(1) = 0;
-            IdaIda = 0;
-        end
-        if ~exist('IdaVuelta',  'var')
-            eleccionMatrices(2) = 0;
-            IdaVuelta = 0;
-        end
-        if ~exist('VueltaIda',  'var')
-             eleccionMatrices(3) = 0;
-             VueltaIda = 0;
-        end
-        if  ~exist('VueltaVuelta',  'var')
-             eleccionMatrices(4) = 0;
-             VueltaVuelta = 0;
-        end
+        disp(['Cargadas:    ', num2str(CurveSelection(1)),...
+                       '       ', num2str(CurveSelection(2)),...
+                     '         ', num2str(CurveSelection(3)),...
+                    '          ', num2str(CurveSelection(4))]);
         
     % ------------------------------------------------------------------------
     %
@@ -94,11 +88,11 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
     % different selected matrices and the Voltage array adding the offset
     % (VoltajeOffset)
     % ------------------------------------------------------------------------
-    MatrizCorriente = ( eleccionMatrices(1)*IdaIda +...
-        eleccionMatrices(2)*IdaVuelta +...
-        eleccionMatrices(3)*VueltaIda +...
-        eleccionMatrices(4)*VueltaVuelta)...
-        /sum(eleccionMatrices);
+    MatrizCorriente = ( CurveSelection(1)*IdaIda +...
+        CurveSelection(2)*IdaVuelta +...
+        CurveSelection(3)*VueltaIda +...
+        CurveSelection(4)*VueltaVuelta)...
+        /sum(CurveSelection);
 
     %-------------------------------------
     % Reading data from in file, if any.
@@ -110,11 +104,11 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
         
     if length(remember) >=11
         App.CurvestoshowEditField.Value     = remember(7);
-        App.DerivativepointsSpinner.Value = remember(8);
+        App.DerivativepointsSpinner.Value   = remember(8);
         App.OffsetvoltageEditField.Value    = remember(9);
         App.fromEditField.Value             = remember(10);
         App.toEditField.Value               = remember(11);        
-    else        
+    else %use some reasonable normalization values if none were given
         if App.toEditField.Value == 0
             App.toEditField.Value = 0.9*max(Voltaje);
         end
@@ -123,12 +117,19 @@ function [Struct, MatrizCorriente, Voltaje] = loadblq(App, initialPoint)
             App.fromEditField.Value = 0.7*max(Voltaje);
         end
     end
+    %Paint some sample curves taken at random
     ncurves = App.CurvestoshowEditField.Value;
-    %Paint some curves at random
-    MatrizCorrienteTest = MatrizCorriente(:,randi(Filas*Columnas,1,ncurves));
-
+    %Check how many curves were read, in case some of them were missing
+    curveCount = min(curveCounts(CurveSelection));
+    if curveCount<Filas*Columnas %if the file is incomplete, we report it
+        fprintf('Curves read: %d out of %d total\n',curveCount,Filas*Columnas)
+    end
+    MatrizCorrienteTest = getRandomCurves(MatrizCorriente,ncurves,curveCount);
+    %We should probably save each direction separately so that we can modified
+    %later on during the analysis
     Struct.MatrizCorrienteTest = MatrizCorrienteTest;
-    Struct.CurveSelection = eleccionMatrices;
+    Struct.CurveSelection = CurveSelection;
+    Struct.curveCount = curveCount; % record this value for the future
     msgbox('blq succesfully loaded.','Congratulations','help')
     end
 end
