@@ -139,7 +139,6 @@ end
 
 % Saving into Structure to pass to analysis
 % ------------------------------------------------------------------------
-Struct.fileID                       = fileID;
 
 % Fix data (raw data)
 % ---------------------------------------------
