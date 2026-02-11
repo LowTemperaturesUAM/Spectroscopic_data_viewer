@@ -33,7 +33,7 @@ switch opts.Method
         Out = Voltage.*dCurves./Curves;
     case 'Log'
         %Assume any kind of offset has already been corrected beforehand
-        logCur = log(Curves);
+        logCur = real(log(Curves));
         Out = derivadorLeastSquaresArray(derivPts,logCur,Voltage);
     case 'none'
         Out = dCurves; % units: uS

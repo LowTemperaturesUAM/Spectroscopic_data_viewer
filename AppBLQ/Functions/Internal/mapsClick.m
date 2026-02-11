@@ -32,8 +32,8 @@ elseif strcmp(btn, 'normal') && ~Movimiento
             Info.Puntero = [punteroT(1,1), punteroT(1,2)];
         end
 
-        curvaUnicaPA_v3(app.RealAxes, Info.Puntero, Voltaje,MatrizNormalizada, DistanciaColumnas,DistanciaFilas, true,0) %Conductancia vs V
-        curvaUnicaPA_v3(app.RealAxes, Info.Puntero, Voltaje,MatrizCorriente, DistanciaColumnas,DistanciaFilas, true,1) %Corriente vs V
+        curvaUnicaPA_v3(app.RealAxes, Info.Puntero, Voltaje,MatrizNormalizada, DistanciaColumnas,DistanciaFilas, true,0); %Conductancia vs V
+        curvaUnicaPA_v3(app.RealAxes, Info.Puntero, Voltaje,MatrizCorriente, DistanciaColumnas,DistanciaFilas, true,1); %Corriente vs V
 
     elseif strcmp(ax.Tag,'FFTAxes')
         Filas = numel(DistanciaFourierFilas);
