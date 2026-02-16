@@ -62,8 +62,8 @@ delete(curve)
 
 plot(VoltajeOffset,MatrizNormalizadaTest,'-','Parent',App.ConductanceAxes);
 
-App.ConductanceAxes.MinorGridLineStyle = ':';
-App.ConductanceAxes.MinorGridColor = 'k';
+App.ConductanceAxes.XGrid = 'on';
+App.ConductanceAxes.YGrid = 'on';
 
 
 
