@@ -8,28 +8,32 @@ arguments
     opt.kLim {mustBeMember(opt.kLim,{'auto','bragg','brillouin'})} = 'brillouin'
 end
 
-kmax = max(Info.DistanciaFourierColumnas); %Get the FFT limit
+kmax = max(Info.DistanciaFourierFilas); %Get the FFT limit
 switch opt.Mode
     case 'double' %negative and positive K
         kmin = -kmax;
         % There should be one more point on the negative side corresponding to the
         % Nyquist frequency, but its better to ignore it by default or we will go out of
         % bounds on the positive side
+        %Just in case, we are going to fix the number of points of the profile,
+        % because it seems to miss the middle sometimes...
+        ProfileLength = numel(Info.DistanciaFourierFilas)-1;
     case 'single' %only to one side of the origin
         kmin = 0;
+        ProfileLength = ceil(numel(Info.DistanciaFourierFilas)/2);
 end
 
 xi = [0,0];
 yi = [kmin,kmax];
 
-[~,yp,profile] = improfile(Info.DistanciaFourierColumnas([1 end]),...
-    Info.DistanciaFourierFilas([1 end]),Info.Transformadas{1},xi,yi,opt.Method);
+[~,yp,~] = improfile(Info.DistanciaFourierColumnas([1 end]),...
+    Info.DistanciaFourierFilas([1 end]),Info.Transformadas{1},xi,yi,ProfileLength,opt.Method);
 
-ProfileLength = length(profile);
 Profiles = zeros(length(Info.Energia),ProfileLength);
+
 for k=1:numel(Info.Energia)
     Profiles(k,:) = improfile(Info.DistanciaFourierColumnas([1 end]),...
-    Info.DistanciaFourierFilas([1 end]),Info.Transformadas{k},xi,yi,opt.Method);
+    Info.DistanciaFourierFilas([1 end]),Info.Transformadas{k},xi,yi,ProfileLength,opt.Method);
 end
 
 %Save to a struct

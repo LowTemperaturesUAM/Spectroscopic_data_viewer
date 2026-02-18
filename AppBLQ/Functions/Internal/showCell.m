@@ -25,8 +25,8 @@ switch Axes.Tag
         Axes.Box = 'On';
         Axes.XLim = Info.XLimReal;
         Axes.YLim = Info.YLimReal;
-
-        if isprop(App, 'Interpolation') & App.Interpolation
+        
+        if isprop(App, 'Interpolation') && App.Interpolation
             Axes.Children.Interpolation = 'bilinear';
         end
         Axes.Colormap = previousColormap;
@@ -112,7 +112,7 @@ switch Axes.Tag
         App.MaxSlider.Value = values(2);
         App.MaxEditField.Value = App.MaxSlider.Value;
         App.Axes.CLim = [App.MinSlider.Value, App.MaxSlider.Value];
-        %     clear TransformadasAUX
+        
     case 'DiffAxes' % Used in EnergySymmetry
         DistanciaFilas = Info.DistanciaFilas;
         DistanciaColumnas = Info.DistanciaColumnas;

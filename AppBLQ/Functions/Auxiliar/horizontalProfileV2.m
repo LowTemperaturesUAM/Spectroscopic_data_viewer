@@ -15,22 +15,26 @@ switch opt.Mode
         % There should be one more point on the negative side corresponding to the
         % Nyquist frequency, but its better to ignore it by default or we will go out of
         % bounds on the positive side
+        %Just in case, we are going to fix the number of points of the profile,
+        % because it seems to miss the middle sometimes...
+        ProfileLength = numel(Info.DistanciaFourierColumnas)-1
     case 'single' %only to one side of the origin
         kmin = 0;
+        ProfileLength = ceil(numel(Info.DistanciaFourierColumnas)/2);
 end
 
 xi = [kmin,kmax];
 yi = [0,0];
 
-[xp,~,profile] = improfile(Info.DistanciaFourierColumnas([1 end]),...
-    Info.DistanciaFourierFilas([1 end]),Info.Transformadas{1},xi,yi,opt.Method);
+[xp,~,~] = improfile(Info.DistanciaFourierColumnas([1 end]),...
+    Info.DistanciaFourierFilas([1 end]),Info.Transformadas{1},xi,yi,ProfileLength,opt.Method);
 
-ProfileLength = length(profile);
 Profiles = zeros(length(Info.Energia),ProfileLength);
+
 for k=1:numel(Info.Energia)
     Profiles(k,:) = improfile(Info.DistanciaFourierColumnas([1 end]),...
-    Info.DistanciaFourierFilas([1 end]),Info.Transformadas{k},xi,yi,opt.Method);
-end
+    Info.DistanciaFourierFilas([1 end]),Info.Transformadas{k},xi,yi,ProfileLength,opt.Method);
+end     
 
 %Save to a struct
 QPI.Map = Profiles;

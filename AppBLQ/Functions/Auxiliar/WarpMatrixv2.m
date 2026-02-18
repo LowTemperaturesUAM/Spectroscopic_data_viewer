@@ -1,4 +1,4 @@
-function [CellWarped] = WarpMatrixv2(Cell,XShear,YShear,YXratio,Info)
+function [CellWarped,tform] = WarpMatrixv2(Cell,XShear,YShear,YXratio,Info)
 % This function applies an affine transformation to FFT maps in order to
 % correct image warping.
 % The function make slight adjustments to the input
@@ -10,8 +10,9 @@ function [CellWarped] = WarpMatrixv2(Cell,XShear,YShear,YXratio,Info)
 % the missing points with zeros, if necessary.
 
 
-Columnas = length(Info.DistanciaFourierColumnas);
-Filas    = length(Info.DistanciaFourierFilas);
+% Columnas = length(Info.DistanciaFourierColumnas);
+% Filas    = length(Info.DistanciaFourierFilas)
+[Filas,Columnas] = size(Cell{1});
 tform = affine2d([1,YShear,0;-XShear,YXratio,0;0,0,1]);
 %The first element is the equivalent parameter for XYratio but for the
 %x-axis. We fix it as 1 as we only want to change the relative size of
@@ -117,15 +118,15 @@ tform = affine2d([1,YShear,0;-XShear,YXratio,0;0,0,1]);
     %larger as we are only applying a shear transform
     if NewFilas >= Filas
     CellWarped = cellfun(@(x) ...
-        x(CentroY-Filas/2+1:CentroY+Filas/2,...
-        CentroX-Columnas/2+1:CentroX+Columnas/2),CellWarpedAUX,...
+        x(CentroY-floor(Filas/2)+1:CentroY+floor(Filas/2),...
+        CentroX-floor(Columnas/2)+1:CentroX+floor(Columnas/2)),CellWarpedAUX,...
         UniformOutput = false);
     else
         CellWarped = cellfun(@(x) zeros(size(x)),Cell,UniformOutput=false);
-        ptgap = (Filas-NewFilas)/2;
+        ptgap = floor((Filas-NewFilas)/2);
         for k = 1:numel(CellWarped)
             CellWarped{k}(1+ptgap:end-ptgap,:) = ...
-                CellWarpedAUX{k}(:,CentroX-Columnas/2+1:CentroX+Columnas/2);
+                CellWarpedAUX{k}(:,CentroX-floor(Columnas/2)+1:CentroX+floor(Columnas/2));
         end
 
     end

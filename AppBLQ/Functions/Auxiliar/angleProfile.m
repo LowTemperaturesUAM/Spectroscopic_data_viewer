@@ -11,28 +11,35 @@ end
 
 kmax = min(max(Info.DistanciaFourierColumnas), ...
     max(Info.DistanciaFourierFilas)); %Get the FFT limit for the smaller axis
+%Make sure the profile always goes through the zero value
 switch opt.Mode
     case 'double' %negative and positive K
         wrapAngle = wrapTo180(angle*2)/2; %allow only for half turn
         kmin = -kmax;
+        xi = [kmin,kmax]*cosd(wrapAngle);
+        yi = [kmin,kmax]*sind(wrapAngle);
     case 'single' %only to one side of the origin
         wrapAngle = wrapTo180(angle); %allow for the whole circunference
         kmin = 0;
+        xi = [0,kmax]*cosd(wrapAngle);
+        yi = [0,kmax]*sind(wrapAngle);
 end
 
+L1 = cosd(wrapAngle)*255;
+L2 = sind(wrapAngle)*255;
+%Make then odd integers
+N1 = round(L1 + (mod(L1,2)<1));
+N2 = round(L2 + (mod(L2,2)<1));
+ProfileLength = max(N1,N2);
+
+[xp,yp,~] = improfile(Info.DistanciaFourierColumnas([1 end]),...
+    Info.DistanciaFourierFilas([1 end]),Info.Transformadas{1},xi,yi,ProfileLength,opt.Method);
 
 
-xi = [kmin,kmax]*cosd(wrapAngle);
-yi = [kmin,kmax]*sind(wrapAngle);
-
-[xp,yp,profile] = improfile(Info.DistanciaFourierColumnas([1 end]),...
-    Info.DistanciaFourierFilas([1 end]),Info.Transformadas{1},xi,yi,opt.Method);
-
-ProfileLength = length(profile);
 Profiles = zeros(length(Info.Energia),ProfileLength);
 for k=1:numel(Info.Energia)
     Profiles(k,:) = improfile(Info.DistanciaFourierColumnas([1 end]),...
-    Info.DistanciaFourierFilas([1 end]),Info.Transformadas{k},xi,yi,opt.Method);
+    Info.DistanciaFourierFilas([1 end]),Info.Transformadas{k},xi,yi,ProfileLength,opt.Method);
 end
 
 
@@ -43,6 +50,7 @@ if all(sign(xp)==0)
 else
     QPI.K = (sqrt(xp.^2+yp.^2).*sign(xp)).';
 end
+
 %we always refer to the lattice parameter for the x axis
 % that we commonly refer to as b
 switch opt.Lattice
