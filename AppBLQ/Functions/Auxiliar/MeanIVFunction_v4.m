@@ -17,7 +17,7 @@ Rectangulo1([1 3]) = Columnas.*Rectangulo([1 3])./(DistanciaColumnas(end) );
 Rectangulo1([2 4]) = Filas.*Rectangulo([2 4])./(DistanciaFilas(end) );
 Inicio = [round(Rectangulo1(1)), round(Rectangulo1(2))];
 Final = [round(Rectangulo1(1) + Rectangulo1(3)), round(Rectangulo1(2) + Rectangulo1(4))];
-
+%check if the rectangle actually covers more than one pixel
 % Obtain indices of curves selected with rectangle
 [X,Y] = meshgrid(1:Columnas,Filas:-1:1);
 Coordenadas = reshape((1:Filas*Columnas),Columnas,Filas);
@@ -29,8 +29,7 @@ if length(Coordenadas)>1
 AvgCur = mean(Matrix(:,Coordenadas),2);
 
 NewFig = plotMeanCurv2(ax,V,AvgCur,Inicio,Final,Type);
-% Place figure inside screen if otherwise
-movegui(NewFig);
+
 
 x1=Rectangulo(1);
 y1=Rectangulo(2);

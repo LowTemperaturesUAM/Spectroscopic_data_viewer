@@ -30,16 +30,33 @@ CoorY = pointer(1,2);
 if isReal
     switch Type
         case 'Current'
+            isNewFig = ~ishandle(122);
             curvaUnicaFig = figure(122);
             curvaUnicaFig.Name = 'singleIVFig'; %not working at the moment
+            condExist = ishandle(120);
+            if condExist && isNewFig
+                condFig =findobj('Type','Figure','Number',120);
+                curvaUnicaFig.Position(1) = condFig.Position(1)+condFig.Position(3);
+                %move it into the display in case it was placed out of borders
+                movegui(curvaUnicaFig)
+            end
         case 'Conductance'
+            isNewFig = ~ishandle(120);
             curvaUnicaFig = figure(120);
             curvaUnicaFig.Name = 'singledI/dVFig';
             display(['RS Pixel = [',num2str(PixelX),',',num2str(PixelY),...
                 '] \\ Indice = ',num2str((PixelY-1)*Columnas+PixelX)]);
         case 'Second'
+            isNewFig = ~ishandle(123);
             curvaUnicaFig = figure(123);
             curvaUnicaFig.Name = 'singled2I/dV2Fig';
+            condExist = ishandle(120);
+            if condExist && isNewFig
+                condFig =findobj('Type','Figure','Number',120);
+                curvaUnicaFig.Position(1) = condFig.Position(1)-condFig.Position(3);
+                %move it into the display in case it was placed out of borders
+                movegui(curvaUnicaFig)
+            end
     end
 else
     curvaUnicaFig = figure(121);
@@ -47,15 +64,25 @@ else
     display(['RS Pixel = [',num2str(PixelX),',',num2str(PixelY),...
         '] \\ Indice = ',num2str((PixelY-1)*Columnas+PixelX)]);
 end
-% Aseguro que figura entra en pantalla
-movegui(curvaUnicaFig);
 
 CurvaUnica = Matrix(:,(PixelY-1)*Columnas+PixelX);
-curvaUnicaFig.KeyPressFcn = @KeyPressSpectraFcn;
-hold on
-a = curvaUnicaFig.CurrentAxes;
-a.Interactions = [zoomInteraction regionZoomInteraction rulerPanInteraction];
-% for i=1:length(PixelX)
+% hold on
+
+% a = curvaUnicaFig.CurrentAxes;
+% ax.ColorOrder
+% a.ColorOrder
+
+
+% hold on
+if isNewFig
+    a = axes(curvaUnicaFig);
+    curvaUnicaFig.KeyPressFcn = @KeyPressSpectraFcn;
+    a.Interactions = [zoomInteraction regionZoomInteraction rulerPanInteraction];
+else
+    a = curvaUnicaFig.CurrentAxes;
+end
+
+hold(a,'on')
 a.ColorOrder = ax.ColorOrder;
 switch Type
     case 'Conductance'
