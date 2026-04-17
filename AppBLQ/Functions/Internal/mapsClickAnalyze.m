@@ -23,6 +23,9 @@ if strcmp(btn, 'alt') && Movimiento && strcmp(ax.Tag,'RealAxes')
     Columnas = numel(DistanciaColumnas);
     Rectangle = ax.UserData.Rectangle;
     CondFig = MeanIVFunction_v4(ax,Rectangle, MatrizNormalizada, Voltaje, DistanciaFilas, DistanciaColumnas, 'Conductance'); %Conductancia vs V
+    if isempty(CondFig)
+        return
+    end
     CurrentFig = MeanIVFunction_v4(ax,Rectangle, MatrizCorriente, Voltaje, DistanciaFilas, DistanciaColumnas, 'Current'); %Corriente vs V
     if SecondDeriv
         SecondFig = MeanIVFunction_v4(ax,Rectangle, MatrizSecondDeriv, Voltaje, DistanciaFilas, DistanciaColumnas, 'Second'); %Corriente vs V

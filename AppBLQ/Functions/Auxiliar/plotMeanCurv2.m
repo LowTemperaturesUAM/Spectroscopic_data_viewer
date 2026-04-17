@@ -20,6 +20,7 @@ switch Type
         meanIVFig = figure(37290);
         meanIVFig.Name = 'meandI/dVFig';
         meanIVFig.CloseRequestFcn = 'kill_v2';
+        movegui(meanIVFig)
     case 'Second'
         isNewFig = ~ishandle(37291);
         meanIVFig = figure(37291);
@@ -35,13 +36,17 @@ switch Type
         end
 end
 
-hold on
-a=meanIVFig.CurrentAxes;
-a.ColorOrder = ax.ColorOrder;
+
 if isNewFig %if it was just created then set the callback and interactions
+    a = axes(meanIVFig);
     meanIVFig.KeyPressFcn = @KeyPressSpectraFcn;
     a.Interactions = [zoomInteraction regionZoomInteraction rulerPanInteraction];
+else
+    a=meanIVFig.CurrentAxes;
 end
+
+hold on
+a.ColorOrder = ax.ColorOrder;
 
 switch Type
     case 'Conductance'

@@ -26,21 +26,22 @@ Coordenadas = Coordenadas(X>=Inicio(1) & X<=Final(1) & Y>=Inicio(2) & Y<=Final(2
 
 % Check if the area covers at least two points
 if length(Coordenadas)>1
-AvgCur = mean(Matrix(:,Coordenadas),2);
+    AvgCur = mean(Matrix(:,Coordenadas),2);
 
-NewFig = plotMeanCurv2(ax,V,AvgCur,Inicio,Final,Type);
+    NewFig = plotMeanCurv2(ax,V,AvgCur,Inicio,Final,Type);
 
+    x1=Rectangulo(1);
+    y1=Rectangulo(2);
+    a1=Rectangulo(3);
+    b1=Rectangulo(4);
 
-x1=Rectangulo(1);
-y1=Rectangulo(2);
-a1=Rectangulo(3);
-b1=Rectangulo(4);
+    hold(ax, 'on');
 
-hold(ax, 'on');
-
-if strcmp(Type,'Conductance') % This condition makes it so the rectangle is only made once
-    area = plot(ax,[x1 x1+a1 x1+a1 x1 x1], [y1 y1 y1+b1 y1+b1 y1],'LineWidth',2);
-    area.Tag = NewFig.Name;
-end
+    if strcmp(Type,'Conductance') % This condition makes it so the rectangle is only made once
+        area = plot(ax,[x1 x1+a1 x1+a1 x1 x1], [y1 y1 y1+b1 y1+b1 y1],'LineWidth',2);
+        area.Tag = NewFig.Name;
+    end
+else
+    NewFig = [];
 
 end
