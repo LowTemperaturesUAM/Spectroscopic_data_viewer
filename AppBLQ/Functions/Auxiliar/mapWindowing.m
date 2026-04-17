@@ -20,9 +20,11 @@ else
 end
 
 if iscell(Maps)
-    WindowedMaps = cellfun(@(x) x.*wx.*wy*enbw(wx),Maps,UniformOutput=false);
+    MeanMaps = cellfun(@(x) mean(x,"all"),Maps,UniformOutput = false);
+    WindowedMaps = cellfun(@(x,x0) ((x-x0).*wx.*wy*enbw(wx) ) +x0,Maps,MeanMaps,UniformOutput=false);
 elseif ismatrix(Maps)
-    WindowedMaps = Maps.*wx.*wy*enbw(wx);
+    MeanMaps = mean(Maps,"all");
+    WindowedMaps = (Maps-MeanMaps).*wx.*wy*enbw(wx)+MeanMaps;
 end
 end
 
