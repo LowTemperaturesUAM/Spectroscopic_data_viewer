@@ -7,6 +7,7 @@ arguments
     Angle double {mustBeFinite}
     InfoStruct struct
     opts.RevertRotation = false
+    opts.Method {mustBeMember(opts.Method,{'linear','nearest'})} = 'nearest'
 end
 %Create the referene frame of the image
 if iscell(Maps)
@@ -32,8 +33,8 @@ else
 end
 
 if iscell(Maps)
-    Out = cellfun(@(x) imwarp(x,RA,tCombined,"nearest",OutputView = RA),Maps,UniformOutput=false);
+    Out = cellfun(@(x) imwarp(x,RA,tCombined,opts.Method,OutputView = RA),Maps,UniformOutput=false);
 elseif ismatrix(Maps)
-    Out = imwarp(Maps,RA,tCombined,OutputView = RA);
+    Out = imwarp(Maps,RA,tCombined,opts.Method,OutputView = RA);
 end
 end
