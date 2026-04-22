@@ -39,7 +39,12 @@ elseif Format == 4 %Make Video with Maps as frames. Default 7 FPS
         'Filename',[Path,filesep,options.Prefix,'MapVideo','.','avi'], ...
         'Framerate',7,'ColorbarVisible',false,'getFrame','figure');
     return
+elseif Format == 5
+    exportMapsGif(Cell,Contrast,Colormap,Path,'MapGif')
+    return
 end
+
+
 
 NCell = length(Info.Energia);
 SaveFigure = figure;
