@@ -64,6 +64,8 @@ plot(VoltajeOffset,MatrizNormalizadaTest,'-','Parent',App.ConductanceAxes);
 
 App.ConductanceAxes.XGrid = 'on';
 App.ConductanceAxes.YGrid = 'on';
+% App.CondcutanceAxes.XTicks = App.CurrentAxes.XTicks %Match the ticks? They
+% seem off now
 
 
 
