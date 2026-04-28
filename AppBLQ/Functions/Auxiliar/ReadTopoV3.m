@@ -36,7 +36,7 @@ else
     end
     Ext = Ext(2:end);% remove the beginning dot
     if strcmp(Ext,'img') %Solo sacamos el numero de puntos
-        disp('Img file loaded')
+        
         Struct.FileNameTopo = Name;
         Struct.FilePathTopo = Path;
         FileIMG=fopen([Path Name],'r');
@@ -68,9 +68,9 @@ else
             %format, we return an empty matrix
             Matrix = [];
         end
-
+        disp('Img file loaded')
     elseif strcmp(Ext,'stp') %Sacamos numero de puntos y tamaño
-        disp('STP file loaded')
+        
         IsCurrent = false;
         Struct.FileNameTopo = Name;
         Struct.FilePathTopo = Path;
@@ -228,6 +228,7 @@ else
             %format, we return an empty matrix
             Matrix = [];
         end
+        disp('STP file loaded')
     else
         disp('This image has the wrong format. No data was read');
         Size=128;
