@@ -1,4 +1,22 @@
 function [writerObj] = mapVideo(Maps,contrastLim,Energia,cmap,options)
+arguments
+    Maps cell
+    % Optional arguments
+    contrastLim (2,:) double = autoContrastCell(Maps,.5/100);
+    Energia (1,:) double = 1:length(Maps)
+    cmap (:, 3) double = viridis
+    % Name-Value arguments
+    options.Framerate (1,1) double {mustBePositive} = length(Maps)/3 % Frames per second by default
+    options.Filename string = "TestVid"
+    options.Title
+    options.AxesVisible logical = 0
+    options.ColorbarVisible logical = 1
+    options.getFrame {mustBeMember(options.getFrame,{'axes','figure'})} = 'figure'
+    options.Axes
+    options.Compression
+    options.Quality {mustBeInteger,mustBeInRange(options.Quality,0,100)} =100;
+    options.Profile char {mustBeMember(options.Profile,{'MPEG-4','Archival','Motion JPEG AVI','Uncompressed AVI'})} = 'MPEG-4'
+end
 
 % INPUTS
 % Maps             Cell array with the maps to create video, Each cell is an indexed image that
@@ -15,29 +33,6 @@ function [writerObj] = mapVideo(Maps,contrastLim,Energia,cmap,options)
 % OUTPUT
 % writerObj         Video object
 
-
-%--------------------------------------------------------------------------
-arguments
-    Maps cell
-    % Optional arguments
-    contrastLim (2,:) double = autoContrastCell(Maps,.5/100);
-    Energia (1,:) double = 1:length(Maps)
-    cmap (:, 3) double = viridis
-    % Name-Value arguments
-    options.Framerate (1,1) double {mustBePositive} = length(Maps)/3 % Frames per second by default
-    options.Filename string = "TestVid"
-    options.Title
-    options.AxesVisible logical = 0
-    options.ColorbarVisible logical = 1
-    options.getFrame {mustBeMember(options.getFrame,{'axes','figure'})} = 'figure'
-    options.Axes
-    options.Compression
-    % options.VideoProfile string = 'Motion JPEG AVI'
-end
-
-% Default values
-bar_check = false;
-doAxes = false;
 
 %------------------------
 % nvar = nargin - length(varargin); % Number of variables outside varargin
@@ -93,7 +88,10 @@ end
 nummaps = length(Maps);
 % [Lx,Ly] = size(Maps{1});
 % Initialize video object
-writerObj = VideoWriter(options.Filename,'MPEG-4'); % Create a video
+options.Filename
+[path,file]=fileparts(options.Filename); %remove extension,if present
+writerObj = VideoWriter(fullfile(path,file),options.Profile); % Create a video
+writerObj.Quality = options.Quality; 
 writerObj.FrameRate = options.Framerate; %Framerate
 open(writerObj);
 
