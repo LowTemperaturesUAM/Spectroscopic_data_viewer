@@ -38,6 +38,14 @@ if opt.AddLabels
     TileSize = size(TileAux);
     GridRow = TileSize(1)/(Vimg+2*Vborder);
     GridCol = TileSize(2)/(Himg+2*Hborder);
+    FontSize = 30; %Default font size
+    examplelabel = sprintf('%.2f meV',min(Energy));
+    % Check the length of the text and make a rough estimation of whether
+    % it will fit on the tile or not assuming the width of the caracters is 2/3
+    % of its height
+    if FontSize*length(examplelabel)*2/3> Himg
+        FontSize = floor(Himg/length(examplelabel)*3/2);
+    end
     for k = 1:numel(Cell)
         [i,j] = ind2sub([GridCol,GridRow],k);
         i = i-1;
@@ -45,8 +53,9 @@ if opt.AddLabels
         TxtPos = [Hborder + floor(Himg/2)+1+i*(2*Hborder+Himg),Vborder+j*(2*Vborder+Vimg)];
         % NOTE: this function requires the Computer Vision Toolbox
         % We might want to think of an alternative at some point
+       
         TileAux = insertText(TileAux,TxtPos,sprintf('%.2f meV',Energy(k)),...
-            TextColor = 'black',BoxColor = 'white',FontSize= 30,...
+            TextColor = 'black',BoxColor = 'white',FontSize= FontSize,...
             BoxOpacity=0,AnchorPoint= 'Center',Font='Arial');
     end
     TileImg = TileAux;
