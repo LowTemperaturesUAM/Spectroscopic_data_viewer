@@ -58,40 +58,17 @@ elseif ~isempty(contrastLim) && (size(contrastLim,2) ~= length(Maps))
 end
 
 
-% if nvar < 4
-%     cmap = colormap;
-% end
-
-% names = varargin(1:2:end);
-% values = varargin(2:2:end);
-% propNames = ["Framerate","Filename", "Title", "Axes", "Colorbar"];
-%
-% for k = 1:numel(names)
-%     switch validatestring(names{k},propNames)
-%         case "Colorbar"
-%             if values{k}=="on"
-%                 %colorbar(gca);
-%                 bar_check = 1;
-%             end
-%         case "Framerate"
-%             fRate = values{k};
-%
-%         case "Filename"
-%             filename = values{k};
-%
-%         case "Axes"
-%             doAxes = values{k};
-%     end
-% end
 
 %--------------------------------------------------------------------------
 nummaps = length(Maps);
 % [Lx,Ly] = size(Maps{1});
 % Initialize video object
-options.Filename
 [path,file]=fileparts(options.Filename); %remove extension,if present
 writerObj = VideoWriter(fullfile(path,file),options.Profile); % Create a video
-writerObj.Quality = options.Quality; 
+switch options.Profile
+    case {'MPEG-4','Motion JPEG AVI'}
+        writerObj.Quality = options.Quality;
+end
 writerObj.FrameRate = options.Framerate; %Framerate
 open(writerObj);
 
@@ -105,10 +82,6 @@ try % Check if there are errors to close the file
     colormap(fig,cmap);
     set(gca,{'YDir','DataAspectRatio'},{'normal', [1 1 1]});
     title("E = "+Energia(1)+" meV",'FontSize',16);
-
-    % if ~doAxes
-    %     set(gca,'YTick',[],'XTick',[],'XLabel',[],'YLabel',[]);
-    % end
 
     %colorbar;
     if options.ColorbarVisible
