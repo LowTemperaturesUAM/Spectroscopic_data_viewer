@@ -59,6 +59,7 @@ if isReal
             end
     end
 else
+    isNewFig = ~ishandle(121);
     curvaUnicaFig = figure(121);
     curvaUnicaFig.Name = 'FFTPointFig';
     display(['RS Pixel = [',num2str(PixelX),',',num2str(PixelY),...
