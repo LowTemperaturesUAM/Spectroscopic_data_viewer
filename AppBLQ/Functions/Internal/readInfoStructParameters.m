@@ -24,7 +24,7 @@ if isfield(opts,'Position')
     f.Position(1:2) = opts.Position;
 end
 f.Position(3) = 240;
-f.Position(4) = 190;
+f.Position(4) = 220;
 topRow = f.Position(4)-30;
 hRow = 15;
 wRow = 210;
@@ -88,10 +88,27 @@ if dE <0.2
 else
     EnergyData = sprintf('Map Spacing: %.4g meV',dE) ;
 end
-uilabel(f,Position=[lPad,topRow - i*hRow, wRow, 20],...
-    Text = EnergyData);
-% i = i +1;
+uilabel(f,Position=[lPad,topRow - i*hRow, wRow, 20],Text = EnergyData);
+i = i +1;
 
+ax = Info.ParametroRedColumnas;
+ay = Info.ParametroRedFilas;
+if (ax>1 || ay>1)
+    XLatTxt = sprintf('X Lattice Parameter: %.3g nm',...
+        Info.ParametroRedColumnas);
+    YLatTxt = sprintf('Y Lattice Parameter: %.3g nm',...
+        Info.ParametroRedFilas);
+else
+    XLatTxt = sprintf('X Lattice Parameter: %.3g %c',...
+        Info.ParametroRedColumnas*10,char(0x212B));
+    YLatTxt = sprintf('Y Lattice Parameter: %.3g %c',...
+        Info.ParametroRedFilas*10,char(0x212B));
+end
+%Display the lattice parameters being used
+uilabel(f,Position=[lPad,topRow - i*hRow, wRow, 20],Text = XLatTxt);
+i = i +1;
+uilabel(f,Position=[lPad,topRow - i*hRow, wRow, 20],Text = YLatTxt);
+% i = i +1;
 
 % uiwait(f)
 
