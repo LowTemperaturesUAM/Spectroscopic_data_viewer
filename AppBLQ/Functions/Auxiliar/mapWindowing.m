@@ -11,10 +11,10 @@ else
     error('The provided input is not an array or a cell array')
     return
 end
-wx = TukeyWindow(Row,alpha,1);
+wx = TukeyWindow(Row,alpha,2);
 % enbw(wx) %efective noise bandwidth of the window.
 if Row~=Col
-    wy = TukeyWindow(Col,alpha,2);
+    wy = TukeyWindow(Col,alpha,1);
 else
     wy = wx.';
 end
