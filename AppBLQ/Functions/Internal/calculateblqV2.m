@@ -24,25 +24,25 @@ IV = length(Voltaje);
 if App.NormalizeMirrorButton.Value
     NormalizationFlag = 'mirror window';
     MatrizNormalizadaTest = getDerivative(Struct.MatrizCorrienteTest,...
-        Voltaje,derivPts,LowerValue=VoltajeNormalizacionInferior,...
+        VoltajeOffset,derivPts,LowerValue=VoltajeNormalizacionInferior,...
         UpperValue=VoltajeNormalizacionSuperior,Method="mirrorNorm");
 elseif App.NormalizeSingleButton.Value
     NormalizationFlag = 'single side';
     MatrizNormalizadaTest = getDerivative(Struct.MatrizCorrienteTest,...
-        Voltaje,derivPts,LowerValue=VoltajeNormalizacionInferior,...
+        VoltajeOffset,derivPts,LowerValue=VoltajeNormalizacionInferior,...
         UpperValue=VoltajeNormalizacionSuperior,Method="singleNorm");
 elseif App.FeenstraNormButton.Value
     NormalizationFlag = 'Feenstra'; 
     MatrizNormalizadaTest = getDerivative(Struct.MatrizCorrienteTest,...
-        Voltaje,derivPts,Method="FeenstraNorm");
+        VoltajeOffset,derivPts,Method="FeenstraNorm");
 elseif App.LogButton.Value
     NormalizationFlag = 'log';
     MatrizNormalizadaTest = getDerivative(Struct.MatrizCorrienteTest,...
-        Voltaje,derivPts,Method="Log");
+        VoltajeOffset,derivPts,Method="Log");
 else
     NormalizationFlag = 'none';
     MatrizNormalizadaTest = getDerivative(Struct.MatrizCorrienteTest,...
-        Voltaje,derivPts,Method="none"); % units: uS
+        VoltajeOffset,derivPts,Method="none"); % units: uS
 end
 
 % Plot current

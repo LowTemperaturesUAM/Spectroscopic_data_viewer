@@ -34,11 +34,10 @@ switch opts.Range
             VoltajeInferior < Voltaje(1:IV));
         Indices2 = find(-VoltajeSuperior < Voltaje(1:IV) & ...
             -VoltajeInferior > Voltaje(1:IV));
-
-        if (sum(Indices1)+sum(Indices2)) == 0
-            errordlg('No datapoints exist in the provided range')
+        if (sum(Indices1)== 0 || sum(Indices2)==0)
+            errordlg('No datapoints exist in at least one of the provided ranges')
         end
-
+        
         Norma1 = mean(MatrizConductancia(Indices1,:),1);
         Norma2 = mean(MatrizConductancia(Indices2,:),1);
         Norma = (Norma1(:,:) + Norma2(:,:))/2;
