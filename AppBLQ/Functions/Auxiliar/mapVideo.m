@@ -12,6 +12,8 @@ arguments
     options.AxesVisible logical = 0
     options.ColorbarVisible logical = 1
     options.getFrame {mustBeMember(options.getFrame,{'axes','figure'})} = 'figure'
+    options.XLim = [1 size(Maps{1},2)];
+    options.YLim= [1 size(Maps{1},1)];
     options.Axes
     options.Compression
     options.Quality {mustBeInteger,mustBeInRange(options.Quality,0,100)} =100;
@@ -80,8 +82,9 @@ dlg  = uiprogressdlg(uifig,'Title','Patience is a Virtue', ...
 try % Check if there are errors to close the file
     im = imagesc(Maps{1});
     colormap(fig,cmap);
-    set(gca,{'YDir','DataAspectRatio'},{'normal', [1 1 1]});
-    title("E = "+Energia(1)+" meV",'FontSize',16);
+    set(gca,{'YDir','DataAspectRatio'},{'normal', [1 1 1]}, ...
+        'XLim',options.XLim,'YLim',options.YLimop);
+    title("E = "+round(Energia(1),2)+" meV",'FontSize',16);
 
     %colorbar;
     if options.ColorbarVisible
@@ -102,7 +105,7 @@ try % Check if there are errors to close the file
         % Change content of axes and title each frame
         im.CData = Maps{n};
         im.Parent.CLim = [contrastLim(:,n)];
-        im.Parent.Title.String = "E = "+Energia(n)+" meV";
+        im.Parent.Title.String = "E = "+round(Energia(n),2)+" meV";
         drawnow;
         % save frame
         if isequal(options.getFrame,'figure')
