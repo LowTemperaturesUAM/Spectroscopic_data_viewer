@@ -83,7 +83,7 @@ try % Check if there are errors to close the file
     im = imagesc(Maps{1});
     colormap(fig,cmap);
     set(gca,{'YDir','DataAspectRatio'},{'normal', [1 1 1]}, ...
-        'XLim',options.XLim,'YLim',options.YLimop);
+        'XLim',options.XLim,'YLim',options.YLim);
     title("E = "+round(Energia(1),2)+" meV",'FontSize',16);
 
     %colorbar;
